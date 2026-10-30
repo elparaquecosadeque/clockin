@@ -17,6 +17,10 @@ Read these before writing code:
   the framework or the approved stack can't cover it.
 - **Never use a forbidden library**, even as a temporary workaround.
 - When a decision isn't covered by the docs, ask, and propose an ADR for it.
+- **Keep ADRs and the baseline in sync** ([ADR 0003](docs/adr/0003-adopt-baseline-code-style-and-stack.md)):
+  an ADR that adds or changes a rule updates `CODE_STYLE.md` or `STACK.md` in
+  the same commit, and the changed line links to the ADR. Never edit an
+  accepted ADR; supersede it.
 - Run the backend and frontend tests before declaring a task done.
 
 ## Skills
