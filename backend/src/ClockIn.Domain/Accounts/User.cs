@@ -38,6 +38,11 @@ public sealed class User
 
     public DateTimeOffset? LockedUntil { get; private set; }
 
+    /// <summary>Hash of the current access link's secret; null when there is none. A new link replaces the old one.</summary>
+    public string? AccessLinkHash { get; private set; }
+
+    public DateTimeOffset? AccessLinkExpiresAt { get; private set; }
+
     /// <summary>0 until first saved; the repository checks and bumps it on every save.</summary>
     public int Version { get; private init; }
 
@@ -51,7 +56,8 @@ public sealed class User
     /// <summary>Rebuilds a saved user. For repositories only; it checks no rules.</summary>
     public static User Restore(
         UserId id, Email email, string name, Role role, UserStatus status, string? passwordHash,
-        Guid securityStamp, int failedSignIns, DateTimeOffset? lockedUntil, int version) =>
+        Guid securityStamp, int failedSignIns, DateTimeOffset? lockedUntil,
+        string? accessLinkHash, DateTimeOffset? accessLinkExpiresAt, int version) =>
         new(id, email, name, role)
         {
             Status = status,
@@ -59,28 +65,57 @@ public sealed class User
             SecurityStamp = securityStamp,
             FailedSignIns = failedSignIns,
             LockedUntil = lockedUntil,
+            AccessLinkHash = accessLinkHash,
+            AccessLinkExpiresAt = accessLinkExpiresAt,
             Version = version,
         };
 
     /// <summary>Activates a pending user or resets an active one's password, ending every earlier session.</summary>
     public void SetPassword(string passwordHash)
     {
-        if (Status == UserStatus.Deactivated)
-        {
-            throw new DomainException("UserIsDeactivated", "The user is deactivated.");
-        }
-
+        EnsureNotDeactivated();
         PasswordHash = Guard.Against.NullOrWhiteSpace(passwordHash);
         Status = UserStatus.Active;
         FailedSignIns = 0;
         LockedUntil = null;
+        AccessLinkHash = null;
+        AccessLinkExpiresAt = null;
         SecurityStamp = Guid.CreateVersion7();
+    }
+
+    /// <summary>A new one-time link, replacing any earlier one. The current password and sessions keep working.</summary>
+    public AccessLink IssueAccessLink(DateTimeOffset now)
+    {
+        EnsureNotDeactivated();
+        string secret = OpaqueToken.NewSecret();
+        AccessLinkHash = OpaqueToken.Hash(secret);
+        AccessLinkExpiresAt = now + AccessLink.Validity;
+        return new AccessLink(Id, secret, AccessLinkExpiresAt.Value);
+    }
+
+    /// <remarks>Every failure gives the same answer, so a link reveals nothing about the account.</remarks>
+    public void SetPasswordWithLink(string secret, string passwordHash, DateTimeOffset now)
+    {
+        if (Status == UserStatus.Deactivated || now > AccessLinkExpiresAt || !OpaqueToken.Matches(AccessLinkHash, secret))
+        {
+            throw new DomainException("InvalidOrExpiredLink", "The link is invalid or has expired. Ask an admin for a new one.");
+        }
+
+        SetPassword(passwordHash);
     }
 
     public void Deactivate()
     {
         Status = UserStatus.Deactivated;
         SecurityStamp = Guid.CreateVersion7();
+    }
+
+    private void EnsureNotDeactivated()
+    {
+        if (Status == UserStatus.Deactivated)
+        {
+            throw new DomainException("UserIsDeactivated", "The user is deactivated.");
+        }
     }
 
     /// <summary>Applies the lockout rules to a sign-in attempt whose password was already checked against <see cref="PasswordHash"/>.</summary>

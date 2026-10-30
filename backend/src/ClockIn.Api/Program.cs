@@ -68,7 +68,7 @@ public sealed class Program
             opts.Discovery.IncludeAssembly(typeof(NotFoundException).Assembly);
             opts.Durability.Mode = DurabilityMode.MediatorOnly;
             opts.UseFluentValidation();
-        });
+        }).AddHostedService<FirstAdminSeeder>(); // after Wolverine's own hosted service, so the mediator is running
 
     private static void AddAuth(IServiceCollection services)
     {

@@ -15,6 +15,8 @@ public sealed class AuthController(IMessageBus bus, AccessTokenIssuer tokens) : 
 {
     public sealed record LogInRequest(string Email, string Password);
 
+    public sealed record SetPasswordRequest(string Token, string Password);
+
     [HttpPost("login")]
     [EnableRateLimiting(RateLimits.SignIn)]
     public async Task<AccessTokenResponse> LogInAsync(LogInRequest request, CancellationToken ct) =>
@@ -30,6 +32,14 @@ public sealed class AuthController(IMessageBus bus, AccessTokenIssuer tokens) : 
     {
         await bus.InvokeAsync(new LogOutCommand(RefreshCookie.Read(Request)), ct);
         RefreshCookie.Delete(Response);
+        return NoContent();
+    }
+
+    [HttpPost("set-password")]
+    [EnableRateLimiting(RateLimits.SignIn)]
+    public async Task<NoContentResult> SetPasswordAsync(SetPasswordRequest request, CancellationToken ct)
+    {
+        await bus.InvokeAsync(new SetPasswordWithLinkCommand(request.Token, request.Password), ct);
         return NoContent();
     }
 

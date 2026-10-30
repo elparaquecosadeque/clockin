@@ -21,6 +21,13 @@ public sealed class UserRepository(AppDataConnection db) : IUserRepository
         return record is null ? null : ToDomain(record);
     }
 
+    public async Task<IReadOnlyList<User>> FindByRoleAsync(Role role, CancellationToken ct)
+    {
+        string name = role.ToString();
+        List<UserRecord> records = await db.GetTable<UserRecord>().Where(u => u.Role == name).ToListAsync(ct);
+        return records.ConvertAll(ToDomain);
+    }
+
     public async Task SaveAsync(User user, CancellationToken ct)
     {
         if (user.Version == 0)
@@ -45,6 +52,8 @@ public sealed class UserRepository(AppDataConnection db) : IUserRepository
             .Set(u => u.SecurityStamp, user.SecurityStamp)
             .Set(u => u.FailedSignIns, user.FailedSignIns)
             .Set(u => u.LockedUntil, user.LockedUntil)
+            .Set(u => u.AccessLinkHash, user.AccessLinkHash)
+            .Set(u => u.AccessLinkExpiresAt, user.AccessLinkExpiresAt)
             .Set(u => u.Version, user.Version + 1)
             .UpdateAsync(ct);
         if (updated == 0)
@@ -64,6 +73,8 @@ public sealed class UserRepository(AppDataConnection db) : IUserRepository
             record.SecurityStamp,
             record.FailedSignIns,
             record.LockedUntil,
+            record.AccessLinkHash,
+            record.AccessLinkExpiresAt,
             record.Version);
 
     private static UserRecord ToRecord(User user, int version) => new()
@@ -77,6 +88,8 @@ public sealed class UserRepository(AppDataConnection db) : IUserRepository
         SecurityStamp = user.SecurityStamp,
         FailedSignIns = user.FailedSignIns,
         LockedUntil = user.LockedUntil,
+        AccessLinkHash = user.AccessLinkHash,
+        AccessLinkExpiresAt = user.AccessLinkExpiresAt,
         Version = version,
     };
 }

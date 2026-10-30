@@ -8,6 +8,8 @@ public interface IUserRepository
 
     Task<User?> FindByEmailAsync(Email email, CancellationToken ct);
 
+    Task<IReadOnlyList<User>> FindByRoleAsync(Role role, CancellationToken ct);
+
     /// <summary>Inserts or updates the whole aggregate.</summary>
     Task SaveAsync(User user, CancellationToken ct);
 }

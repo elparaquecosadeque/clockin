@@ -32,6 +32,12 @@ public sealed class UserRecord
     [Column("locked_until")]
     public required DateTimeOffset? LockedUntil { get; init; }
 
+    [Column("access_link_hash")]
+    public required string? AccessLinkHash { get; init; }
+
+    [Column("access_link_expires_at")]
+    public required DateTimeOffset? AccessLinkExpiresAt { get; init; }
+
     [Column("version")]
     public required int Version { get; init; }
 }

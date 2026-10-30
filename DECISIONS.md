@@ -4,6 +4,17 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-10-30: Access links and the first admin
+
+| Decision | Why | By |
+|---|---|---|
+| Access-link tokens are `{userId}.{secret}` like refresh tokens, through one shared `OpaqueToken` helper in the domain; the hash and expiry live on the `User`. | One token format, stored hashed, found by id. A newer link overwrites the hash, so older ones stop working. | dev |
+| The seeded admin's activation link goes to the log at Warning under the `Audit` category, with the path `/set-password?token=…`. | `seed-first-admin.feature` names the deploy log as the delivery channel; it's the one exception to "never log tokens". Treat that log line as a secret. | dev |
+| The first-admin seed runs as a hosted service after Wolverine starts, reading `FirstAdmin:Email`; a missing email with no admin stops startup. | The mediator only works on a started host; the spec says startup fails. | dev |
+| Remote environments must run migrations before the app starts, since the seed needs the `users` table. | Migrations run as a separate deploy step there (CODE_STYLE.md). | dev |
+| Admins get the `users.manage` permission; `POST /api/users/{id}/access-links` requires it. `POST /api/auth/set-password` is anonymous and rate-limited with sign-in. | Spec permissions; the link is the credential for setting a password. | dev |
+| Development seeds `admin@clockin.local`. | So a fresh local database is usable straight away. | dev |
+
 ## 2026-10-30: Authentication in the API and clock endpoints
 
 | Decision | Why | By |

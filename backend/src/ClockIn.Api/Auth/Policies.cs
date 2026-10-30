@@ -8,6 +8,7 @@ public static class Policies
     public const string PermissionClaim = "permission";
 
     public const string PunchTime = Permissions.PunchTime;
+    public const string ManageUsers = Permissions.ManageUsers;
 
-    public static readonly IReadOnlyList<string> All = [PunchTime];
+    public static readonly IReadOnlyList<string> All = [PunchTime, ManageUsers];
 }

@@ -12,4 +12,9 @@ public interface IAuditLog
     void LockedOut(UserId userId);
 
     void RefreshTokenReused(UserId userId);
+
+    void AccessLinkGenerated(UserId actorId, UserId userId);
+
+    /// <summary>The one event that carries a token: the deploy log is how the first admin receives it.</summary>
+    void FirstAdminLinkIssued(Email email, string token);
 }

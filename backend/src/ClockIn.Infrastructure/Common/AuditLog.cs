@@ -17,6 +17,10 @@ public sealed partial class AuditLog(ILoggerFactory loggers) : IAuditLog
 
     public void RefreshTokenReused(UserId userId) => LogRefreshTokenReused(userId.Value);
 
+    public void AccessLinkGenerated(UserId actorId, UserId userId) => LogAccessLinkGenerated(actorId.Value, userId.Value);
+
+    public void FirstAdminLinkIssued(Email email, string token) => LogFirstAdminLinkIssued(email.Value, token);
+
     [LoggerMessage(Level = LogLevel.Information, Message = "Sign-in succeeded for user {UserId}")]
     private partial void LogSignedIn(Guid userId);
 
@@ -28,4 +32,11 @@ public sealed partial class AuditLog(ILoggerFactory loggers) : IAuditLog
 
     [LoggerMessage(Level = LogLevel.Warning, Message = "Refresh-token reuse for user {UserId}; every session revoked")]
     private partial void LogRefreshTokenReused(Guid userId);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "User {ActorId} generated an access link for user {UserId}")]
+    private partial void LogAccessLinkGenerated(Guid actorId, Guid userId);
+
+    // seed-first-admin.feature: the deploy log is the delivery channel, so this entry, alone, carries the token.
+    [LoggerMessage(Level = LogLevel.Warning, Message = "First admin {Email} must activate the account at /set-password?token={Token}")]
+    private partial void LogFirstAdminLinkIssued(string email, string token);
 }
