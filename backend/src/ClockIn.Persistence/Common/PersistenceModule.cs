@@ -30,7 +30,9 @@ public static class PersistenceModule
         };
         string linqProvider = isPostgres ? ProviderName.PostgreSQL : ProviderName.SQLiteMS;
 
-        services.AddScoped(_ => new AppDataConnection(new DataOptions().UseConnectionString(linqProvider, options.ConnectionString)));
+        // Plain constructor registrations: Wolverine generates handler code and cannot call factory lambdas.
+        services.AddSingleton(new DataOptions().UseConnectionString(linqProvider, options.ConnectionString));
+        services.AddScoped<AppDataConnection>();
 
         services.AddFluentMigratorCore().ConfigureRunner(rb => (isPostgres ? rb.AddPostgres() : rb.AddSQLite())
             .WithGlobalConnectionString(options.ConnectionString)

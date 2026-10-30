@@ -4,6 +4,23 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-10-30: Authentication in the API and clock endpoints
+
+| Decision | Why | By |
+|---|---|---|
+| Access tokens are issued in `ClockIn.Api/Auth` (ES256, `JsonWebTokenHandler`), not in Infrastructure. | STACK.md: "Own `Auth` feature in `ClockIn.Api`"; the API holds the only private key and validates with it. | dev |
+| Development generates a throwaway P-256 key when `Auth:SigningKey` is empty; every other environment fails at startup without one. | CODE_STYLE.md: a development key is generated and never committed. | dev |
+| Permissions live in the domain (`Permissions.For(role)`); one authorization policy per permission, same name. Admins have none yet. | Glossary: a role is a bundle of permissions; code checks permissions, never roles. | dev |
+| Every request loads the user to check status and security stamp, then adds permission claims; no cache yet (`ponytail:`). | CODE_STYLE.md: permissions are checked on every request. Cache when profiling says so. | dev |
+| Anonymous requests to unknown routes get 401, not 404. | Effect of the authentication fallback policy; it doesn't reveal which routes exist. | dev |
+| Sign-in and refresh share a fixed-window limit per client IP (`Auth:SignInPermitsPerMinute`, default 10). | CODE_STYLE.md: strict limits on login and refresh. | dev |
+| Routes: `POST /api/auth/login`, `/refresh`, `/logout`; `GET /api/me`; `POST /api/time-entries/clock-in` and `/clock-out` (200 with the entry). | Punches are actions on the user's open entry, not a resource the client names. | dev |
+| A clock-in that loses a race to a simultaneous punch returns 409 `EntryAlreadyOpen`. | `clock-in.feature` @api scenario; the repository's `ConcurrencyConflict` is translated by the handler. | dev |
+| The company timezone is `Company:TimeZone` (default `America/Bogota`), validated at startup; the app's `TimeProvider` uses it as its local zone. | Glossary: one company timezone from deploy config. | dev |
+| Client IP is the direct peer address (`ponytail:`). | Enable forwarded headers when deploying behind a reverse proxy. | dev |
+| `AppDataConnection` is registered by constructor, not a factory lambda. | Wolverine's generated handlers cannot call factory lambdas for scoped services. | dev |
+| The two `@api` scenarios so far (rate limit, simultaneous clock-ins) are plain xUnit HTTP tests for now. | ADR 0002 says Reqnroll; adding it is pending a user decision. | dev |
+
 ## 2026-10-30: Accounts persistence and infrastructure
 
 | Decision | Why | By |

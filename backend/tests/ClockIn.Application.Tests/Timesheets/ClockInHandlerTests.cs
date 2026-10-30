@@ -1,4 +1,5 @@
 using AwesomeAssertions;
+using ClockIn.Application.Common.Exceptions;
 using ClockIn.Application.Common.Interfaces;
 using ClockIn.Application.Timesheets.Commands;
 using ClockIn.Application.Timesheets.Interfaces;
@@ -79,6 +80,17 @@ public sealed class ClockInHandlerTests
         await _timesheets.Received(1).SaveAsync(
             Arg.Is<Timesheet>(t => t.Week == new Week(new DateOnly(2026, 10, 26))),
             Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Reports_the_open_entry_when_a_simultaneous_punch_saved_first()
+    {
+        _timesheets.SaveAsync(Arg.Any<Timesheet>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromException(new ConflictException("ConcurrencyConflict", "Changed by someone else.")));
+
+        var act = () => _handler.HandleAsync(new ClockInCommand("203.0.113.7", "Mobile Safari"), CancellationToken.None);
+
+        (await act.Should().ThrowAsync<ConflictException>()).Which.Code.Should().Be("EntryAlreadyOpen");
     }
 
     private Timesheet TimesheetWithClosedEntry(string start, string end)

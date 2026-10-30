@@ -2,6 +2,7 @@ using System.Net;
 using System.Text.Json;
 using AwesomeAssertions;
 using ClockIn.Api.Tests.Common;
+using ClockIn.Domain.Accounts;
 
 namespace ClockIn.Api.Tests;
 
@@ -9,6 +10,7 @@ namespace ClockIn.Api.Tests;
 public sealed class ErrorHandlingTests(ApiFactory factory)
 {
     [Theory]
+    [InlineData("unauthorized", HttpStatusCode.Unauthorized, null)]
     [InlineData("not-found", HttpStatusCode.NotFound, null)]
     [InlineData("forbidden", HttpStatusCode.Forbidden, null)]
     [InlineData("conflict", HttpStatusCode.Conflict, "ConcurrencyConflict")]
@@ -50,7 +52,11 @@ public sealed class ErrorHandlingTests(ApiFactory factory)
     [Fact]
     public async Task Returns_problem_details_when_the_route_does_not_exist()
     {
-        HttpResponseMessage response = await factory.CreateClient().GetAsync("/no-such-route", TestContext.Current.CancellationToken);
+        // Anonymous callers get 401 for every route, existing or not, so routes aren't revealed.
+        User eve = await TestUsers.CreateActiveAsync(factory, Role.Employee, TestContext.Current.CancellationToken);
+        HttpClient client = await TestUsers.SignedInClientAsync(factory, eve, TestContext.Current.CancellationToken);
+
+        HttpResponseMessage response = await client.GetAsync("/no-such-route", TestContext.Current.CancellationToken);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         response.Content.Headers.ContentType!.MediaType.Should().Be("application/problem+json");

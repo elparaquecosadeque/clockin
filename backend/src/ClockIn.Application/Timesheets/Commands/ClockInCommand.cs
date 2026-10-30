@@ -1,3 +1,4 @@
+using ClockIn.Application.Common.Exceptions;
 using ClockIn.Application.Common.Interfaces;
 using ClockIn.Application.Timesheets.Interfaces;
 using ClockIn.Application.Timesheets.Mappings;
@@ -25,7 +26,16 @@ public sealed class ClockInHandler(ICurrentUser currentUser, ITimesheetRepositor
         Timesheet timesheet = await timesheets.FindAsync(currentUser.Id, week, ct) ?? Timesheet.Start(currentUser.Id, week);
 
         timesheet.ClockIn(now, new PunchSource(command.IpAddress, command.UserAgent), time.LocalTimeZone);
-        await timesheets.SaveAsync(timesheet, ct);
+        try
+        {
+            await timesheets.SaveAsync(timesheet, ct);
+        }
+        catch (ConflictException ex) when (ex.Code == "ConcurrencyConflict")
+        {
+            // Another punch saved this week's timesheet first: from here, that is an entry already open.
+            throw new ConflictException("EntryAlreadyOpen", "An entry is already open. Clock out first.");
+        }
+
         return timesheet.OpenEntry!.ToDto(timesheet.Id);
     }
 }
