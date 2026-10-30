@@ -1,6 +1,6 @@
 # Specs
 
-Use cases of ClockIn v1, written in Gherkin. They are the source for the TDD loop; they are **not executed** by a Gherkin runner (none is in [`STACK.md`](../../STACK.md)). Each one is translated by hand into xUnit tests.
+Use cases of ClockIn v1, written in Gherkin. They are the source for the TDD loop. Domain and application tests are translated from them by hand into xUnit. Only `@api` scenarios run through Reqnroll, in `Api.Tests` ([ADR 0002](../adr/0002-reqnroll-for-api-specs.md)).
 
 ## Mapping to tests
 
@@ -11,6 +11,7 @@ Use cases of ClockIn v1, written in Gherkin. They are the source for the TDD loo
 | `Rule:` | Domain invariant → `Domain.Tests` for the aggregate that owns it |
 | `Scenario:` | One test method, `<Behavior>_when_<condition>` |
 | `Scenario Outline:` | One `[Theory]` with one `[InlineData]` per example row |
+| `@api` | Executed by Reqnroll in `Api.Tests` over HTTP, with a real database. Tag one happy path per feature as well. |
 | `@e2e` | Playwright test in the frontend, not a backend test |
 
 ## Conventions

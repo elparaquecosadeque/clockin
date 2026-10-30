@@ -33,6 +33,7 @@ Keep this list short. A new package needs a reason the framework can't cover, an
 | Integration host | **Microsoft.AspNetCore.Mvc.Testing** (`WebApplicationFactory`) |
 | Disposable databases | **Testcontainers** |
 | Architecture rules | **NetArchTest.Rules** |
+| Executable Gherkin specs (`Api.Tests` only) | **Reqnroll** (xUnit integration). See [ADR 0002](docs/adr/0002-reqnroll-for-api-specs.md) |
 
 ### Frontend
 
