@@ -1,0 +1,1 @@
+i need a clock-in system where employees can register and punch-in and out their working hours, also some supervisors that employees are assigned to and these should review, and approve or revisit for corrections, finally, some admin users that are capable to oversees supervisors and employees work in case of assistance or troubleshooting
