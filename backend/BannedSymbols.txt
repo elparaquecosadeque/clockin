@@ -1,0 +1,5 @@
+P:System.DateTime.Now;Use TimeProvider.GetUtcNow()
+P:System.DateTime.UtcNow;Use TimeProvider.GetUtcNow()
+P:System.DateTimeOffset.Now;Use TimeProvider.GetUtcNow()
+P:System.DateTimeOffset.UtcNow;Use TimeProvider.GetUtcNow()
+M:System.Guid.NewGuid;Use the strongly-typed ID factory (Guid v7)

@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ClockIn.Api/ClockIn.Api.csproj" />
+    <Project Path="src/ClockIn.Application/ClockIn.Application.csproj" />
+    <Project Path="src/ClockIn.Domain/ClockIn.Domain.csproj" />
+    <Project Path="src/ClockIn.Infrastructure/ClockIn.Infrastructure.csproj" />
+    <Project Path="src/ClockIn.Persistence/ClockIn.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ClockIn.Api.Tests/ClockIn.Api.Tests.csproj" />
+    <Project Path="tests/ClockIn.Architecture.Tests/ClockIn.Architecture.Tests.csproj" />
+    <Project Path="tests/ClockIn.Tests.Common/ClockIn.Tests.Common.csproj" />
+  </Folder>
+</Solution>

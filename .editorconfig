@@ -1,0 +1,46 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+[*.cs]
+indent_size = 4
+
+# Namespaces and usings
+csharp_style_namespace_declarations = file_scoped:warning
+dotnet_sort_system_directives_first = true
+csharp_using_directive_placement = outside_namespace:warning
+dotnet_diagnostic.IDE0005.severity = warning
+
+# var only when the type is obvious
+csharp_style_var_when_type_is_apparent = true:warning
+csharp_style_var_for_built_in_types = false:warning
+csharp_style_var_elsewhere = false:suggestion
+
+# Primary constructors
+csharp_style_prefer_primary_constructors = true:suggestion
+
+# Braces and expression bodies
+csharp_prefer_braces = when_multiline:warning
+csharp_style_expression_bodied_methods = when_on_single_line:suggestion
+
+# Naming: async methods end in Async
+dotnet_naming_rule.async_methods_end_in_async.symbols = async_methods
+dotnet_naming_rule.async_methods_end_in_async.style = ends_in_async
+dotnet_naming_rule.async_methods_end_in_async.severity = warning
+dotnet_naming_symbols.async_methods.applicable_kinds = method
+dotnet_naming_symbols.async_methods.required_modifiers = async
+dotnet_naming_style.ends_in_async.required_suffix = Async
+dotnet_naming_style.ends_in_async.capitalization = pascal_case
+
+
+# Tests: method names are Behavior_when_condition (CODE_STYLE.md)
+[backend/tests/**.cs]
+dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA1822.severity = none
+dotnet_naming_rule.async_methods_end_in_async.severity = none

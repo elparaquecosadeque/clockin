@@ -1,0 +1,10 @@
+# .NET
+bin/
+obj/
+*.user
+.vs/
+logs/
+*.db
+*.db-shm
+*.db-wal
+TestResults/

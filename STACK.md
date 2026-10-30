@@ -10,9 +10,9 @@ Keep this list short. A new package needs a reason the framework can't cover, an
 
 | Concern | Library | Notes |
 |---|---|---|
-| Data access | **linq2db** | LINQ queries over table records; no change tracking. |
-| Migrations and seed data | **FluentMigrator** | One migration works for every supported engine. |
-| Mediator (commands, queries, events) | **Wolverine** | In-process mediator only. See [Wolverine](#wolverine). |
+| Data access | **linq2db** (+ the engine drivers **Npgsql**, **Microsoft.Data.Sqlite**) | LINQ queries over table records; no change tracking. |
+| Migrations and seed data | **FluentMigrator** (`FluentMigrator.Runner.Postgres`, `FluentMigrator.Runner.SQLite`) | One migration works for every supported engine. Reference the engine runners, not the `FluentMigrator.Runner` meta-package, which pulls every engine (and SQL Server's vulnerable crypto dependency). |
+| Mediator (commands, queries, events) | **Wolverine** (+ `WolverineFx.RuntimeCompilation`) | In-process mediator only. Since v6 the runtime code compiler is its own package. See [Wolverine](#wolverine). |
 | Validation | **FluentValidation** + **WolverineFx.FluentValidation** | Validators run as Wolverine middleware. |
 | Guard clauses | **Ardalis.GuardClauses** | The only package allowed in Domain. |
 | Password hashing | **Microsoft.Extensions.Identity.Core** | `PasswordHasher<T>` only; no Identity stores (they require EF Core). |

@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\ClockIn.Domain\ClockIn.Domain.csproj" />
+  </ItemGroup>
+</Project>

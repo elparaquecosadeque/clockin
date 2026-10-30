@@ -21,6 +21,11 @@ Read these before writing code:
   an ADR that adds or changes a rule updates `CODE_STYLE.md` or `STACK.md` in
   the same commit, and the changed line links to the ADR. Never edit an
   accepted ADR; supersede it.
+- **Log smaller decisions** in [`DECISIONS.md`](DECISIONS.md) as you make them
+  (decision, why, who decided), in the same commit as the change. Anything
+  that changes a baseline rule or is hard to reverse is an ADR instead.
+- **Conventional Commits** (`feat:`, `fix:`, `chore:`, …), on a short-lived
+  branch, never directly on `main`.
 - Run the backend and frontend tests before declaring a task done.
 
 ## Skills

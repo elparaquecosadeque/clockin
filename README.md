@@ -1,10 +1,42 @@
-# Architecture diagrams
+# ClockIn
 
-Excalidraw diagrams (`.excalidraw`, plus an exported `.svg` for previews) describing the system. **Update them on each major version.**
+Weekly time tracking with supervisor approval. Product context: [`PRODUCT.md`](PRODUCT.md). Rules for contributors: [`CODE_STYLE.md`](CODE_STYLE.md), [`STACK.md`](STACK.md), [`docs/adr/`](docs/adr/). Use cases: [`docs/specs/`](docs/specs/).
 
-| Diagram | Shows |
-|---|---|
-| `architecture.excalidraw` | Projects and layers (Domain, Application, Persistence, Infrastructure, Api, PublicApi), their dependencies, the Angular app, databases and external systems. |
-| `message-flow.excalidraw` | How a request travels: controller → mediator → validation → transaction → handler → repository → domain events → event handlers → commit, and how a query reaches the reads. |
+## Prerequisites
 
-Keep diagrams at the level of projects, features and flows; don't mirror individual classes.
+- .NET SDK 10 (pinned in `backend/global.json`)
+- Node.js 24
+- Docker, for the integration tests (PostgreSQL in Testcontainers)
+
+## Backend
+
+```sh
+cd backend
+dotnet run --project src/ClockIn.Api        # http://localhost:5244, SQLite file, migrates on startup
+dotnet test                                 # architecture + integration tests (needs Docker)
+dotnet build -p:ContinuousIntegrationBuild=true   # strict build, as in CI
+dotnet format --verify-no-changes
+```
+
+Health: `/health/live` and `/health/ready`. OpenAPI document (Development only): `/openapi/v1.json`.
+
+**Database.** Development uses SQLite (`appsettings.Development.json`). Other environments use PostgreSQL: set `Database:ConnectionString` through user secrets or the environment, never in `appsettings.json`. Migrations run on startup only where `Database:MigrateOnStartup` is true (local and tests); remote environments run them as a deployment step.
+
+## Frontend
+
+```sh
+cd frontend
+npm ci
+npm start                                  # English, http://localhost:4200
+npx ng serve --configuration es            # Spanish
+npm run test:ci                            # unit tests
+npm run e2e                                # Playwright + axe, both languages
+npm run build                              # production build, one folder per language
+npm run extract-i18n                       # refresh src/locale/messages.xlf after changing texts
+```
+
+New texts get an `i18n` id in the template, then a `<target>` in `src/locale/messages.es.xlf`. The build fails on a missing translation.
+
+## Architecture diagrams
+
+See [`docs/architecture/`](docs/architecture/README.md).

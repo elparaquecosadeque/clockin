@@ -1,0 +1,16 @@
+// The one place the theme is defined (CODE_STYLE.md, UI and accessibility).
+// Angular Material's Azure palette, light, as in the approved mockups.
+@use '@angular/material' as mat;
+
+@mixin apply {
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}

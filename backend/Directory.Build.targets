@@ -1,0 +1,14 @@
+<Project>
+  <Target Name="CheckBannedPackages" BeforeTargets="CollectPackageReferences">
+    <ItemGroup>
+      <_BannedEfCore Include="@(PackageReference)"
+                     Condition="$([System.String]::Copy('%(Identity)').StartsWith('Microsoft.EntityFrameworkCore'))" />
+    </ItemGroup>
+    <Error Condition="'@(_BannedEfCore)' != ''" Text="Entity Framework Core is not allowed (@(_BannedEfCore)). Use linq2db. See STACK.md." />
+    <Error Condition="'@(PackageReference->WithMetadataValue('Identity','Dapper'))' != ''" Text="Dapper is not allowed. Use linq2db. See STACK.md." />
+    <Error Condition="'@(PackageReference->WithMetadataValue('Identity','MediatR'))' != ''" Text="MediatR is not allowed. Use Wolverine. See STACK.md." />
+    <Error Condition="'@(PackageReference->WithMetadataValue('Identity','AutoMapper'))' != ''" Text="AutoMapper is not allowed. Map manually. See STACK.md." />
+    <Error Condition="'@(PackageReference->WithMetadataValue('Identity','Moq'))' != ''" Text="Moq is not allowed. Use NSubstitute. See STACK.md." />
+    <Error Condition="'@(PackageReference->WithMetadataValue('Identity','FluentAssertions'))' != ''" Text="FluentAssertions is not allowed. Use AwesomeAssertions. See STACK.md." />
+  </Target>
+</Project>
