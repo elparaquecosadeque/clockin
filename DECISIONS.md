@@ -4,6 +4,20 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-10-30: Timesheet persistence
+
+| Decision | Why | By |
+|---|---|---|
+| `time_entries.owner_id` is copied from the timesheet, with a partial unique index `WHERE ended_at IS NULL`. | Enforces one open entry per person under concurrency; partial indexes work on both engines. | dev |
+| A unique-index violation while saving entries maps to 409 `EntryAlreadyOpen`; on the timesheet row (same owner and week) or a stale `Version`, to 409 `ConcurrencyConflict`. | Matches the `@api` concurrency scenario in `clock-in.feature` and the optimistic-concurrency rule. | dev |
+| Saving rewrites the timesheet's entries (delete, then insert) inside the save. | The version check already serializes writers; it also covers deleted entries with no diffing. | dev |
+| `SaveAsync` opens its own transaction (`ponytail:`) instead of the mediator's unit of work. | Each command saves one aggregate today. Move it to middleware with domain events. | dev |
+| Domain aggregates expose `Restore(...)` for repositories. | Rebuilding needs private state; it checks no rules. | dev |
+| Records hold plain `Guid`s; the repository maps typed IDs. No linq2db value converters yet. | Records never leave Persistence, so converters add nothing yet. | dev |
+| Timestamps use a custom `timestamptz` column type. | FluentMigrator can't map `DateTimeOffset` on SQLite; SQLite accepts any type name. | dev |
+| Repository tests live in `Api.Tests` (real PostgreSQL); they were also run once against SQLite. | No `Persistence.Tests` project in `CODE_STYLE.md`; the database is what's under test. | dev |
+| Migration class names are exempt from CA1707. | `CODE_STYLE.md` names them `M<yyyyMMddHHmm>_<Description>`. | dev |
+
 ## 2026-10-30: Clock in and out (domain and application)
 
 | Decision | Why | By |

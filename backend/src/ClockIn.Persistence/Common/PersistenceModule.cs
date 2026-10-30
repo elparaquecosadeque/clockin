@@ -1,4 +1,4 @@
-using FluentMigrator;
+using ClockIn.Persistence.Timesheets;
 using FluentMigrator.Runner;
 using LinqToDB;
 using Microsoft.Extensions.Configuration;
@@ -36,17 +36,11 @@ public static class PersistenceModule
             .ScanIn(typeof(PersistenceModule).Assembly).For.Migrations());
 
         services.AddHealthChecks().AddCheck<DatabaseHealthCheck>("database", HealthStatus.Unhealthy, ["ready"]);
-        return services;
+        return services.AddTimesheetsPersistence();
     }
 
     public static void MigrateDatabase(this IServiceProvider services)
     {
-        // ponytail: FluentMigrator throws when it finds no migrations; drop this guard once the first one exists.
-        if (!typeof(PersistenceModule).Assembly.GetTypes().Any(t => t.IsDefined(typeof(MigrationAttribute), inherit: false)))
-        {
-            return;
-        }
-
         using IServiceScope scope = services.CreateScope();
         scope.ServiceProvider.GetRequiredService<IMigrationRunner>().MigrateUp();
     }

@@ -28,6 +28,11 @@ public sealed class TimeEntry
 
     public TimeSpan? Duration => End - Start;
 
+    /// <summary>Rebuilds a saved entry. For repositories only; it checks no rules.</summary>
+    public static TimeEntry Restore(
+        TimeEntryId id, DateTimeOffset start, DateTimeOffset? end, PunchSource clockInSource, PunchSource? clockOutSource, bool isManuallyChanged) =>
+        new(id, start, clockInSource) { End = end, ClockOutSource = clockOutSource, IsManuallyChanged = isManuallyChanged };
+
     internal void ClockOut(DateTimeOffset end, PunchSource source)
     {
         if (end <= Start)

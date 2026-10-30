@@ -25,11 +25,22 @@ public sealed class Timesheet
 
     public TimesheetStatus Status { get; private set; } = TimesheetStatus.Draft;
 
+    /// <summary>0 until first saved; the repository checks and bumps it on every save.</summary>
+    public int Version { get; private init; }
+
     public IReadOnlyList<TimeEntry> Entries => _entries;
 
     public TimeEntry? OpenEntry => _entries.SingleOrDefault(e => e.End is null);
 
     public static Timesheet Start(UserId ownerId, Week week) => new(TimesheetId.New(), ownerId, week);
+
+    /// <summary>Rebuilds a saved timesheet. For repositories only; it checks no rules.</summary>
+    public static Timesheet Restore(TimesheetId id, UserId ownerId, Week week, TimesheetStatus status, int version, IEnumerable<TimeEntry> entries)
+    {
+        var timesheet = new Timesheet(id, ownerId, week) { Status = status, Version = version };
+        timesheet._entries.AddRange(entries);
+        return timesheet;
+    }
 
     /// <remarks>
     /// Only checks entries of this week. The handler checks other weeks, and a database
