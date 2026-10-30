@@ -4,6 +4,20 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-10-30: Sign-in, refresh and log-out (domain and application)
+
+| Decision | Why | By |
+|---|---|---|
+| A `Session` aggregate per signed-in device; the refresh token is `{sessionId}.{secret}`, and only the secret's SHA-256 is stored. | A token whose session exists but whose secret is no longer current is a reused, rotated token. Reuse detection needs no history of old tokens. | dev |
+| Refresh-token reuse revokes every session of the user with one bulk update. | `refresh-session.feature`; loading each session as an aggregate adds nothing. | dev |
+| Sign-in failures return a 422 `InvalidCredentials`, as the specs' error table says, and log-out always succeeds. | The specs map "breaks the rule" to 422; a log-out that can fail would reveal whether a token was valid. | dev |
+| Unknown emails still run a password verification (against a dummy hash, inside the hasher). | Response times don't reveal which emails have accounts. | dev |
+| Sign-in saves the failure count before rejecting (`ponytail:` note). | A future transaction-per-command middleware must not roll it back. | dev |
+| `IAuditLog` port with one method per security event. | Tests can check each event; the implementation writes to the `Audit` logger category (`CODE_STYLE.md`). | dev |
+| New `UnauthorizedException` → 401. | The "it is unauthorized" outcome in the specs had no exception yet. | dev |
+| `FluentValidation` referenced directly by Application, pinned at 12.0.0. | It was only transitive through Wolverine; validators live in Application. Same version, so nothing changes at runtime. | dev |
+| Email check is deliberately loose: one `@` with text on both sides, no spaces, at most 254 characters. | The activation link reaching the person is the real validation. | dev |
+
 ## 2026-10-30: Timesheet persistence
 
 | Decision | Why | By |

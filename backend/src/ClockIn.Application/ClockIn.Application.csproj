@@ -3,4 +3,8 @@
   <ItemGroup>
     <ProjectReference Include="..\ClockIn.Domain\ClockIn.Domain.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+  </ItemGroup>
 </Project>
