@@ -4,6 +4,18 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-10-30: Clock in and out (domain and application)
+
+| Decision | Why | By |
+|---|---|---|
+| Time entries live inside the `Timesheet` aggregate (one per user and week); no `TimeEntry` repository. | A week's entries share its rules (Draft only, approval, 16 h) and change together. | dev |
+| The company timezone is `TimeProvider.LocalTimeZone`; production will supply a `TimeProvider` set from deploy config. | One injected dependency gives both "now" and the zone, and tests swap both with `CompanyClock`. | dev |
+| "One open entry per user" is checked by the aggregate within its week, by the clock-in handler across weeks, and (to come) by a unique database index under concurrency. | An aggregate can't see other weeks; only the database is safe against two simultaneous punches. | dev |
+| Handlers don't check roles; "admins don't punch" will be a permission policy on the endpoint. | `CODE_STYLE.md`: permission-based policies, never roles in code. | dev |
+| A user agent longer than 512 characters is truncated, not rejected. | A punch must not fail over request metadata. | dev |
+| No Bogus fakers yet; tests build domain objects directly. | Construction is two lines today. Add Bogus fakers when setup grows. | dev |
+| Deferred: `Version` on `Timesheet`. | It belongs with the repository and the optimistic-concurrency check. | dev |
+
 ## 2026-10-30: Walking skeleton
 
 | Decision | Why | By |

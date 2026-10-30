@@ -8,7 +8,9 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/ClockIn.Api.Tests/ClockIn.Api.Tests.csproj" />
+    <Project Path="tests/ClockIn.Application.Tests/ClockIn.Application.Tests.csproj" />
     <Project Path="tests/ClockIn.Architecture.Tests/ClockIn.Architecture.Tests.csproj" />
+    <Project Path="tests/ClockIn.Domain.Tests/ClockIn.Domain.Tests.csproj" />
     <Project Path="tests/ClockIn.Tests.Common/ClockIn.Tests.Common.csproj" />
   </Folder>
 </Solution>
