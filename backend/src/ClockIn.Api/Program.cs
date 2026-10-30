@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using ClockIn.Api.Common;
 using ClockIn.Application.Common.Exceptions;
+using ClockIn.Infrastructure.Common;
 using ClockIn.Persistence.Common;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
@@ -33,7 +34,7 @@ public sealed class Program
             .ReadFrom.Services(services));
 
     private static void AddModules(IServiceCollection services, IConfiguration configuration) =>
-        services.AddPersistence(configuration);
+        services.AddPersistence(configuration).AddInfrastructure();
 
     private static void AddMediator(IServiceCollection services) =>
         services.AddWolverine(opts =>

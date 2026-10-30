@@ -4,6 +4,15 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-10-30: Accounts persistence and infrastructure
+
+| Decision | Why | By |
+|---|---|---|
+| `PasswordHasher<T>` and logging come from `FrameworkReference Microsoft.AspNetCore.App` in Infrastructure; no `Microsoft.Extensions.Identity.Core` package. | The shared framework already ships it; STACK.md's approved package is the same code. | dev |
+| A lost race on a session save (two refreshes with one token) is a 401, not a 409. | Only one refresh may rotate a token; the loser's token is no longer current anyway. | dev |
+| No foreign key from `timesheets.owner_id` to `users` yet. | SQLite can't add a constraint to an existing table; add it when the tables are next rebuilt. | dev |
+| Test helper `Scopes` resolves each repository from its own DI scope and disposes them. | Mimics separate requests and stops leaking connections. | dev |
+
 ## 2026-10-30: Sign-in, refresh and log-out (domain and application)
 
 | Decision | Why | By |

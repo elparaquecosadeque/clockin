@@ -3,4 +3,9 @@
   <ItemGroup>
     <ProjectReference Include="..\ClockIn.Application\ClockIn.Application.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <!-- Logging, DI and PasswordHasher<T> (Microsoft.Extensions.Identity.Core) come with the shared framework. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
 </Project>

@@ -1,3 +1,4 @@
+using ClockIn.Persistence.Accounts;
 using ClockIn.Persistence.Timesheets;
 using FluentMigrator.Runner;
 using LinqToDB;
@@ -36,7 +37,7 @@ public static class PersistenceModule
             .ScanIn(typeof(PersistenceModule).Assembly).For.Migrations());
 
         services.AddHealthChecks().AddCheck<DatabaseHealthCheck>("database", HealthStatus.Unhealthy, ["ready"]);
-        return services.AddTimesheetsPersistence();
+        return services.AddTimesheetsPersistence().AddAccountsPersistence();
     }
 
     public static void MigrateDatabase(this IServiceProvider services)

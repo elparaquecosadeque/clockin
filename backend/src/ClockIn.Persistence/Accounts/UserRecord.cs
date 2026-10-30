@@ -1,0 +1,37 @@
+using LinqToDB.Mapping;
+
+namespace ClockIn.Persistence.Accounts;
+
+[Table("users")]
+public sealed class UserRecord
+{
+    [Column("id"), PrimaryKey]
+    public required Guid Id { get; init; }
+
+    [Column("email")]
+    public required string Email { get; init; }
+
+    [Column("name")]
+    public required string Name { get; init; }
+
+    [Column("role")]
+    public required string Role { get; init; }
+
+    [Column("status")]
+    public required string Status { get; init; }
+
+    [Column("password_hash")]
+    public required string? PasswordHash { get; init; }
+
+    [Column("security_stamp")]
+    public required Guid SecurityStamp { get; init; }
+
+    [Column("failed_sign_ins")]
+    public required int FailedSignIns { get; init; }
+
+    [Column("locked_until")]
+    public required DateTimeOffset? LockedUntil { get; init; }
+
+    [Column("version")]
+    public required int Version { get; init; }
+}

@@ -5,7 +5,6 @@ using ClockIn.Application.Timesheets.Interfaces;
 using ClockIn.Domain.Accounts;
 using ClockIn.Domain.Timesheets;
 using ClockIn.Tests.Common;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace ClockIn.Api.Tests.Timesheets;
 
@@ -19,7 +18,7 @@ public sealed class TimesheetRepositoryTests(ApiFactory factory) : IDisposable
     private static readonly Week ThisWeek = new(new DateOnly(2026, 10, 26));
 
     private readonly UserId _eve = UserId.New();
-    private readonly List<IServiceScope> _scopes = [];
+    private readonly Scopes _scopes = new(factory);
     private CancellationToken Ct => TestContext.Current.CancellationToken;
 
     [Fact]
@@ -135,15 +134,9 @@ public sealed class TimesheetRepositoryTests(ApiFactory factory) : IDisposable
         (await Repository().FindAsync(_eve, ThisWeek, Ct)).Should().BeNull("the failed save is rolled back");
     }
 
-    public void Dispose() => _scopes.ForEach(scope => scope.Dispose());
+    public void Dispose() => _scopes.Dispose();
 
-    // A fresh scope per call, like separate requests.
-    private ITimesheetRepository Repository()
-    {
-        IServiceScope scope = factory.Services.CreateScope();
-        _scopes.Add(scope);
-        return scope.ServiceProvider.GetRequiredService<ITimesheetRepository>();
-    }
+    private ITimesheetRepository Repository() => _scopes.Get<ITimesheetRepository>();
 
     private Task SaveAsync(Timesheet timesheet) => Repository().SaveAsync(timesheet, Ct);
 }
