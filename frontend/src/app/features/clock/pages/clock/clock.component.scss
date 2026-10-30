@@ -1,0 +1,132 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+.day {
+  font: var(--mat-sys-title-medium);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 32px 16px;
+  border-radius: 28px;
+  background: var(--mat-sys-surface-container);
+
+  &.active {
+    background: var(--mat-sys-primary-container);
+    color: var(--mat-sys-on-primary-container);
+  }
+}
+
+.label {
+  font: var(--mat-sys-title-medium);
+}
+
+.timer {
+  font: var(--mat-sys-display-medium);
+  font-variant-numeric: tabular-nums;
+
+  &.idle {
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.punch {
+  height: 72px;
+  border-radius: 36px;
+  font: var(--mat-sys-title-large);
+}
+
+.warning {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+
+  h2 {
+    font: var(--mat-sys-title-small);
+    margin-bottom: 4px;
+  }
+}
+
+.totals {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.total {
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--mat-sys-outline-variant);
+
+  h2 {
+    font: var(--mat-sys-label-large);
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.amount {
+  font: var(--mat-sys-headline-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.entries {
+  h2 {
+    font: var(--mat-sys-title-medium);
+    margin-bottom: 8px;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+    font: var(--mat-sys-body-large);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.open {
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  font: var(--mat-sys-label-medium);
+}
+
+.empty {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.failed {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+mat-progress-spinner {
+  margin: 48px auto;
+}

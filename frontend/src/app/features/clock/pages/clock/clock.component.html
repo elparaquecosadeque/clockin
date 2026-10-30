@@ -1,0 +1,82 @@
+@if (status(); as status) {
+  <h1 class="day">{{ now() | companyTime: status.timeZone : 'day' }}</h1>
+
+  <section class="status" [class.active]="status.openEntry" aria-labelledby="status-label">
+    @if (status.openEntry; as open) {
+      <p id="status-label" class="label" i18n="@@clockedInSince">
+        Clocked in since {{ open.start | companyTime: status.timeZone }}
+      </p>
+      <p class="timer" role="timer">{{ elapsedSeconds() | duration: true }}</p>
+    } @else {
+      <p id="status-label" class="label" i18n="@@notClockedIn">Not clocked in</p>
+      <p class="timer idle">0:00:00</p>
+    }
+  </section>
+
+  <button mat-flat-button class="punch" [disabled]="busy()" (click)="punch()">
+    <mat-icon aria-hidden="true" [fontIcon]="status.openEntry ? 'logout' : 'login'" />
+    @if (status.openEntry) {
+      <ng-container i18n="@@clockOut">Clock out</ng-container>
+    } @else {
+      <ng-container i18n="@@clockIn">Clock in</ng-container>
+    }
+  </button>
+
+  @if (entryTooLong()) {
+    <section class="warning" role="alert">
+      <mat-icon aria-hidden="true" fontIcon="warning" />
+      <div>
+        <h2 i18n="@@entryTooLongTitle">This entry is over 16 hours</h2>
+        <p i18n="@@entryTooLongBody">
+          An entry can't be longer than 16 hours, so it can't be closed now. It looks like you
+          forgot to clock out. Set its end time by hand, or ask your supervisor.
+        </p>
+      </div>
+    </section>
+  }
+
+  <section class="totals">
+    <div class="total">
+      <h2 i18n="@@today">Today</h2>
+      <p class="amount">{{ todaySeconds() | duration }}</p>
+    </div>
+    <div class="total">
+      <h2 i18n="@@thisWeek">This week</h2>
+      <p class="amount">{{ weekSeconds() | duration }}</p>
+    </div>
+  </section>
+
+  <section class="entries" aria-labelledby="entries-title">
+    <h2 id="entries-title" i18n="@@todaysEntries">Today's entries</h2>
+    @if (status.todayEntries.length) {
+      <ul>
+        @for (entry of status.todayEntries; track entry.id) {
+          <li>
+            <span class="range">
+              {{ entry.start | companyTime: status.timeZone }} –
+              @if (entry.end) {
+                {{ entry.end | companyTime: status.timeZone }}
+              } @else {
+                <span class="open" i18n="@@openEntry">Open</span>
+              }
+            </span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="empty" i18n="@@noEntriesToday">No entries yet today.</p>
+    }
+  </section>
+} @else if (loadFailed()) {
+  <section class="failed" role="alert">
+    <p i18n="@@clockLoadFailed">Your clock couldn't be loaded.</p>
+    <button mat-stroked-button (click)="reload()" i18n="@@tryAgain">Try again</button>
+  </section>
+} @else {
+  <mat-progress-spinner
+    mode="indeterminate"
+    diameter="48"
+    i18n-aria-label="@@loading"
+    aria-label="Loading"
+  />
+}

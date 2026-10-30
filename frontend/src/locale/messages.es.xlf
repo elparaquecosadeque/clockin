@@ -1,16 +1,393 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xliff version="2.0" xmlns="urn:oasis:names:tc:xliff:document:2.0" srcLang="en" trgLang="es">
   <file id="ngi18n" original="ng.template">
-    <unit id="appName">
+    <unit id="signInTitle">
+      <notes>
+        <note category="location">src/app/app.routes.ts:12</note>
+      </notes>
+      <segment>
+        <source>Sign in · ClockIn</source>
+        <target>Iniciar sesión · ClockIn</target>
+      </segment>
+    </unit>
+    <unit id="setPasswordTitle">
+      <notes>
+        <note category="location">src/app/app.routes.ts:18</note>
+      </notes>
+      <segment>
+        <source>Set your password · ClockIn</source>
+        <target>Crea tu contraseña · ClockIn</target>
+      </segment>
+    </unit>
+    <unit id="homeTitle">
+      <notes>
+        <note category="location">src/app/app.routes.ts:42</note>
+      </notes>
       <segment>
         <source>ClockIn</source>
         <target>ClockIn</target>
       </segment>
     </unit>
-    <unit id="shellReady">
+    <unit id="dismiss">
+      <notes>
+        <note category="location">src/app/core/interceptors/error.interceptor.ts:26</note>
+      </notes>
       <segment>
-        <source>Ready to track your time</source>
-        <target>Listo para registrar tu tiempo</target>
+        <source>Dismiss</source>
+        <target>Cerrar</target>
+      </segment>
+    </unit>
+    <unit id="networkError">
+      <notes>
+        <note category="location">src/app/core/interceptors/error.interceptor.ts:49</note>
+      </notes>
+      <segment>
+        <source>Can&apos;t reach ClockIn. Check your connection and try again.</source>
+        <target>No se puede conectar con ClockIn. Revisa tu conexión e inténtalo de nuevo.</target>
+      </segment>
+    </unit>
+    <unit id="unexpectedError">
+      <notes>
+        <note category="location">src/app/core/interceptors/error.interceptor.ts:53</note>
+      </notes>
+      <segment>
+        <source>Something went wrong on our side. Try again in a moment.</source>
+        <target>Algo falló de nuestro lado. Inténtalo de nuevo en un momento.</target>
+      </segment>
+    </unit>
+    <unit id="tooManyRequests">
+      <notes>
+        <note category="location">src/app/core/interceptors/error.interceptor.ts:57</note>
+      </notes>
+      <segment>
+        <source>Too many attempts. Wait a minute and try again.</source>
+        <target>Demasiados intentos. Espera un minuto e inténtalo de nuevo.</target>
+      </segment>
+    </unit>
+    <unit id="appName">
+      <notes>
+        <note category="location">src/app/core/layout/shell/shell.component.html:3,5</note>
+      </notes>
+      <segment>
+        <source>ClockIn</source>
+        <target>ClockIn</target>
+      </segment>
+    </unit>
+    <unit id="accountMenu">
+      <notes>
+        <note category="location">src/app/core/layout/shell/shell.component.html:10,11</note>
+      </notes>
+      <segment>
+        <source>Account</source>
+        <target>Cuenta</target>
+      </segment>
+    </unit>
+    <unit id="signOut">
+      <notes>
+        <note category="location">src/app/core/layout/shell/shell.component.html:22,23</note>
+      </notes>
+      <segment>
+        <source>Sign out</source>
+        <target>Cerrar sesión</target>
+      </segment>
+    </unit>
+    <unit id="linkInvalidTitle">
+      <notes>
+        <note category="location">src/app/features/auth/pages/set-password/set-password.component.html:4,5</note>
+      </notes>
+      <segment>
+        <source>This link doesn&apos;t work</source>
+        <target>Este enlace no funciona</target>
+      </segment>
+    </unit>
+    <unit id="linkInvalidBody">
+      <notes>
+        <note category="location">src/app/features/auth/pages/set-password/set-password.component.html:6,9</note>
+      </notes>
+      <segment>
+        <source> It may have expired, been used already, or been replaced by a newer link. Ask your administrator for a new one. </source>
+        <target>Puede que haya caducado, que ya se haya usado o que lo haya reemplazado uno más reciente. Pide uno nuevo a tu administrador.</target>
+      </segment>
+    </unit>
+    <unit id="goToSignIn">
+      <notes>
+        <note category="location">src/app/features/auth/pages/set-password/set-password.component.html:9,11</note>
+      </notes>
+      <segment>
+        <source>Go to sign in</source>
+        <target>Ir a iniciar sesión</target>
+      </segment>
+    </unit>
+    <unit id="setPassword">
+      <notes>
+        <note category="location">src/app/features/auth/pages/set-password/set-password.component.html:13,15</note>
+      </notes>
+      <segment>
+        <source>Set your password</source>
+        <target>Crea tu contraseña</target>
+      </segment>
+    </unit>
+    <unit id="newPassword">
+      <notes>
+        <note category="location">src/app/features/auth/pages/set-password/set-password.component.html:16,17</note>
+      </notes>
+      <segment>
+        <source>New password</source>
+        <target>Nueva contraseña</target>
+      </segment>
+    </unit>
+    <unit id="passwordLengthHint">
+      <notes>
+        <note category="location">src/app/features/auth/pages/set-password/set-password.component.html:18,19</note>
+      </notes>
+      <segment>
+        <source>12 to 128 characters. A few words work well.</source>
+        <target>Entre 12 y 128 caracteres. Unas cuantas palabras funcionan bien.</target>
+      </segment>
+    </unit>
+    <unit id="passwordRequired">
+      <notes>
+        <note category="location">src/app/features/auth/pages/set-password/set-password.component.html:20,21</note>
+        <note category="location">src/app/features/auth/pages/sign-in/sign-in.component.html:25,27</note>
+      </notes>
+      <segment>
+        <source>Enter your password.</source>
+        <target>Escribe tu contraseña.</target>
+      </segment>
+    </unit>
+    <unit id="passwordLength">
+      <notes>
+        <note category="location">src/app/features/auth/pages/set-password/set-password.component.html:24,25</note>
+      </notes>
+      <segment>
+        <source>Use 12 to 128 characters.</source>
+        <target>Usa entre 12 y 128 caracteres.</target>
+      </segment>
+    </unit>
+    <unit id="setPasswordAction">
+      <notes>
+        <note category="location">src/app/features/auth/pages/set-password/set-password.component.html:35,37</note>
+      </notes>
+      <segment>
+        <source> Set password </source>
+        <target>Guardar contraseña</target>
+      </segment>
+    </unit>
+    <unit id="signIn">
+      <notes>
+        <note category="location">src/app/features/auth/pages/sign-in/sign-in.component.html:3,5</note>
+        <note category="location">src/app/features/auth/pages/sign-in/sign-in.component.html:33,35</note>
+      </notes>
+      <segment>
+        <source>Sign in</source>
+        <target>Iniciar sesión</target>
+      </segment>
+    </unit>
+    <unit id="passwordSetNotice">
+      <notes>
+        <note category="location">src/app/features/auth/pages/sign-in/sign-in.component.html:7,11</note>
+      </notes>
+      <segment>
+        <source> Your password is set. Sign in with it. </source>
+        <target>Tu contraseña está lista. Inicia sesión con ella.</target>
+      </segment>
+    </unit>
+    <unit id="email">
+      <notes>
+        <note category="location">src/app/features/auth/pages/sign-in/sign-in.component.html:12,13</note>
+      </notes>
+      <segment>
+        <source>Email</source>
+        <target>Correo electrónico</target>
+      </segment>
+    </unit>
+    <unit id="emailRequired">
+      <notes>
+        <note category="location">src/app/features/auth/pages/sign-in/sign-in.component.html:15,16</note>
+      </notes>
+      <segment>
+        <source>Enter your email.</source>
+        <target>Escribe tu correo electrónico.</target>
+      </segment>
+    </unit>
+    <unit id="emailInvalid">
+      <notes>
+        <note category="location">src/app/features/auth/pages/sign-in/sign-in.component.html:17,19</note>
+      </notes>
+      <segment>
+        <source>Enter a valid email.</source>
+        <target>Escribe un correo electrónico válido.</target>
+      </segment>
+    </unit>
+    <unit id="password">
+      <notes>
+        <note category="location">src/app/features/auth/pages/sign-in/sign-in.component.html:22,23</note>
+      </notes>
+      <segment>
+        <source>Password</source>
+        <target>Contraseña</target>
+      </segment>
+    </unit>
+    <unit id="invalidCredentials">
+      <notes>
+        <note category="location">src/app/features/auth/pages/sign-in/sign-in.component.ts:47</note>
+      </notes>
+      <segment>
+        <source>The email or password is incorrect.</source>
+        <target>El correo o la contraseña no son correctos.</target>
+      </segment>
+    </unit>
+    <unit id="clockTitle">
+      <notes>
+        <note category="location">src/app/features/clock/clock.routes.ts:5</note>
+      </notes>
+      <segment>
+        <source>Clock · ClockIn</source>
+        <target>Reloj · ClockIn</target>
+      </segment>
+    </unit>
+    <unit id="clockedInSince">
+      <notes>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:7,9</note>
+      </notes>
+      <segment>
+        <source> Clocked in since <ph id="0" equiv="INTERPOLATION" disp="{{ open.start | companyTime: status.timeZone }}"/> </source>
+        <target>Con entrada desde <ph id="0" equiv="INTERPOLATION" disp="{{ open.start | companyTime: status.timeZone }}"/></target>
+      </segment>
+    </unit>
+    <unit id="notClockedIn">
+      <notes>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:11,12</note>
+      </notes>
+      <segment>
+        <source>Not clocked in</source>
+        <target>Sin entrada registrada</target>
+      </segment>
+    </unit>
+    <unit id="clockOut">
+      <notes>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:19,20</note>
+      </notes>
+      <segment>
+        <source>Clock out</source>
+        <target>Marcar salida</target>
+      </segment>
+    </unit>
+    <unit id="clockIn">
+      <notes>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:21,23</note>
+      </notes>
+      <segment>
+        <source>Clock in</source>
+        <target>Marcar entrada</target>
+      </segment>
+    </unit>
+    <unit id="entryTooLongTitle">
+      <notes>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:29,30</note>
+      </notes>
+      <segment>
+        <source>This entry is over 16 hours</source>
+        <target>Este registro supera las 16 horas</target>
+      </segment>
+    </unit>
+    <unit id="entryTooLongBody">
+      <notes>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:31,33</note>
+      </notes>
+      <segment>
+        <source> An entry can&apos;t be longer than 16 hours, so it can&apos;t be closed now. It looks like you forgot to clock out. Set its end time by hand, or ask your supervisor. </source>
+        <target>Un registro no puede durar más de 16 horas, así que no se puede cerrar ahora. Parece que olvidaste marcar la salida. Pon la hora de salida a mano o pídeselo a tu supervisor.</target>
+      </segment>
+    </unit>
+    <unit id="today">
+      <notes>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:40,41</note>
+      </notes>
+      <segment>
+        <source>Today</source>
+        <target>Hoy</target>
+      </segment>
+    </unit>
+    <unit id="thisWeek">
+      <notes>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:44,45</note>
+      </notes>
+      <segment>
+        <source>This week</source>
+        <target>Esta semana</target>
+      </segment>
+    </unit>
+    <unit id="todaysEntries">
+      <notes>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:50,51</note>
+      </notes>
+      <segment>
+        <source>Today&apos;s entries</source>
+        <target>Registros de hoy</target>
+      </segment>
+    </unit>
+    <unit id="openEntry">
+      <notes>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:60,62</note>
+      </notes>
+      <segment>
+        <source>Open</source>
+        <target>Abierto</target>
+      </segment>
+    </unit>
+    <unit id="noEntriesToday">
+      <notes>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:67,70</note>
+      </notes>
+      <segment>
+        <source>No entries yet today.</source>
+        <target>Todavía no hay registros hoy.</target>
+      </segment>
+    </unit>
+    <unit id="clockLoadFailed">
+      <notes>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:72,73</note>
+      </notes>
+      <segment>
+        <source>Your clock couldn&apos;t be loaded.</source>
+        <target>No se pudo cargar tu reloj.</target>
+      </segment>
+    </unit>
+    <unit id="tryAgain">
+      <notes>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:73,75</note>
+      </notes>
+      <segment>
+        <source>Try again</source>
+        <target>Reintentar</target>
+      </segment>
+    </unit>
+    <unit id="loading">
+      <notes>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:76,78</note>
+      </notes>
+      <segment>
+        <source>Loading</source>
+        <target>Cargando</target>
+      </segment>
+    </unit>
+    <unit id="welcome">
+      <notes>
+        <note category="location">src/app/features/home/pages/home/home.component.html:1,2</note>
+      </notes>
+      <segment>
+        <source>Welcome, <ph id="0" equiv="INTERPOLATION" disp="{{ user()?.name }}"/></source>
+        <target>Hola, <ph id="0" equiv="INTERPOLATION" disp="{{ user()?.name }}"/></target>
+      </segment>
+    </unit>
+    <unit id="homeNothingYet">
+      <notes>
+        <note category="location">src/app/features/home/pages/home/home.component.html:2,3</note>
+      </notes>
+      <segment>
+        <source>There&apos;s nothing to do here yet for your role.</source>
+        <target>Todavía no hay nada que hacer aquí para tu rol.</target>
       </segment>
     </unit>
   </file>

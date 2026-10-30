@@ -1,0 +1,29 @@
+<header>
+  <mat-toolbar>
+    <span class="brand" i18n="@@appName">ClockIn</span>
+    <button
+      mat-icon-button
+      class="account"
+      [matMenuTriggerFor]="account"
+      i18n-aria-label="@@accountMenu"
+      aria-label="Account"
+    >
+      <mat-icon aria-hidden="true" fontIcon="account_circle" />
+    </button>
+    <mat-menu #account="matMenu" xPosition="before">
+      @if (user(); as user) {
+        <div class="who">
+          <span class="name">{{ user.name }}</span>
+          <span class="email">{{ user.email }}</span>
+        </div>
+      }
+      <button mat-menu-item (click)="signOut()">
+        <mat-icon aria-hidden="true" fontIcon="logout" />
+        <span i18n="@@signOut">Sign out</span>
+      </button>
+    </mat-menu>
+  </mat-toolbar>
+</header>
+<main>
+  <router-outlet />
+</main>

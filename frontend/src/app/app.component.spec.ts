@@ -1,18 +1,21 @@
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
 
-describe('AppComponent', () => {
-  it('shows the product name in the toolbar', async () => {
-    await TestBed.configureTestingModule({
-      imports: [AppComponent],
-      providers: [provideRouter([])],
-    }).compileComponents();
+@Component({ template: '<p>routed</p>' })
+class RoutedComponent {}
 
+describe('AppComponent', () => {
+  it('renders the routed page', async () => {
+    TestBed.configureTestingModule({
+      imports: [AppComponent],
+      providers: [provideRouter([{ path: '**', component: RoutedComponent }])],
+    });
     const fixture = TestBed.createComponent(AppComponent);
+    await TestBed.inject(Router).navigateByUrl('/');
     await fixture.whenStable();
 
-    const toolbar = (fixture.nativeElement as HTMLElement).querySelector('mat-toolbar');
-    expect(toolbar?.textContent).toContain('ClockIn');
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('routed');
   });
 });

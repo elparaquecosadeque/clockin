@@ -4,6 +4,22 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-10-30: Frontend sign-in, set-password and clock screens
+
+| Decision | Why | By |
+|---|---|---|
+| On app start the session is restored with one silent refresh; the access token stays in memory only. | CODE_STYLE.md; a reload keeps the user signed in while the refresh cookie lasts. | dev |
+| Interceptor order: error (outermost), correlation ID, auth. Auth refreshes once on a 401 and retries; a failed refresh sends the user to sign in. | The auth interceptor must see the raw 401 before it turns into an `ApiError`. | dev |
+| A request can silence the error snackbar for rule codes it explains itself, through the `SILENT_ERRORS` context token (`'*'` for all). | Sign-in, set-password and EntryTooLong show their errors inline. | dev |
+| Snackbars show the server's English `detail` for 403/404/409/422 (`ponytail:`); the codes the screens handle have Spanish text. | Translating every rule code client-side waits until more screens exist. | dev |
+| `/` redirects to `/clock` with the punch permission, otherwise to `/home`, a placeholder for admins. | Admins can't punch; their pages come later. | dev |
+| Auth pages are top-level routes (`/sign-in`, `/set-password`), not a lazy `''` parent. | An empty-path lazy parent swallowed `/` and rendered nothing. | dev |
+| Times are 24h in the company timezone from the API response (`ponytail:`); the 12h preference comes with `update-preferences.feature`. | No preferences endpoint yet. | dev |
+| The EntryTooLong card explains the 16-hour limit but has no "edit the entry" link yet. | The edit-entry screen doesn't exist yet. | dev |
+| Material Symbols is registered as the default ligature font and icons use `fontIcon`. | Ligature text inside buttons failed axe's label/name check, and the default `material-icons` class didn't match the loaded font. | dev |
+| The dev server proxies `/api` to `http://localhost:5244`. | Same origin in development, so the SameSite=Strict refresh cookie works. | dev |
+| E2E tests mock the API with `page.route` and a fixed clock. | Fast and deterministic; the API has its own HTTP tests (ADR 0004). | dev |
+
 ## 2026-10-30: Access links and the first admin
 
 | Decision | Why | By |
