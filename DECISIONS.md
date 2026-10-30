@@ -30,7 +30,7 @@ Each entry has the decision, the reason, and who decided (**user**, or **dev** w
 | The company timezone is `Company:TimeZone` (default `America/Bogota`), validated at startup; the app's `TimeProvider` uses it as its local zone. | Glossary: one company timezone from deploy config. | dev |
 | Client IP is the direct peer address (`ponytail:`). | Enable forwarded headers when deploying behind a reverse proxy. | dev |
 | `AppDataConnection` is registered by constructor, not a factory lambda. | Wolverine's generated handlers cannot call factory lambdas for scoped services. | dev |
-| The two `@api` scenarios so far (rate limit, simultaneous clock-ins) are plain xUnit HTTP tests for now. | ADR 0002 says Reqnroll; adding it is pending a user decision. | dev |
+| The two `@api` scenarios so far (rate limit, simultaneous clock-ins) are plain xUnit HTTP tests. | Confirmed by [ADR 0004](docs/adr/0004-http-tests-instead-of-reqnroll.md), which supersedes ADR 0002. | user |
 
 ## 2026-10-30: Accounts persistence and infrastructure
 
@@ -133,4 +133,4 @@ The interview decisions are in [`docs/specs/`](docs/specs/) and [`docs/glossary.
 | The "declined request" badge counts the last 7 days. | user |
 | Deactivation and correction requests need no reason. | user |
 
-Larger decisions: [ADR 0001](docs/adr/0001-internationalization.md) (i18n), [ADR 0002](docs/adr/0002-reqnroll-for-api-specs.md) (Reqnroll), [ADR 0003](docs/adr/0003-adopt-baseline-code-style-and-stack.md) (baseline and ADR sync).
+Larger decisions: [ADR 0001](docs/adr/0001-internationalization.md) (i18n), [ADR 0002](docs/adr/0002-reqnroll-for-api-specs.md) (Reqnroll), [ADR 0003](docs/adr/0003-adopt-baseline-code-style-and-stack.md) (baseline and ADR sync), [ADR 0004](docs/adr/0004-http-tests-instead-of-reqnroll.md) (no Reqnroll; supersedes 0002).

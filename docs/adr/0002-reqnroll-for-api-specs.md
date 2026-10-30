@@ -1,6 +1,6 @@
 # 0002. Reqnroll for executable specs in Api.Tests only
 
-- **Status:** Accepted
+- **Status:** Superseded by [0004](0004-http-tests-instead-of-reqnroll.md)
 - **Date:** 2026-10-30
 
 ## Context
