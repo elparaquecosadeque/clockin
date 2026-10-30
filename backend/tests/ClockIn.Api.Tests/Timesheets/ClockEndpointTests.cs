@@ -30,6 +30,21 @@ public sealed class ClockEndpointTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task Reports_the_open_entry_and_company_timezone_on_the_clock_status()
+    {
+        HttpClient eve = await SignedInAsync(Role.Employee);
+        JsonElement opened = await JsonAsync(await eve.PostAsync("/api/time-entries/clock-in", null, Ct));
+
+        HttpResponseMessage response = await eve.GetAsync("/api/time-entries/clock", Ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        JsonElement status = await JsonAsync(response);
+        status.GetProperty("openEntry").GetProperty("id").GetGuid().Should().Be(opened.GetProperty("id").GetGuid());
+        status.GetProperty("openEntryStartedThisWeek").GetBoolean().Should().BeTrue();
+        status.GetProperty("timeZone").GetString().Should().Be("America/Bogota");
+    }
+
+    [Fact]
     public async Task Lets_a_supervisor_clock_in()
     {
         HttpClient sam = await SignedInAsync(Role.Supervisor);
