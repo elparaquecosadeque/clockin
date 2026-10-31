@@ -73,9 +73,18 @@
         <target>Cuenta</target>
       </segment>
     </unit>
+    <unit id="teamAndSupervisor">
+      <notes>
+        <note category="location">src/app/core/layout/shell/shell.component.html:20,21</note>
+      </notes>
+      <segment>
+        <source><ph id="0" equiv="INTERPOLATION" disp="{{ user.teamName }}"/> · Supervisor: <ph id="1" equiv="INTERPOLATION_1" disp="{{ user.supervisorName }}"/></source>
+        <target><ph id="0" equiv="INTERPOLATION" disp="{{ user.teamName }}"/> · Supervisor: <ph id="1" equiv="INTERPOLATION_1" disp="{{ user.supervisorName }}"/></target>
+      </segment>
+    </unit>
     <unit id="navSettings">
       <notes>
-        <note category="location">src/app/core/layout/shell/shell.component.html:22,24</note>
+        <note category="location">src/app/core/layout/shell/shell.component.html:27,29</note>
       </notes>
       <segment>
         <source>Settings</source>
@@ -84,7 +93,7 @@
     </unit>
     <unit id="signOut">
       <notes>
-        <note category="location">src/app/core/layout/shell/shell.component.html:26,27</note>
+        <note category="location">src/app/core/layout/shell/shell.component.html:31,32</note>
       </notes>
       <segment>
         <source>Sign out</source>
@@ -93,7 +102,7 @@
     </unit>
     <unit id="mainNav">
       <notes>
-        <note category="location">src/app/core/layout/shell/shell.component.html:32</note>
+        <note category="location">src/app/core/layout/shell/shell.component.html:37</note>
       </notes>
       <segment>
         <source>Main</source>
@@ -102,7 +111,7 @@
     </unit>
     <unit id="navClock">
       <notes>
-        <note category="location">src/app/core/layout/shell/shell.component.ts:59</note>
+        <note category="location">src/app/core/layout/shell/shell.component.ts:54</note>
       </notes>
       <segment>
         <source>Clock</source>
@@ -111,7 +120,7 @@
     </unit>
     <unit id="navTimesheets">
       <notes>
-        <note category="location">src/app/core/layout/shell/shell.component.ts:66</note>
+        <note category="location">src/app/core/layout/shell/shell.component.ts:61</note>
       </notes>
       <segment>
         <source>My timesheets</source>
@@ -120,7 +129,7 @@
     </unit>
     <unit id="navReview">
       <notes>
-        <note category="location">src/app/core/layout/shell/shell.component.ts:73</note>
+        <note category="location">src/app/core/layout/shell/shell.component.ts:68</note>
       </notes>
       <segment>
         <source>Review</source>
@@ -129,7 +138,7 @@
     </unit>
     <unit id="navTeam">
       <notes>
-        <note category="location">src/app/core/layout/shell/shell.component.ts:80</note>
+        <note category="location">src/app/core/layout/shell/shell.component.ts:75</note>
       </notes>
       <segment>
         <source>Team week</source>
@@ -138,7 +147,7 @@
     </unit>
     <unit id="navUsers">
       <notes>
-        <note category="location">src/app/core/layout/shell/shell.component.ts:87</note>
+        <note category="location">src/app/core/layout/shell/shell.component.ts:82</note>
       </notes>
       <segment>
         <source>Users</source>
@@ -147,7 +156,7 @@
     </unit>
     <unit id="navTeams">
       <notes>
-        <note category="location">src/app/core/layout/shell/shell.component.ts:94</note>
+        <note category="location">src/app/core/layout/shell/shell.component.ts:89</note>
       </notes>
       <segment>
         <source>Teams</source>
@@ -192,7 +201,7 @@
     </unit>
     <unit id="copied">
       <notes>
-        <note category="location">src/app/features/admin/components/link-dialog/link-dialog.component.html:13,14</note>
+        <note category="location">src/app/features/admin/components/link-dialog/link-dialog.component.html:15,16</note>
       </notes>
       <segment>
         <source>Copied</source>
@@ -201,7 +210,7 @@
     </unit>
     <unit id="copyLink">
       <notes>
-        <note category="location">src/app/features/admin/components/link-dialog/link-dialog.component.html:15,17</note>
+        <note category="location">src/app/features/admin/components/link-dialog/link-dialog.component.html:17,19</note>
       </notes>
       <segment>
         <source>Copy link</source>
@@ -210,7 +219,7 @@
     </unit>
     <unit id="done">
       <notes>
-        <note category="location">src/app/features/admin/components/link-dialog/link-dialog.component.html:18,19</note>
+        <note category="location">src/app/features/admin/components/link-dialog/link-dialog.component.html:20,21</note>
       </notes>
       <segment>
         <source>Done</source>
@@ -261,7 +270,7 @@
       <notes>
         <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:17,18</note>
         <note category="location">src/app/features/admin/pages/teams/teams.component.html:15,16</note>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:76</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:84</note>
       </notes>
       <segment>
         <source>Supervisor</source>
@@ -270,7 +279,7 @@
     </unit>
     <unit id="noFreeSupervisors">
       <notes>
-        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:24,26</note>
+        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:25,27</note>
       </notes>
       <segment>
         <source>Every supervisor leads a team. Create or promote one first.</source>
@@ -279,7 +288,7 @@
     </unit>
     <unit id="supervisorRequired">
       <notes>
-        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:26,27</note>
+        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:28,29</note>
       </notes>
       <segment>
         <source>Choose a supervisor.</source>
@@ -288,9 +297,9 @@
     </unit>
     <unit id="cancel">
       <notes>
-        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:34,35</note>
+        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:36,37</note>
         <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:54,55</note>
-        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:43,44</note>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:50,51</note>
         <note category="location">src/app/shared/components/choice-dialog/choice-dialog.component.html:18,19</note>
         <note category="location">src/app/shared/components/text-dialog/text-dialog.component.html:27,28</note>
       </notes>
@@ -301,10 +310,10 @@
     </unit>
     <unit id="save">
       <notes>
-        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:35,36</note>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:77</note>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:138</note>
-        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:44,45</note>
+        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:37,38</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:85</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:164</note>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:51,52</note>
       </notes>
       <segment>
         <source>Save</source>
@@ -344,7 +353,7 @@
       <notes>
         <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:15,16</note>
         <note category="location">src/app/features/admin/pages/users/users.component.html:15,16</note>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:80</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:92</note>
       </notes>
       <segment>
         <source>Role</source>
@@ -354,7 +363,7 @@
     <unit id="roleEmployee">
       <notes>
         <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:17,18</note>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:83</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:95</note>
         <note category="location">src/app/features/admin/pipes/role-label.pipe.ts:10</note>
         <note category="location">src/app/features/auth/components/demo-accounts/demo-accounts.component.html:24,25</note>
       </notes>
@@ -366,7 +375,7 @@
     <unit id="roleSupervisor">
       <notes>
         <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:18,19</note>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:84</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:96</note>
         <note category="location">src/app/features/admin/pipes/role-label.pipe.ts:12</note>
         <note category="location">src/app/features/auth/components/demo-accounts/demo-accounts.component.html:21,22</note>
       </notes>
@@ -390,7 +399,7 @@
       <notes>
         <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:24,25</note>
         <note category="location">src/app/features/admin/pages/users/users.component.html:16,17</note>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:137</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:163</note>
       </notes>
       <segment>
         <source>Team</source>
@@ -409,7 +418,7 @@
     <unit id="language">
       <notes>
         <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:35,36</note>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:8,9</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:10,11</note>
       </notes>
       <segment>
         <source>Language</source>
@@ -419,7 +428,7 @@
     <unit id="timeFormat">
       <notes>
         <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:42,43</note>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:15,16</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:17,18</note>
       </notes>
       <segment>
         <source>Time format</source>
@@ -429,7 +438,7 @@
     <unit id="timeFormat24">
       <notes>
         <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:44,45</note>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:17,18</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:19,20</note>
       </notes>
       <segment>
         <source>24-hour (17:30)</source>
@@ -439,7 +448,7 @@
     <unit id="timeFormat12">
       <notes>
         <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:45,46</note>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:18,19</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:20,21</note>
       </notes>
       <segment>
         <source>12-hour (5:30 PM)</source>
@@ -448,10 +457,10 @@
     </unit>
     <unit id="createUser">
       <notes>
-        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:55,56</note>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:56,58</note>
       </notes>
       <segment>
-        <source>Create user</source>
+        <source> Create user </source>
         <target>Crear usuario</target>
       </segment>
     </unit>
@@ -503,8 +512,8 @@
     </unit>
     <unit id="actionsFor">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.html:38,39</note>
-        <note category="location">src/app/features/admin/pages/users/users.component.html:52,53</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:36,37</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:49,50</note>
       </notes>
       <segment>
         <source>Actions for <ph id="0" equiv="INTERPOLATION" disp="{{ team.name }}"/></source>
@@ -513,7 +522,7 @@
     </unit>
     <unit id="rename">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.html:43,44</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:42,43</note>
       </notes>
       <segment>
         <source>Rename</source>
@@ -522,7 +531,7 @@
     </unit>
     <unit id="changeSupervisor">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.html:47,48</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:46,47</note>
       </notes>
       <segment>
         <source>Change supervisor</source>
@@ -531,8 +540,8 @@
     </unit>
     <unit id="archive">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.html:51,52</note>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:95</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:50,51</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:108</note>
       </notes>
       <segment>
         <source>Archive</source>
@@ -541,7 +550,7 @@
     </unit>
     <unit id="noTeams">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.html:59,61</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:58,60</note>
       </notes>
       <segment>
         <source>No teams yet.</source>
@@ -550,7 +559,7 @@
     </unit>
     <unit id="teamsLoadFailed">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.html:67,68</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:66,67</note>
       </notes>
       <segment>
         <source>The teams couldn&apos;t be loaded.</source>
@@ -559,12 +568,12 @@
     </unit>
     <unit id="tryAgain">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.html:68,70</note>
-        <note category="location">src/app/features/admin/pages/users/users.component.html:100,102</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:67,69</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:97,99</note>
         <note category="location">src/app/features/clock/pages/clock/clock.component.html:76,78</note>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:95,97</note>
-        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:49,51</note>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:198,200</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:113,115</note>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:55,57</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:241,243</note>
       </notes>
       <segment>
         <source>Try again</source>
@@ -573,12 +582,12 @@
     </unit>
     <unit id="loading">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.html:71,73</note>
-        <note category="location">src/app/features/admin/pages/users/users.component.html:103,105</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:75,77</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:105,107</note>
         <note category="location">src/app/features/clock/pages/clock/clock.component.html:84,86</note>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:98,101</note>
-        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:52,54</note>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:201,203</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:121,124</note>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:63,65</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:249,251</note>
       </notes>
       <segment>
         <source>Loading</source>
@@ -587,7 +596,7 @@
     </unit>
     <unit id="teamCreated">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:61</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:69</note>
       </notes>
       <segment>
         <source>Team created.</source>
@@ -596,7 +605,7 @@
     </unit>
     <unit id="teamRenamed">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:68</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:76</note>
       </notes>
       <segment>
         <source>Team renamed.</source>
@@ -605,7 +614,7 @@
     </unit>
     <unit id="changeSupervisorTitle">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:74</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:82</note>
       </notes>
       <segment>
         <source>New supervisor for <ph id="0" equiv="name" disp="team.name"/></source>
@@ -614,7 +623,7 @@
     </unit>
     <unit id="changeSupervisorMessage">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:75</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:83</note>
       </notes>
       <segment>
         <source>Pending timesheets and correction requests move to the new supervisor.</source>
@@ -623,7 +632,7 @@
     </unit>
     <unit id="supervisorChanged">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:86</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:99</note>
       </notes>
       <segment>
         <source>Supervisor changed.</source>
@@ -632,7 +641,7 @@
     </unit>
     <unit id="archiveTeamTitle">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:93</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:106</note>
       </notes>
       <segment>
         <source>Archive <ph id="0" equiv="name" disp="team.name"/>?</source>
@@ -641,7 +650,7 @@
     </unit>
     <unit id="archiveTeamMessage">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:94</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:107</note>
       </notes>
       <segment>
         <source>The team keeps its name in history and exports, but nobody can join it again.</source>
@@ -650,7 +659,7 @@
     </unit>
     <unit id="teamArchived">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:101</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:121</note>
       </notes>
       <segment>
         <source>Team archived.</source>
@@ -678,7 +687,7 @@
     <unit id="status">
       <notes>
         <note category="location">src/app/features/admin/pages/users/users.component.html:17,18</note>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:67,68</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:81,82</note>
       </notes>
       <segment>
         <source>Status</source>
@@ -723,8 +732,8 @@
     </unit>
     <unit id="reactivate">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.html:58,59</note>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:125</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:55,56</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:149</note>
       </notes>
       <segment>
         <source>Reactivate</source>
@@ -733,7 +742,7 @@
     </unit>
     <unit id="accessLink">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.html:63,64</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:60,61</note>
       </notes>
       <segment>
         <source>Activation or reset link</source>
@@ -742,7 +751,7 @@
     </unit>
     <unit id="changeRole">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.html:68,69</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:65,66</note>
       </notes>
       <segment>
         <source>Change role</source>
@@ -751,7 +760,7 @@
     </unit>
     <unit id="moveToTeam">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.html:74,75</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:71,72</note>
       </notes>
       <segment>
         <source>Move to another team</source>
@@ -760,7 +769,7 @@
     </unit>
     <unit id="unlock">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.html:80,81</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:77,78</note>
       </notes>
       <segment>
         <source>Unlock</source>
@@ -769,8 +778,8 @@
     </unit>
     <unit id="deactivate">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.html:86,87</note>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:108</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:83,84</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:129</note>
       </notes>
       <segment>
         <source>Deactivate</source>
@@ -779,7 +788,7 @@
     </unit>
     <unit id="usersLoadFailed">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.html:99,100</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:96,97</note>
       </notes>
       <segment>
         <source>The users couldn&apos;t be loaded.</source>
@@ -788,7 +797,7 @@
     </unit>
     <unit id="theNewUser">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:67</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:79</note>
       </notes>
       <segment>
         <source>the new user</source>
@@ -797,7 +806,7 @@
     </unit>
     <unit id="changeRoleTitle">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:78</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:90</note>
       </notes>
       <segment>
         <source>Change the role of <ph id="0" equiv="name" disp="user.name"/></source>
@@ -806,7 +815,7 @@
     </unit>
     <unit id="changeRoleMessage">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:79</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:91</note>
       </notes>
       <segment>
         <source>Their sessions end, so they sign in again with the new permissions.</source>
@@ -815,7 +824,7 @@
     </unit>
     <unit id="next">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:81</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:93</note>
       </notes>
       <segment>
         <source>Next</source>
@@ -824,7 +833,7 @@
     </unit>
     <unit id="roleChanged">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:90</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:104</note>
       </notes>
       <segment>
         <source>Role changed.</source>
@@ -833,7 +842,7 @@
     </unit>
     <unit id="employeeMoved">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:96</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:113</note>
       </notes>
       <segment>
         <source>Employee moved.</source>
@@ -842,7 +851,7 @@
     </unit>
     <unit id="userUnlocked">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:101</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:121</note>
       </notes>
       <segment>
         <source><ph id="0" equiv="name" disp="user.name"/> can sign in again.</source>
@@ -851,7 +860,7 @@
     </unit>
     <unit id="deactivateTitle">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:106</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:127</note>
       </notes>
       <segment>
         <source>Deactivate <ph id="0" equiv="name" disp="user.name"/>?</source>
@@ -860,7 +869,7 @@
     </unit>
     <unit id="deactivateMessage">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:107</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:128</note>
       </notes>
       <segment>
         <source>They are signed out everywhere at once. Their records stay, and you can reactivate them later.</source>
@@ -869,7 +878,7 @@
     </unit>
     <unit id="userDeactivated">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:111</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:134</note>
       </notes>
       <segment>
         <source>User deactivated.</source>
@@ -878,7 +887,7 @@
     </unit>
     <unit id="reactivateTitle">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:123</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:147</note>
       </notes>
       <segment>
         <source>Reactivate <ph id="0" equiv="name" disp="user.name"/>?</source>
@@ -887,7 +896,7 @@
     </unit>
     <unit id="reactivateMessage">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:124</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:148</note>
       </notes>
       <segment>
         <source>They get a new link to set a password; the old one no longer works.</source>
@@ -896,7 +905,7 @@
     </unit>
     <unit id="chooseTeamTitle">
       <notes>
-        <note category="location">src/app/features/admin/pages/users/users.component.ts:136</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:162</note>
       </notes>
       <segment>
         <source>Team for <ph id="0" equiv="name" disp="user.name"/></source>
@@ -1006,7 +1015,7 @@
     <unit id="newPassword">
       <notes>
         <note category="location">src/app/features/auth/pages/set-password/set-password.component.html:16,17</note>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:41,42</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:56,58</note>
       </notes>
       <segment>
         <source>New password</source>
@@ -1016,7 +1025,7 @@
     <unit id="passwordLengthHint">
       <notes>
         <note category="location">src/app/features/auth/pages/set-password/set-password.component.html:19,21</note>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:43,44</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:64,65</note>
       </notes>
       <segment>
         <source>12 to 128 characters. A few words work well.</source>
@@ -1036,7 +1045,7 @@
     <unit id="passwordLength">
       <notes>
         <note category="location">src/app/features/auth/pages/set-password/set-password.component.html:27,28</note>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:44,45</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:65,66</note>
       </notes>
       <segment>
         <source>Use 12 to 128 characters.</source>
@@ -1200,7 +1209,7 @@
     <unit id="openEntry">
       <notes>
         <note category="location">src/app/features/clock/pages/clock/clock.component.html:63,65</note>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:145,146</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:170,171</note>
       </notes>
       <segment>
         <source>Open</source>
@@ -1236,8 +1245,8 @@
     </unit>
     <unit id="weekNavigation">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:4</note>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:18</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:4,5</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:24,25</note>
       </notes>
       <segment>
         <source>Week</source>
@@ -1246,8 +1255,8 @@
     </unit>
     <unit id="previousWeek">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:4,5</note>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:18,19</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:9,11</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:29,31</note>
       </notes>
       <segment>
         <source>Previous week</source>
@@ -1256,8 +1265,8 @@
     </unit>
     <unit id="weekOf">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:7,8</note>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:21,22</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:13,14</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:34,36</note>
       </notes>
       <segment>
         <source>Week of <ph id="0" equiv="INTERPOLATION" disp="{{ week() + &apos;T12:00:00Z&apos; | companyTime: &apos;UTC&apos; : &apos;date&apos; }}"/></source>
@@ -1266,8 +1275,8 @@
     </unit>
     <unit id="nextWeek">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:8,9</note>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:22,23</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:19,21</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:41,43</note>
       </notes>
       <segment>
         <source>Next week</source>
@@ -1276,7 +1285,7 @@
     </unit>
     <unit id="teamFilter">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:15,16</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:27,28</note>
       </notes>
       <segment>
         <source>Team</source>
@@ -1285,7 +1294,7 @@
     </unit>
     <unit id="allTeams">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:17,18</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:29,30</note>
       </notes>
       <segment>
         <source>All teams</source>
@@ -1294,7 +1303,7 @@
     </unit>
     <unit id="exportCsv">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:28,29</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:40,41</note>
       </notes>
       <segment>
         <source>Approved CSV</source>
@@ -1303,8 +1312,8 @@
     </unit>
     <unit id="print">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:32,33</note>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:124,125</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:44,45</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:147,148</note>
       </notes>
       <segment>
         <source>Print</source>
@@ -1313,7 +1322,7 @@
     </unit>
     <unit id="supervisorsGroup">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:43,44</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:55,56</note>
       </notes>
       <segment>
         <source>Supervisors</source>
@@ -1322,7 +1331,7 @@
     </unit>
     <unit id="ledBy">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:49,50</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:61,62</note>
       </notes>
       <segment>
         <source>Led by <ph id="0" equiv="INTERPOLATION" disp="{{ group.supervisorName }}"/></source>
@@ -1331,7 +1340,7 @@
     </unit>
     <unit id="countNotStarted">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:52,53</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:64,65</note>
       </notes>
       <segment>
         <source><ph id="0" equiv="INTERPOLATION" disp="{{ group.summary.notStarted }}"/> not started</source>
@@ -1340,7 +1349,7 @@
     </unit>
     <unit id="countDraft">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:53,54</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:65,66</note>
       </notes>
       <segment>
         <source><ph id="0" equiv="INTERPOLATION" disp="{{ group.summary.draft }}"/> draft</source>
@@ -1349,7 +1358,7 @@
     </unit>
     <unit id="countSubmitted">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:54,55</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:66,67</note>
       </notes>
       <segment>
         <source><ph id="0" equiv="INTERPOLATION" disp="{{ group.summary.submitted }}"/> submitted</source>
@@ -1358,7 +1367,7 @@
     </unit>
     <unit id="countApproved">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:55,56</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:67,68</note>
       </notes>
       <segment>
         <source><ph id="0" equiv="INTERPOLATION" disp="{{ group.summary.approved }}"/> approved</source>
@@ -1367,7 +1376,7 @@
     </unit>
     <unit id="person">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:62,63</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:74,75</note>
       </notes>
       <segment>
         <source>Person</source>
@@ -1376,7 +1385,7 @@
     </unit>
     <unit id="total">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:66,67</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:80,81</note>
       </notes>
       <segment>
         <source>Total</source>
@@ -1385,7 +1394,7 @@
     </unit>
     <unit id="nobodyToShow">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:90,92</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:108,110</note>
       </notes>
       <segment>
         <source>Nobody to show for this week.</source>
@@ -1394,7 +1403,7 @@
     </unit>
     <unit id="teamWeekLoadFailed">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:94,95</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:112,113</note>
       </notes>
       <segment>
         <source>The team week couldn&apos;t be loaded.</source>
@@ -1403,7 +1412,7 @@
     </unit>
     <unit id="clockedInNow">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:103,104</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:126,127</note>
       </notes>
       <segment>
         <source>Clocked in now</source>
@@ -1412,7 +1421,7 @@
     </unit>
     <unit id="since">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:109,110</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:133,134</note>
       </notes>
       <segment>
         <source>since <ph id="0" equiv="INTERPOLATION" disp="{{ person.since | companyTime: grid()?.timeZone ?? &apos;UTC&apos; : &apos;dateTime&apos; }}"/></source>
@@ -1421,7 +1430,7 @@
     </unit>
     <unit id="overLimit">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:112,114</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:137,139</note>
       </notes>
       <segment>
         <source>Over 16 h</source>
@@ -1430,7 +1439,7 @@
     </unit>
     <unit id="nobodyClockedIn">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:118,122</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:143,147</note>
       </notes>
       <segment>
         <source>Nobody is clocked in.</source>
@@ -1439,7 +1448,7 @@
     </unit>
     <unit id="exceptions">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:123,124</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:148,149</note>
       </notes>
       <segment>
         <source>Exceptions</source>
@@ -1448,7 +1457,7 @@
     </unit>
     <unit id="exceptionOverdue">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:132,133</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:160,162</note>
       </notes>
       <segment>
         <source>Not submitted: week of <ph id="0" equiv="INTERPOLATION" disp="{{ item.weekStart + &apos;T12:00:00Z&apos; | companyTime: &apos;UTC&apos; : &apos;date&apos; }}"/></source>
@@ -1457,16 +1466,16 @@
     </unit>
     <unit id="exceptionLongEntry">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:135,136</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:166,167</note>
       </notes>
       <segment>
-        <source>Entry over 10 h (<ph id="0" equiv="INTERPOLATION" disp="{{ (item.seconds ?? 0) | duration }}"/>)</source>
-        <target>Registro de más de 10 h (<ph id="0" equiv="INTERPOLATION" disp="{{ (item.seconds ?? 0) | duration }}"/>)</target>
+        <source>Entry over 10 h (<ph id="0" equiv="INTERPOLATION" disp="{{ item.seconds ?? 0 | duration }}"/>)</source>
+        <target>Registro de más de 10 h (<ph id="0" equiv="INTERPOLATION" disp="{{ item.seconds ?? 0 | duration }}"/>)</target>
       </segment>
     </unit>
     <unit id="exceptionManualChanges">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:138,139</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:171,172</note>
       </notes>
       <segment>
         <source><ph id="0" equiv="INTERPOLATION" disp="{{ item.count }}"/> entries changed by hand</source>
@@ -1475,7 +1484,7 @@
     </unit>
     <unit id="noExceptions">
       <notes>
-        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:146,149</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:180,183</note>
       </notes>
       <segment>
         <source>No exceptions.</source>
@@ -1511,16 +1520,16 @@
     </unit>
     <unit id="preferencesHint">
       <notes>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:5,6</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:6,8</note>
       </notes>
       <segment>
-        <source>They follow you on every device. Saving reloads the app.</source>
+        <source> They follow you on every device. Saving reloads the app. </source>
         <target>Te acompañan en todos tus dispositivos. Al guardar, la aplicación se recarga.</target>
       </segment>
     </unit>
     <unit id="savePreferences">
       <notes>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:22,25</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:29,32</note>
       </notes>
       <segment>
         <source> Save preferences </source>
@@ -1529,8 +1538,8 @@
     </unit>
     <unit id="changePassword">
       <notes>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:28,29</note>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:54,56</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:35,36</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:82,84</note>
       </notes>
       <segment>
         <source>Change password</source>
@@ -1539,16 +1548,16 @@
     </unit>
     <unit id="changePasswordHint">
       <notes>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:29,30</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:37,39</note>
       </notes>
       <segment>
-        <source>Your other devices are signed out; this one stays signed in.</source>
+        <source> Your other devices are signed out; this one stays signed in. </source>
         <target>Se cierra la sesión en tus otros dispositivos; en este sigues dentro.</target>
       </segment>
     </unit>
     <unit id="currentPassword">
       <notes>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:32,33</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:41,43</note>
       </notes>
       <segment>
         <source>Current password</source>
@@ -1557,7 +1566,7 @@
     </unit>
     <unit id="wrongCurrentPassword">
       <notes>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:35,37</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:50,52</note>
       </notes>
       <segment>
         <source>The current password is incorrect.</source>
@@ -1566,7 +1575,7 @@
     </unit>
     <unit id="currentPasswordRequired">
       <notes>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:37,39</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:52,54</note>
       </notes>
       <segment>
         <source>Enter your current password.</source>
@@ -1575,7 +1584,7 @@
     </unit>
     <unit id="confirmPassword">
       <notes>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:47,48</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:68,70</note>
       </notes>
       <segment>
         <source>Confirm new password</source>
@@ -1584,7 +1593,7 @@
     </unit>
     <unit id="confirmPasswordRequired">
       <notes>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:49,51</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:76,78</note>
       </notes>
       <segment>
         <source>Enter the new password again.</source>
@@ -1593,7 +1602,7 @@
     </unit>
     <unit id="passwordsDiffer">
       <notes>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.html:52,54</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:79,81</note>
       </notes>
       <segment>
         <source>The passwords don&apos;t match.</source>
@@ -1602,7 +1611,7 @@
     </unit>
     <unit id="passwordChanged">
       <notes>
-        <note category="location">src/app/features/settings/pages/settings/settings.component.ts:86</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.ts:99</note>
       </notes>
       <segment>
         <source>Password changed. Your other devices are signed out.</source>
@@ -1611,7 +1620,7 @@
     </unit>
     <unit id="settingsPageTitle">
       <notes>
-        <note category="location">src/app/features/settings/settings.routes.ts:5</note>
+        <note category="location">src/app/features/settings/settings.routes.ts:8</note>
       </notes>
       <segment>
         <source>Settings · ClockIn</source>
@@ -1647,7 +1656,7 @@
     </unit>
     <unit id="entryDateRequired">
       <notes>
-        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:13,14</note>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:20,21</note>
       </notes>
       <segment>
         <source>Choose a date in this week.</source>
@@ -1656,7 +1665,7 @@
     </unit>
     <unit id="entryStart">
       <notes>
-        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:17,18</note>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:24,25</note>
       </notes>
       <segment>
         <source>Start</source>
@@ -1665,7 +1674,7 @@
     </unit>
     <unit id="entryStartRequired">
       <notes>
-        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:19,20</note>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:26,27</note>
       </notes>
       <segment>
         <source>Enter a start time.</source>
@@ -1674,7 +1683,7 @@
     </unit>
     <unit id="entryEnd">
       <notes>
-        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:22,23</note>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:29,30</note>
       </notes>
       <segment>
         <source>End</source>
@@ -1683,7 +1692,7 @@
     </unit>
     <unit id="entryEndOpenHint">
       <notes>
-        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:25,27</note>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:32,34</note>
       </notes>
       <segment>
         <source>Leave empty to keep it running.</source>
@@ -1692,7 +1701,7 @@
     </unit>
     <unit id="entryEndHint">
       <notes>
-        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:27,29</note>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:34,36</note>
       </notes>
       <segment>
         <source>Earlier than the start means the next day.</source>
@@ -1701,7 +1710,7 @@
     </unit>
     <unit id="entryEndRequired">
       <notes>
-        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:29,30</note>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:36,37</note>
       </notes>
       <segment>
         <source>Enter an end time.</source>
@@ -1710,7 +1719,7 @@
     </unit>
     <unit id="entryNote">
       <notes>
-        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:33,34</note>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:40,41</note>
       </notes>
       <segment>
         <source>Why is this changed by hand?</source>
@@ -1719,7 +1728,7 @@
     </unit>
     <unit id="entryNoteRequired">
       <notes>
-        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:36,37</note>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:43,44</note>
       </notes>
       <segment>
         <source>Add a note of at most 500 characters.</source>
@@ -1728,7 +1737,7 @@
     </unit>
     <unit id="historySubmitted">
       <notes>
-        <note category="location">src/app/features/timesheets/components/history/history.component.html:9,10</note>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:10,11</note>
       </notes>
       <segment>
         <source>Submitted by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
@@ -1737,7 +1746,7 @@
     </unit>
     <unit id="historySubmittedOnBehalf">
       <notes>
-        <note category="location">src/app/features/timesheets/components/history/history.component.html:11,12</note>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:14,15</note>
       </notes>
       <segment>
         <source>Submitted by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/> on the owner&apos;s behalf</source>
@@ -1746,7 +1755,7 @@
     </unit>
     <unit id="historyReturned">
       <notes>
-        <note category="location">src/app/features/timesheets/components/history/history.component.html:15,16</note>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:19,20</note>
       </notes>
       <segment>
         <source>Returned by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
@@ -1755,7 +1764,7 @@
     </unit>
     <unit id="historyApproved">
       <notes>
-        <note category="location">src/app/features/timesheets/components/history/history.component.html:18,19</note>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:22,23</note>
       </notes>
       <segment>
         <source>Approved by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
@@ -1764,7 +1773,7 @@
     </unit>
     <unit id="historyReopened">
       <notes>
-        <note category="location">src/app/features/timesheets/components/history/history.component.html:21,22</note>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:25,26</note>
       </notes>
       <segment>
         <source>Reopened by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
@@ -1773,7 +1782,7 @@
     </unit>
     <unit id="historyCorrectionRequested">
       <notes>
-        <note category="location">src/app/features/timesheets/components/history/history.component.html:24,25</note>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:29,30</note>
       </notes>
       <segment>
         <source>Correction requested by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
@@ -1782,7 +1791,7 @@
     </unit>
     <unit id="historyCorrectionDeclined">
       <notes>
-        <note category="location">src/app/features/timesheets/components/history/history.component.html:27,28</note>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:34,35</note>
       </notes>
       <segment>
         <source>Correction declined by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
@@ -1791,7 +1800,7 @@
     </unit>
     <unit id="historyEntryAdded">
       <notes>
-        <note category="location">src/app/features/timesheets/components/history/history.component.html:30,31</note>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:39,40</note>
       </notes>
       <segment>
         <source>Entry added by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
@@ -1800,7 +1809,7 @@
     </unit>
     <unit id="historyEntryEdited">
       <notes>
-        <note category="location">src/app/features/timesheets/components/history/history.component.html:33,34</note>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:44,45</note>
       </notes>
       <segment>
         <source>Entry edited by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
@@ -1809,7 +1818,7 @@
     </unit>
     <unit id="historyEntryDeleted">
       <notes>
-        <note category="location">src/app/features/timesheets/components/history/history.component.html:36,37</note>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:49,50</note>
       </notes>
       <segment>
         <source>Entry deleted by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
@@ -1836,8 +1845,8 @@
     </unit>
     <unit id="weekOfShort">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:13,14</note>
-        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:36,37</note>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:15,16</note>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:41,42</note>
       </notes>
       <segment>
         <source>Week of <ph id="0" equiv="INTERPOLATION" disp="{{ item.weekStart + &apos;T12:00:00Z&apos; | companyTime: &apos;UTC&apos; : &apos;date&apos; }}"/></source>
@@ -1846,7 +1855,7 @@
     </unit>
     <unit id="nothingToReview">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:23,27</note>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:26,30</note>
       </notes>
       <segment>
         <source>Nothing to review.</source>
@@ -1855,7 +1864,7 @@
     </unit>
     <unit id="correctionsToDecide">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:28,29</note>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:31,32</note>
       </notes>
       <segment>
         <source>Correction requests</source>
@@ -1864,7 +1873,7 @@
     </unit>
     <unit id="noCorrections">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:43,46</note>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:49,52</note>
       </notes>
       <segment>
         <source>No correction requests.</source>
@@ -1873,7 +1882,7 @@
     </unit>
     <unit id="reviewLoadFailed">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:48,49</note>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:54,55</note>
       </notes>
       <segment>
         <source>The review queue couldn&apos;t be loaded.</source>
@@ -1882,7 +1891,7 @@
     </unit>
     <unit id="backToReview">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:5,6</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:10,12</note>
       </notes>
       <segment>
         <source>Back to review</source>
@@ -1891,7 +1900,7 @@
     </unit>
     <unit id="weekTotal">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:30,31</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:50,51</note>
       </notes>
       <segment>
         <source>Week total</source>
@@ -1900,7 +1909,7 @@
     </unit>
     <unit id="returnedBanner">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:40,41</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:60,61</note>
       </notes>
       <segment>
         <source>Returned for changes</source>
@@ -1909,7 +1918,7 @@
     </unit>
     <unit id="approvedBanner">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:50,52</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:70,73</note>
       </notes>
       <segment>
         <source> Approved by <ph id="0" equiv="INTERPOLATION" disp="{{ approval.approverName }}"/> on <ph id="1" equiv="INTERPOLATION_1" disp="{{ approval.at | companyTime: sheet.timeZone : &apos;dateTime&apos; }}"/> </source>
@@ -1918,7 +1927,7 @@
     </unit>
     <unit id="correctionPendingBanner">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:60,61</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:81,82</note>
       </notes>
       <segment>
         <source>Correction requested</source>
@@ -1927,16 +1936,16 @@
     </unit>
     <unit id="correctionDeclinedBanner">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:68,69</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:90,92</note>
       </notes>
       <segment>
-        <source>Correction declined by <ph id="0" equiv="INTERPOLATION" disp="{{ correction.decidedByName }}"/></source>
+        <source> Correction declined by <ph id="0" equiv="INTERPOLATION" disp="{{ correction.decidedByName }}"/> </source>
         <target>Corrección rechazada por <ph id="0" equiv="INTERPOLATION" disp="{{ correction.decidedByName }}"/></target>
       </segment>
     </unit>
     <unit id="addEntry">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:79,80</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:102,103</note>
       </notes>
       <segment>
         <source>Add entry</source>
@@ -1945,7 +1954,7 @@
     </unit>
     <unit id="submit">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:85,86</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:108,109</note>
       </notes>
       <segment>
         <source>Submit</source>
@@ -1954,7 +1963,7 @@
     </unit>
     <unit id="approve">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:91,92</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:114,115</note>
       </notes>
       <segment>
         <source>Approve</source>
@@ -1963,7 +1972,7 @@
     </unit>
     <unit id="return">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:97,98</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:120,121</note>
         <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:145</note>
       </notes>
       <segment>
@@ -1973,7 +1982,7 @@
     </unit>
     <unit id="acceptCorrection">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:103,104</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:126,127</note>
       </notes>
       <segment>
         <source>Accept correction</source>
@@ -1982,7 +1991,7 @@
     </unit>
     <unit id="declineCorrection">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:107,109</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:130,132</note>
       </notes>
       <segment>
         <source>Decline correction</source>
@@ -1991,7 +2000,7 @@
     </unit>
     <unit id="requestCorrection">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:113,115</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:136,138</note>
       </notes>
       <segment>
         <source>Request correction</source>
@@ -2000,7 +2009,7 @@
     </unit>
     <unit id="reopen">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:119,120</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:142,143</note>
         <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:162</note>
       </notes>
       <segment>
@@ -2010,7 +2019,7 @@
     </unit>
     <unit id="addedBy">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:154,155</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:180,181</note>
       </notes>
       <segment>
         <source>Added by hand by <ph id="0" equiv="INTERPOLATION" disp="{{ entry.changedByName }}"/></source>
@@ -2019,7 +2028,7 @@
     </unit>
     <unit id="editedBy">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:156,157</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:184,185</note>
       </notes>
       <segment>
         <source>Edited by <ph id="0" equiv="INTERPOLATION" disp="{{ entry.changedByName }}"/></source>
@@ -2028,7 +2037,7 @@
     </unit>
     <unit id="punchedValues">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:165,167</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:194,196</note>
       </notes>
       <segment>
         <source> Punched <ph id="0" equiv="INTERPOLATION" disp="{{ entry.punchedStart | companyTime: sheet.timeZone }}"/> – <ph id="1" equiv="INTERPOLATION_1" disp="{{ entry.punchedEnd ? (entry.punchedEnd | companyTime: sheet.timeZone) : &apos;…&apos; }}"/> </source>
@@ -2037,8 +2046,8 @@
     </unit>
     <unit id="editEntry">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:171</note>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:171,172</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:204,205</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:206,208</note>
       </notes>
       <segment>
         <source>Edit entry</source>
@@ -2047,8 +2056,8 @@
     </unit>
     <unit id="deleteEntry">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:174</note>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:174,175</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:214,215</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:216,218</note>
       </notes>
       <segment>
         <source>Delete entry</source>
@@ -2057,7 +2066,7 @@
     </unit>
     <unit id="history">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:190,191</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:233,234</note>
       </notes>
       <segment>
         <source>History</source>
@@ -2066,7 +2075,7 @@
     </unit>
     <unit id="timesheetLoadFailed">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:197,198</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:240,241</note>
       </notes>
       <segment>
         <source>This timesheet couldn&apos;t be loaded.</source>
@@ -2291,7 +2300,7 @@
     </unit>
     <unit id="correctionAccepted">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:203</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:204</note>
       </notes>
       <segment>
         <source>Correction accepted.</source>
@@ -2300,7 +2309,7 @@
     </unit>
     <unit id="declineCorrectionTitle">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:210</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:211</note>
       </notes>
       <segment>
         <source>Decline the correction?</source>
@@ -2309,7 +2318,7 @@
     </unit>
     <unit id="declineCorrectionComment">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:211</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:212</note>
       </notes>
       <segment>
         <source>Why is it declined?</source>
@@ -2318,7 +2327,7 @@
     </unit>
     <unit id="decline">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:212</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:213</note>
       </notes>
       <segment>
         <source>Decline</source>
@@ -2327,7 +2336,7 @@
     </unit>
     <unit id="correctionDeclined">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:219</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:220</note>
       </notes>
       <segment>
         <source>Correction declined.</source>
@@ -2336,7 +2345,7 @@
     </unit>
     <unit id="entrySaved">
       <notes>
-        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:253</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:254</note>
       </notes>
       <segment>
         <source>Entry saved.</source>

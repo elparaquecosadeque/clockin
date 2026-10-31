@@ -11,7 +11,7 @@ describe('ShellComponent', () => {
   const user = signal<SessionUser | null>(null);
   const toDos = { load: vi.fn(async () => undefined), ownCount: signal(2), reviewCount: signal(0) };
 
-  function signIn(permissions: string[]): void {
+  function signIn(permissions: string[], overrides: Partial<SessionUser> = {}): void {
     user.set({
       id: 'u1',
       name: 'Sam',
@@ -20,8 +20,41 @@ describe('ShellComponent', () => {
       permissions,
       language: 'en',
       timeFormat: '24h',
+      teamName: null,
+      supervisorName: null,
+      ...overrides,
     });
   }
+
+  async function openAccountMenu(): Promise<Element> {
+    const fixture = TestBed.createComponent(ShellComponent);
+    await fixture.whenStable();
+    (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLButtonElement>('button.account')!
+      .click();
+    await fixture.whenStable();
+    const panels = document.querySelectorAll('.mat-mdc-menu-panel');
+    return panels[panels.length - 1];
+  }
+
+  it("names an employee's team and supervisor in the account menu", async () => {
+    signIn(['time-entries.punch'], {
+      name: 'Eve',
+      role: 'Employee',
+      teamName: 'Warehouse',
+      supervisorName: 'Sam',
+    });
+
+    expect((await openAccountMenu()).querySelector('.team')?.textContent?.trim()).toBe(
+      'Warehouse · Supervisor: Sam',
+    );
+  });
+
+  it('shows no team line for users without a team', async () => {
+    signIn(['users.manage']);
+
+    expect((await openAccountMenu()).querySelector('.team')).toBeNull();
+  });
 
   beforeEach(() => {
     TestBed.configureTestingModule({

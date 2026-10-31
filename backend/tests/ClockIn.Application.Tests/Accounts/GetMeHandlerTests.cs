@@ -3,7 +3,9 @@ using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Accounts.Queries;
 using ClockIn.Application.Accounts.Results;
 using ClockIn.Application.Common.Interfaces;
+using ClockIn.Application.Teams.Interfaces;
 using ClockIn.Domain.Accounts;
+using ClockIn.Domain.Teams;
 using NSubstitute;
 
 namespace ClockIn.Application.Tests.Accounts;
@@ -23,8 +25,29 @@ public sealed class GetMeHandlerTests
         ICurrentUser currentUser = Substitute.For<ICurrentUser>();
         currentUser.Id.Returns(user.Id);
 
-        MeDto me = await new GetMeHandler(currentUser, users).HandleAsync(new GetMeQuery(), CancellationToken.None);
+        MeDto me = await new GetMeHandler(currentUser, users, Substitute.For<ITeamRepository>()).HandleAsync(new GetMeQuery(), CancellationToken.None);
 
-        me.Should().BeEquivalentTo(new MeDto(user.Id.Value, "Eve", "eve@clockin.test", role, permissions, "en", "24h"));
+        me.Should().BeEquivalentTo(new MeDto(user.Id.Value, "Eve", "eve@clockin.test", role, permissions, "en", "24h", null, null));
+    }
+
+    [Fact]
+    public async Task Names_the_employees_team_and_its_supervisor()
+    {
+        var sam = User.Create(new Email("sam@clockin.test"), "Sam", Role.Supervisor);
+        var team = Team.Create("Warehouse", sam);
+        var eve = User.Create(new Email("eve@clockin.test"), "Eve", Role.Employee);
+        eve.MoveTo(team);
+        IUserRepository users = Substitute.For<IUserRepository>();
+        users.FindAsync(eve.Id, Arg.Any<CancellationToken>()).Returns(eve);
+        users.FindAsync(sam.Id, Arg.Any<CancellationToken>()).Returns(sam);
+        ITeamRepository teams = Substitute.For<ITeamRepository>();
+        teams.FindAsync(team.Id, Arg.Any<CancellationToken>()).Returns(team);
+        ICurrentUser currentUser = Substitute.For<ICurrentUser>();
+        currentUser.Id.Returns(eve.Id);
+
+        MeDto me = await new GetMeHandler(currentUser, users, teams).HandleAsync(new GetMeQuery(), CancellationToken.None);
+
+        me.TeamName.Should().Be("Warehouse");
+        me.SupervisorName.Should().Be("Sam");
     }
 }

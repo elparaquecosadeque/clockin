@@ -12,6 +12,8 @@ const eve: SessionUser = {
   permissions: ['time-entries.punch'],
   language: 'en',
   timeFormat: '24h',
+  teamName: 'Warehouse',
+  supervisorName: 'Sam',
 };
 
 describe('SessionService', () => {

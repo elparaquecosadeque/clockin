@@ -47,8 +47,13 @@ main {
     font: var(--mat-sys-title-small);
   }
 
-  .email {
+  .email,
+  .team {
     font: var(--mat-sys-body-small);
     color: var(--mat-sys-on-surface-variant);
+  }
+
+  .team {
+    margin-top: 4px;
   }
 }

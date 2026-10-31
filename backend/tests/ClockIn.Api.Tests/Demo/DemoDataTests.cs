@@ -121,13 +121,16 @@ public sealed class DemoDataTests(DemoApiFactory factory) : IClassFixture<DemoAp
     }
 
     [Fact]
-    public async Task Lists_featured_accounts_that_sign_in_with_the_shared_password()
+    public async Task Lists_every_account_that_can_sign_in_with_the_shared_password()
     {
         HttpClient client = TestUsers.HttpsClient(factory);
 
         DemoAccountsDto? demo = await client.GetFromJsonAsync<DemoAccountsDto>("/api/demo/accounts", Json, Ct);
 
-        demo!.Accounts.Select(a => a.Scenario).Should().Contain([DemoScenario.Admin, DemoScenario.ClockedIn, DemoScenario.ForgotToClockOut]);
+        // Everyone who can sign in: not Fay (pending activation), Ed (deactivated) or Lou (locked out).
+        demo!.Accounts.Should().HaveCount(17);
+        demo.Accounts.Select(a => a.Name).Should().NotContain(["Fay", "Ed", "Lou"]);
+        demo.Accounts.Select(a => a.Scenario).Should().Contain([DemoScenario.Admin, DemoScenario.ClockedIn, DemoScenario.ForgotToClockOut]);
         foreach (DemoAccount account in demo.Accounts)
         {
             HttpResponseMessage login = await client.PostAsJsonAsync("/api/auth/login", new { email = account.Email, password = demo.Password }, Ct);

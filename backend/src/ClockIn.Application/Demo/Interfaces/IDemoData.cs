@@ -8,8 +8,8 @@ public interface IDemoData
     /// <summary>Every demo account's password.</summary>
     string Password { get; }
 
-    /// <summary>One account per scenario worth trying.</summary>
-    IReadOnlyList<DemoAccount> FeaturedAccounts { get; }
+    /// <summary>Every demo account that can sign in.</summary>
+    IReadOnlyList<DemoAccount> Accounts { get; }
 
     /// <summary>Null when the data was never seeded.</summary>
     Task<DateTimeOffset?> LastSeededAtAsync(CancellationToken ct);

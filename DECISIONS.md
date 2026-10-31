@@ -4,6 +4,13 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-10-31: Demo sign-in list and own team
+
+| Decision | Why | By |
+|---|---|---|
+| The sign-in page lists every demo account that can sign in (17), not 7 featured ones. Fay (pending), Ed (deactivated) and Lou (locked out) stay off the list; admins see their states. | Asked by the user. | user |
+| Employees see their team and supervisor in the account menu, from `/api/me` ([see-own-team.feature](docs/specs/teams/see-own-team.feature)). | Asked by the user; the menu is on every page. Supervisors and admins have no team, so no line. | user / dev |
+
 ## 2026-10-30: Timesheets, review, reports, administration and settings (frontend)
 
 | Decision | Why | By |

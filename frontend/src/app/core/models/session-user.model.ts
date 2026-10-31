@@ -9,4 +9,7 @@ export interface SessionUser {
   permissions: string[];
   language: 'en' | 'es';
   timeFormat: TimeFormat;
+  /** Set for employees only. */
+  teamName: string | null;
+  supervisorName: string | null;
 }

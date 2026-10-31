@@ -34,34 +34,35 @@ public sealed class DemoSeed(AppDataConnection db, TimeProvider time) : IDemoDat
 
     private static readonly Person[] People =
     [
-        new("Ada", Role.Admin, Today: DemoScenario.Admin, Featured: true),
+        new("Ada", Role.Admin, Today: DemoScenario.Admin),
         new("Abe", Role.Admin, Today: DemoScenario.Admin),
-        new("Sam", Role.Supervisor, Leads: Warehouse, Today: DemoScenario.ClockedIn, OpenFor: TimeSpan.FromHours(2), Featured: true),
-        new("Sue", Role.Supervisor, Leads: Office, Today: DemoScenario.ClockedOut, Featured: true),
+        new("Sam", Role.Supervisor, Leads: Warehouse, Today: DemoScenario.ClockedIn, OpenFor: TimeSpan.FromHours(2)),
+        new("Sue", Role.Supervisor, Leads: Office, Today: DemoScenario.ClockedOut),
         new("Sid", Role.Supervisor, Leads: NightShift),
-        new("Eve", Role.Employee, Team: Warehouse, Today: DemoScenario.ClockedIn, OpenFor: TimeSpan.FromHours(2), Featured: true),
+        new("Eve", Role.Employee, Team: Warehouse, Today: DemoScenario.ClockedIn, OpenFor: TimeSpan.FromHours(2)),
         new("Ed", Role.Employee, Team: Warehouse, Status: UserStatus.Deactivated, Today: DemoScenario.Deactivated),
         new("Fay", Role.Employee, Team: Warehouse, Status: UserStatus.PendingActivation, Today: DemoScenario.PendingActivation),
         new("Gus", Role.Employee, Team: Warehouse, Today: DemoScenario.ClockedIn, OpenFor: TimeSpan.FromHours(3)),
-        new("Hal", Role.Employee, Team: Warehouse, Today: DemoScenario.ClockedOut, Featured: true),
+        new("Hal", Role.Employee, Team: Warehouse, Today: DemoScenario.ClockedOut),
         new("Ivy", Role.Employee, Team: Office, Today: DemoScenario.ClockedIn, OpenFor: TimeSpan.FromHours(1)),
         new("Jon", Role.Employee, Team: Office, Today: DemoScenario.ClockedOut),
         new("Kim", Role.Employee, Team: Office, Today: DemoScenario.ClockedIn, OpenFor: TimeSpan.FromHours(4)),
         new("Lou", Role.Employee, Team: Office, Today: DemoScenario.LockedOut),
-        new("Mia", Role.Employee, Team: Office, Featured: true),
+        new("Mia", Role.Employee, Team: Office),
         new("Ned", Role.Employee, Team: NightShift, Today: DemoScenario.ClockedIn, OpenFor: TimeSpan.FromHours(9)),
-        new("Oli", Role.Employee, Team: NightShift, Today: DemoScenario.ForgotToClockOut, OpenFor: TimeSpan.FromHours(20), Featured: true),
+        new("Oli", Role.Employee, Team: NightShift, Today: DemoScenario.ForgotToClockOut, OpenFor: TimeSpan.FromHours(20)),
         new("Pam", Role.Employee, Team: NightShift, Today: DemoScenario.ClockedOut),
         new("Ray", Role.Employee, Team: NightShift),
         new("Rob", Role.Employee, Team: NightShift),
     ];
 
-    private static readonly IReadOnlyList<DemoAccount> Featured =
-        [.. People.Where(p => p.Featured).Select(p => new DemoAccount(p.Email, p.Name, p.Role, p.Team ?? p.Leads, p.Today))];
+    // Everyone who can sign in; pending, deactivated and locked-out people show those states from an admin's view.
+    private static readonly IReadOnlyList<DemoAccount> SignInAccounts =
+        [.. People.Where(p => p.Status == UserStatus.Active && p.Today != DemoScenario.LockedOut).Select(p => new DemoAccount(p.Email, p.Name, p.Role, p.Team ?? p.Leads, p.Today))];
 
     public string Password => DemoPassword;
 
-    public IReadOnlyList<DemoAccount> FeaturedAccounts => Featured;
+    public IReadOnlyList<DemoAccount> Accounts => SignInAccounts;
 
     public async Task<DateTimeOffset?> LastSeededAtAsync(CancellationToken ct) =>
         await db.GetTable<DemoSeedRecord>().Select(s => (DateTimeOffset?)s.SeededAt).FirstOrDefaultAsync(ct);
@@ -357,8 +358,7 @@ public sealed class DemoSeed(AppDataConnection db, TimeProvider time) : IDemoDat
         string? Leads = null,
         UserStatus Status = UserStatus.Active,
         DemoScenario Today = DemoScenario.NotStarted,
-        TimeSpan OpenFor = default,
-        bool Featured = false)
+        TimeSpan OpenFor = default)
     {
         public string Email => $"{Name.ToLowerInvariant()}@{EmailDomain}";
     }

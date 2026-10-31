@@ -8,5 +8,5 @@ public sealed record GetDemoAccountsQuery;
 
 public sealed class GetDemoAccountsHandler(IDemoData demo)
 {
-    public DemoAccountsDto Handle(GetDemoAccountsQuery query) => new(demo.Password, demo.FeaturedAccounts);
+    public DemoAccountsDto Handle(GetDemoAccountsQuery query) => new(demo.Password, demo.Accounts);
 }
