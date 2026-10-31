@@ -15,7 +15,7 @@ public static class TestUsers
         using var scopes = new Scopes(factory);
         var user = User.Create(new Email($"{Guid.CreateVersion7():N}@clockin.test"), role.ToString(), role);
         user.SetPassword(scopes.Get<IPasswordHasher>().Hash(Password));
-        await scopes.Get<IUserRepository>().SaveAsync(user, ct);
+        await scopes.Get<IUserRepository>().SaveOrUpdateAsync(user, ct);
         return user;
     }
 

@@ -12,5 +12,5 @@ public interface ICorrectionRequestRepository
     Task<CorrectionRequest?> FindLatestAsync(TimesheetId timesheetId, CancellationToken ct);
 
     /// <summary>Inserts or updates the request. A second pending one conflicts with CorrectionRequestAlreadyPending.</summary>
-    Task SaveAsync(CorrectionRequest request, CancellationToken ct);
+    Task SaveOrUpdateAsync(CorrectionRequest request, CancellationToken ct);
 }

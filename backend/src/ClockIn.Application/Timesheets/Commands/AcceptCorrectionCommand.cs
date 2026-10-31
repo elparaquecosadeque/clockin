@@ -18,12 +18,12 @@ public sealed class AcceptCorrectionValidator : AbstractValidator<AcceptCorrecti
 }
 
 public sealed class AcceptCorrectionHandler(
-    ICurrentUser currentUser, IUserRepository users, ITeamRepository teams, ICorrectionRequestRepository corrections, TimeProvider time)
+    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ICorrectionRequestRepository correctionsRepository, TimeProvider time)
 {
     public async Task HandleAsync(AcceptCorrectionCommand command, CancellationToken ct)
     {
-        CorrectionRequest request = await corrections.GetForApproverAsync(command.RequestId, currentUser, users, teams, ct);
+        CorrectionRequest request = await correctionsRepository.GetForApproverAsync(command.RequestId, currentUser, usersRepository, teamsRepository, ct);
         request.Accept(currentUser.Id, command.Comment, time.GetUtcNow());
-        await corrections.SaveAsync(request, ct);
+        await correctionsRepository.SaveOrUpdateAsync(request, ct);
     }
 }

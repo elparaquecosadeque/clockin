@@ -25,7 +25,7 @@ public sealed class TeamRepository(AppDataConnection db) : ITeamRepository
     public Task<bool> LeadsActiveTeamAsync(UserId supervisorId, CancellationToken ct) =>
         db.GetTable<TeamRecord>().AnyAsync(t => t.SupervisorId == supervisorId.Value && !t.IsArchived, ct);
 
-    public async Task SaveAsync(Team team, CancellationToken ct)
+    public async Task SaveOrUpdateAsync(Team team, CancellationToken ct)
     {
         if (team.Version == 0)
         {

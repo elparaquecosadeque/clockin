@@ -12,14 +12,14 @@ namespace ClockIn.Application.Tests.Accounts;
 public sealed class SeedFirstAdminHandlerTests
 {
     private readonly CompanyClock _clock = new();
-    private readonly IUserRepository _users = Substitute.For<IUserRepository>();
+    private readonly IUserRepository _usersRepository = Substitute.For<IUserRepository>();
     private readonly IAuditLog _audit = Substitute.For<IAuditLog>();
     private readonly SeedFirstAdminHandler _handler;
 
     public SeedFirstAdminHandlerTests()
     {
-        _users.FindByRoleAsync(Role.Admin, Arg.Any<CancellationToken>()).Returns([]);
-        _handler = new SeedFirstAdminHandler(_users, _audit, _clock);
+        _usersRepository.FindByRoleAsync(Role.Admin, Arg.Any<CancellationToken>()).Returns([]);
+        _handler = new SeedFirstAdminHandler(_usersRepository, _audit, _clock);
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public sealed class SeedFirstAdminHandlerTests
     {
         await _handler.HandleAsync(new SeedFirstAdminCommand("admin@clockin.test"), CancellationToken.None);
 
-        await _users.Received(1).SaveAsync(
+        await _usersRepository.Received(1).SaveOrUpdateAsync(
             Arg.Is<User>(u => u.Email == new Email("admin@clockin.test") && u.Role == Role.Admin
                 && u.Status == UserStatus.PendingActivation && u.AccessLinkHash != null),
             Arg.Any<CancellationToken>());
@@ -42,11 +42,11 @@ public sealed class SeedFirstAdminHandlerTests
     {
         var ada = User.Create(new Email("ada@clockin.test"), "Ada", Role.Admin);
         ada.SetPassword("hash");
-        _users.FindByRoleAsync(Role.Admin, Arg.Any<CancellationToken>()).Returns([ada]);
+        _usersRepository.FindByRoleAsync(Role.Admin, Arg.Any<CancellationToken>()).Returns([ada]);
 
         await _handler.HandleAsync(new SeedFirstAdminCommand(configuredEmail), CancellationToken.None);
 
-        await _users.DidNotReceiveWithAnyArgs().SaveAsync(default!, TestContext.Current.CancellationToken);
+        await _usersRepository.DidNotReceiveWithAnyArgs().SaveOrUpdateAsync(default!, TestContext.Current.CancellationToken);
         _audit.DidNotReceiveWithAnyArgs().FirstAdminLinkIssued(default!, default!);
     }
 
@@ -55,12 +55,12 @@ public sealed class SeedFirstAdminHandlerTests
     {
         var seeded = User.Create(new Email("admin@clockin.test"), "Admin", Role.Admin);
         AccessLink previous = seeded.IssueAccessLink(_clock.GetUtcNow());
-        _users.FindByRoleAsync(Role.Admin, Arg.Any<CancellationToken>()).Returns([seeded]);
+        _usersRepository.FindByRoleAsync(Role.Admin, Arg.Any<CancellationToken>()).Returns([seeded]);
 
         await _handler.HandleAsync(new SeedFirstAdminCommand("admin@clockin.test"), CancellationToken.None);
 
         _audit.Received(1).FirstAdminLinkIssued(seeded.Email, Arg.Is<string>(t => t != previous.Token));
-        await _users.Received(1).SaveAsync(seeded, Arg.Any<CancellationToken>());
+        await _usersRepository.Received(1).SaveOrUpdateAsync(seeded, Arg.Any<CancellationToken>());
         var usePrevious = () => seeded.SetPasswordWithLink(previous.Secret, "hash", _clock.GetUtcNow());
         usePrevious.Should().Throw<Domain.Common.DomainException>();
     }

@@ -19,20 +19,20 @@ public sealed class AddEntryValidator : AbstractValidator<AddEntryCommand>
 }
 
 public sealed class AddEntryHandler(
-    ICurrentUser currentUser, IUserRepository users, ITeamRepository teams, ITimesheetRepository timesheets, TimeProvider time)
+    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ITimesheetRepository timesheetsRepository, TimeProvider time)
 {
     public async Task<Guid> HandleAsync(AddEntryCommand command, CancellationToken ct)
     {
         UserId ownerId = command.OwnerId is { } id ? new UserId(id) : currentUser.Id;
-        TimesheetParties parties = await TimesheetParties.LoadAsync(users, teams, currentUser.Id, ownerId, ct);
+        TimesheetParties parties = await TimesheetParties.LoadAsync(usersRepository, teamsRepository, currentUser.Id, ownerId, ct);
         TimesheetParties.Require(parties.CanChange);
 
         var week = Week.Containing(command.Start, time.LocalTimeZone);
-        Timesheet timesheet = await timesheets.FindAsync(ownerId, week, ct) ?? Timesheet.Start(ownerId, week);
+        Timesheet timesheet = await timesheetsRepository.FindAsync(ownerId, week, ct) ?? Timesheet.Start(ownerId, week);
         TimeEntry entry = timesheet.AddEntry(
             currentUser.Id, command.Start, command.End, command.Note, new PunchSource(command.IpAddress, command.UserAgent),
-            time.GetUtcNow(), time.LocalTimeZone, await timesheets.NeighboursAsync(ownerId, week, ct));
-        await timesheets.SaveAsync(timesheet, ct);
+            time.GetUtcNow(), time.LocalTimeZone, await timesheetsRepository.NeighboursAsync(ownerId, week, ct));
+        await timesheetsRepository.SaveOrUpdateAsync(timesheet, ct);
         return entry.Id.Value;
     }
 }

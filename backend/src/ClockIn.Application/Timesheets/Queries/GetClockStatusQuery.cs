@@ -8,7 +8,7 @@ namespace ClockIn.Application.Timesheets.Queries;
 
 public sealed record GetClockStatusQuery;
 
-public sealed class GetClockStatusHandler(ICurrentUser currentUser, ITimesheetRepository timesheets, TimeProvider time)
+public sealed class GetClockStatusHandler(ICurrentUser currentUser, ITimesheetRepository timesheetsRepository, TimeProvider time)
 {
     // ponytail: reads through the repository; switch to an ITimesheetReads projection when reporting needs one.
     public async Task<ClockStatusDto> HandleAsync(GetClockStatusQuery query, CancellationToken ct)
@@ -18,8 +18,8 @@ public sealed class GetClockStatusHandler(ICurrentUser currentUser, ITimesheetRe
         var week = Week.Containing(now, zone);
         DateOnly today = CompanyDay(now, zone);
 
-        Timesheet? withOpen = await timesheets.FindWithOpenEntryAsync(currentUser.Id, ct);
-        Timesheet? thisWeek = withOpen?.Week == week ? withOpen : await timesheets.FindAsync(currentUser.Id, week, ct);
+        Timesheet? withOpen = await timesheetsRepository.FindWithOpenEntryAsync(currentUser.Id, ct);
+        Timesheet? thisWeek = withOpen?.Week == week ? withOpen : await timesheetsRepository.FindAsync(currentUser.Id, week, ct);
         IReadOnlyList<TimeEntry> entries = thisWeek?.Entries ?? [];
         TimeEntry? open = withOpen?.OpenEntry;
 

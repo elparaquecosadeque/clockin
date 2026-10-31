@@ -22,7 +22,7 @@ public sealed class CorrectionHandlerTests
 
         await Request(week);
 
-        await _world.Corrections.Received(1).SaveAsync(
+        await _world.CorrectionsRepository.Received(1).SaveOrUpdateAsync(
             Arg.Is<CorrectionRequest>(r => r.TimesheetId == week.Id && r.Status == CorrectionStatus.Pending), Arg.Any<CancellationToken>());
     }
 
@@ -72,7 +72,7 @@ public sealed class CorrectionHandlerTests
         _world.SignIn(Person(actor));
 
         var accept = () => Accept(request, null);
-        var decline = () => new DeclineCorrectionHandler(_world.CurrentUser, _world.Users, _world.Teams, _world.Corrections, _world.Clock)
+        var decline = () => new DeclineCorrectionHandler(_world.CurrentUser, _world.UsersRepository, _world.TeamsRepository, _world.CorrectionsRepository, _world.Clock)
             .HandleAsync(new DeclineCorrectionCommand(request.Id.Value, "no"), CancellationToken.None);
 
         await accept.Should().ThrowAsync<ForbiddenException>();
@@ -84,13 +84,13 @@ public sealed class CorrectionHandlerTests
     {
         Timesheet week = _world.Week(_world.Eve, LastWeek, TimesheetStatus.Approved);
 
-        await new ReopenTimesheetOnCorrectionRequestAcceptedHandler(_world.Timesheets).HandleAsync(
+        await new ReopenTimesheetOnCorrectionRequestAcceptedHandler(_world.TimesheetsRepository).HandleAsync(
             new CorrectionRequestAccepted(CorrectionRequestId.New(), week.Id, _world.Sam.Id, "go ahead", _world.Clock.GetUtcNow()),
             CancellationToken.None);
 
         week.Status.Should().Be(TimesheetStatus.Draft);
         week.History[^1].Kind.Should().Be(TimesheetEventKind.Reopened);
-        await _world.Timesheets.Received(1).SaveAsync(week, Arg.Any<CancellationToken>());
+        await _world.TimesheetsRepository.Received(1).SaveOrUpdateAsync(week, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -99,9 +99,9 @@ public sealed class CorrectionHandlerTests
         Timesheet week = _world.Week(_world.Eve, LastWeek, TimesheetStatus.Approved);
         DateTimeOffset now = _world.Clock.GetUtcNow();
 
-        await new RecordRequestOnCorrectionRequestedHandler(_world.Timesheets).HandleAsync(
+        await new RecordRequestOnCorrectionRequestedHandler(_world.TimesheetsRepository).HandleAsync(
             new CorrectionRequested(CorrectionRequestId.New(), week.Id, _world.Eve.Id, "missing shift", now), CancellationToken.None);
-        await new RecordDeclineOnCorrectionRequestDeclinedHandler(_world.Timesheets).HandleAsync(
+        await new RecordDeclineOnCorrectionRequestDeclinedHandler(_world.TimesheetsRepository).HandleAsync(
             new CorrectionRequestDeclined(CorrectionRequestId.New(), week.Id, _world.Sam.Id, "already paid", now), CancellationToken.None);
 
         week.History.Select(h => h.Kind).Should().EndWith([TimesheetEventKind.CorrectionRequested, TimesheetEventKind.CorrectionDeclined]);
@@ -117,10 +117,10 @@ public sealed class CorrectionHandlerTests
     };
 
     private Task<Guid> Request(Timesheet week) =>
-        new RequestCorrectionHandler(_world.CurrentUser, _world.Users, _world.Teams, _world.Timesheets, _world.Corrections, _world.Clock)
+        new RequestCorrectionHandler(_world.CurrentUser, _world.UsersRepository, _world.TeamsRepository, _world.TimesheetsRepository, _world.CorrectionsRepository, _world.Clock)
             .HandleAsync(new RequestCorrectionCommand(week.Id.Value, "Wednesday shift is missing"), CancellationToken.None);
 
     private Task Accept(CorrectionRequest request, string? comment) =>
-        new AcceptCorrectionHandler(_world.CurrentUser, _world.Users, _world.Teams, _world.Corrections, _world.Clock)
+        new AcceptCorrectionHandler(_world.CurrentUser, _world.UsersRepository, _world.TeamsRepository, _world.CorrectionsRepository, _world.Clock)
             .HandleAsync(new AcceptCorrectionCommand(request.Id.Value, comment), CancellationToken.None);
 }

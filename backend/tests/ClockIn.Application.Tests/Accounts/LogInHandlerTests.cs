@@ -16,8 +16,8 @@ public sealed class LogInHandlerTests
     private const string Password = "correct horse battery";
 
     private readonly CompanyClock _clock = new();
-    private readonly IUserRepository _users = Substitute.For<IUserRepository>();
-    private readonly ISessionRepository _sessions = Substitute.For<ISessionRepository>();
+    private readonly IUserRepository _usersRepository = Substitute.For<IUserRepository>();
+    private readonly ISessionRepository _sessionsRepository = Substitute.For<ISessionRepository>();
     private readonly IPasswordHasher _hasher = Substitute.For<IPasswordHasher>();
     private readonly IAuditLog _audit = Substitute.For<IAuditLog>();
     private readonly LogInHandler _handler;
@@ -28,8 +28,8 @@ public sealed class LogInHandlerTests
         _eve.SetPassword("hash-of-password");
         _hasher.Verify(Arg.Any<string?>(), Arg.Any<string>())
             .Returns(call => call.ArgAt<string?>(0) == "hash-of-password" && call.ArgAt<string>(1) == Password);
-        _users.FindByEmailAsync(new Email("eve@clockin.test"), Arg.Any<CancellationToken>()).Returns(_eve);
-        _handler = new LogInHandler(_users, _sessions, _hasher, _audit, _clock);
+        _usersRepository.FindByEmailAsync(new Email("eve@clockin.test"), Arg.Any<CancellationToken>()).Returns(_eve);
+        _handler = new LogInHandler(_usersRepository, _sessionsRepository, _hasher, _audit, _clock);
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public sealed class LogInHandlerTests
         result.UserId.Should().Be(_eve.Id.Value);
         result.SecurityStamp.Should().Be(_eve.SecurityStamp);
         result.RefreshTokenExpiresAt.Should().Be(_clock.GetUtcNow().AddHours(12));
-        await _sessions.Received(1).SaveAsync(
+        await _sessionsRepository.Received(1).SaveOrUpdateAsync(
             Arg.Is<Session>(s => s.UserId == _eve.Id && s.SecurityStamp == _eve.SecurityStamp),
             Arg.Any<CancellationToken>());
         _audit.Received(1).SignedIn(_eve.Id);
@@ -61,9 +61,9 @@ public sealed class LogInHandlerTests
 
         (await act.Should().ThrowAsync<DomainException>()).Which.Code.Should().Be("InvalidCredentials");
         _eve.FailedSignIns.Should().Be(1);
-        await _users.Received(1).SaveAsync(_eve, Arg.Any<CancellationToken>());
+        await _usersRepository.Received(1).SaveOrUpdateAsync(_eve, Arg.Any<CancellationToken>());
         _audit.Received(1).SignInFailed("eve@clockin.test");
-        await _sessions.DidNotReceiveWithAnyArgs().SaveAsync(default!, TestContext.Current.CancellationToken);
+        await _sessionsRepository.DidNotReceiveWithAnyArgs().SaveOrUpdateAsync(default!, TestContext.Current.CancellationToken);
     }
 
     [Theory]
@@ -82,7 +82,7 @@ public sealed class LogInHandlerTests
     public async Task Rejects_the_same_way_when_the_user_is_pending_activation()
     {
         var fay = User.Create(new Email("fay@clockin.test"), "Fay", Role.Employee);
-        _users.FindByEmailAsync(fay.Email, Arg.Any<CancellationToken>()).Returns(fay);
+        _usersRepository.FindByEmailAsync(fay.Email, Arg.Any<CancellationToken>()).Returns(fay);
 
         var act = () => _handler.HandleAsync(new LogInCommand("fay@clockin.test", Password), CancellationToken.None);
 

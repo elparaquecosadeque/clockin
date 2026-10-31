@@ -22,12 +22,12 @@ public sealed class SessionRepositoryTests(ApiFactory factory) : IDisposable
     {
         User eve = await SavedUserAsync();
         (Session session, RefreshToken token) = Session.Start(eve.Id, eve.SecurityStamp, Now);
-        await Sessions().SaveAsync(session, Ct);
+        await Sessions().SaveOrUpdateAsync(session, Ct);
 
         Session loaded = (await Sessions().FindAsync(session.Id, Ct))!;
         loaded.Should().BeEquivalentTo(session, o => o.Excluding(s => s.Version));
         (RefreshOutcome outcome, RefreshToken? next) = loaded.Refresh(token.Secret, Now.AddHours(1));
-        await Sessions().SaveAsync(loaded, Ct);
+        await Sessions().SaveOrUpdateAsync(loaded, Ct);
 
         Session reloaded = (await Sessions().FindAsync(session.Id, Ct))!;
         outcome.Should().Be(RefreshOutcome.Refreshed);
@@ -45,7 +45,7 @@ public sealed class SessionRepositoryTests(ApiFactory factory) : IDisposable
         (Session other, _) = Session.Start(ed.Id, ed.SecurityStamp, Now);
         foreach (Session session in new[] { phone, laptop, other })
         {
-            await Sessions().SaveAsync(session, Ct);
+            await Sessions().SaveOrUpdateAsync(session, Ct);
         }
 
         await Sessions().RevokeAllAsync(eve.Id, Now.AddMinutes(5), Ct);
@@ -59,7 +59,7 @@ public sealed class SessionRepositoryTests(ApiFactory factory) : IDisposable
     {
         var user = User.Create(new Email($"{Guid.CreateVersion7():N}@clockin.test"), "Someone", Role.Employee);
         user.SetPassword("hash");
-        await _scopes.Get<IUserRepository>().SaveAsync(user, Ct);
+        await _scopes.Get<IUserRepository>().SaveOrUpdateAsync(user, Ct);
         return user;
     }
 

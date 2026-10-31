@@ -22,7 +22,7 @@ public sealed class UserRepositoryTests(ApiFactory factory) : IDisposable
         User eve = NewUser();
         eve.SetPassword("hash");
         eve.SignIn(passwordMatches: false, CompanyClock.At("2026-10-30 10:00"));
-        await Users().SaveAsync(eve, Ct);
+        await Users().SaveOrUpdateAsync(eve, Ct);
 
         User? byId = await Users().FindAsync(eve.Id, Ct);
         User? byEmail = await Users().FindByEmailAsync(eve.Email, Ct);
@@ -36,11 +36,11 @@ public sealed class UserRepositoryTests(ApiFactory factory) : IDisposable
     public async Task Saves_changes_and_bumps_the_version_when_the_user_exists()
     {
         User fay = NewUser();
-        await Users().SaveAsync(fay, Ct);
+        await Users().SaveOrUpdateAsync(fay, Ct);
         User loaded = (await Users().FindAsync(fay.Id, Ct))!;
 
         loaded.SetPassword("hash");
-        await Users().SaveAsync(loaded, Ct);
+        await Users().SaveOrUpdateAsync(loaded, Ct);
 
         User reloaded = (await Users().FindAsync(fay.Id, Ct))!;
         reloaded.Status.Should().Be(UserStatus.Active);
@@ -52,14 +52,14 @@ public sealed class UserRepositoryTests(ApiFactory factory) : IDisposable
     public async Task Rejects_a_save_when_someone_else_saved_first()
     {
         User fay = NewUser();
-        await Users().SaveAsync(fay, Ct);
+        await Users().SaveOrUpdateAsync(fay, Ct);
         User first = (await Users().FindAsync(fay.Id, Ct))!;
         User second = (await Users().FindAsync(fay.Id, Ct))!;
         first.SetPassword("one");
         second.SetPassword("two");
-        await Users().SaveAsync(first, Ct);
+        await Users().SaveOrUpdateAsync(first, Ct);
 
-        var act = () => Users().SaveAsync(second, Ct);
+        var act = () => Users().SaveOrUpdateAsync(second, Ct);
 
         (await act.Should().ThrowAsync<ConflictException>()).Which.Code.Should().Be("ConcurrencyConflict");
     }
@@ -68,9 +68,9 @@ public sealed class UserRepositoryTests(ApiFactory factory) : IDisposable
     public async Task Rejects_a_new_user_when_the_email_is_taken()
     {
         User eve = NewUser();
-        await Users().SaveAsync(eve, Ct);
+        await Users().SaveOrUpdateAsync(eve, Ct);
 
-        var act = () => Users().SaveAsync(User.Create(new Email(eve.Email.Value.ToUpperInvariant()), "Eve 2", Role.Employee), Ct);
+        var act = () => Users().SaveOrUpdateAsync(User.Create(new Email(eve.Email.Value.ToUpperInvariant()), "Eve 2", Role.Employee), Ct);
 
         (await act.Should().ThrowAsync<ConflictException>()).Which.Code.Should().Be("EmailAlreadyInUse");
     }

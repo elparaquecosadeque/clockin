@@ -12,13 +12,13 @@ namespace ClockIn.Application.Teams.Commands;
 /// </summary>
 public sealed record MoveEmployeeCommand(Guid UserId, Guid TeamId);
 
-public sealed class MoveEmployeeHandler(IUserRepository users, ITeamRepository teams)
+public sealed class MoveEmployeeHandler(IUserRepository usersRepository, ITeamRepository teamsRepository)
 {
     public async Task HandleAsync(MoveEmployeeCommand command, CancellationToken ct)
     {
-        User user = await users.FindAsync(new UserId(command.UserId), ct) ?? throw new NotFoundException("User not found.");
-        Team team = await teams.FindAsync(new TeamId(command.TeamId), ct) ?? throw new NotFoundException("Team not found.");
+        User user = await usersRepository.FindAsync(new UserId(command.UserId), ct) ?? throw new NotFoundException("User not found.");
+        Team team = await teamsRepository.FindAsync(new TeamId(command.TeamId), ct) ?? throw new NotFoundException("Team not found.");
         user.MoveTo(team);
-        await users.SaveAsync(user, ct);
+        await usersRepository.SaveOrUpdateAsync(user, ct);
     }
 }

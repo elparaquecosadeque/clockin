@@ -23,24 +23,24 @@ public sealed class CreateTeamValidator : AbstractValidator<CreateTeamCommand>
     }
 }
 
-public sealed class CreateTeamHandler(IUserRepository users, ITeamRepository teams)
+public sealed class CreateTeamHandler(IUserRepository usersRepository, ITeamRepository teamsRepository)
 {
     public async Task<TeamDto> HandleAsync(CreateTeamCommand command, CancellationToken ct)
     {
-        User supervisor = await users.FindAsync(new UserId(command.SupervisorId!.Value), ct)
+        User supervisor = await usersRepository.FindAsync(new UserId(command.SupervisorId!.Value), ct)
             ?? throw new NotFoundException("Supervisor not found.");
-        if (await teams.NameInUseAsync(command.Name, ct))
+        if (await teamsRepository.NameInUseAsync(command.Name, ct))
         {
             throw new ConflictException("TeamNameInUse", "Another team, maybe archived, already has this name.");
         }
 
         var team = Team.Create(command.Name, supervisor);
-        if (await teams.LeadsActiveTeamAsync(supervisor.Id, ct))
+        if (await teamsRepository.LeadsActiveTeamAsync(supervisor.Id, ct))
         {
             throw new DomainException("SupervisorAlreadyLeadsTeam", "This supervisor already leads a team.");
         }
 
-        await teams.SaveAsync(team, ct);
+        await teamsRepository.SaveOrUpdateAsync(team, ct);
         return team.ToDto();
     }
 }

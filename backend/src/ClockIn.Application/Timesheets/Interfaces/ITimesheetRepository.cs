@@ -16,5 +16,5 @@ public interface ITimesheetRepository
     Task<Timesheet?> FindWithOpenEntryAsync(UserId ownerId, CancellationToken ct);
 
     /// <summary>Inserts or updates the whole aggregate and appends its new history.</summary>
-    Task SaveAsync(Timesheet timesheet, CancellationToken ct);
+    Task SaveOrUpdateAsync(Timesheet timesheet, CancellationToken ct);
 }

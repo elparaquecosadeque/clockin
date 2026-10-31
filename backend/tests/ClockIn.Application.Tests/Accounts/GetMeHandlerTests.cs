@@ -20,12 +20,12 @@ public sealed class GetMeHandlerTests
     public async Task Returns_the_user_with_the_permissions_of_their_role(Role role, string[] permissions)
     {
         var user = User.Create(new Email("eve@clockin.test"), "Eve", role);
-        IUserRepository users = Substitute.For<IUserRepository>();
-        users.FindAsync(user.Id, Arg.Any<CancellationToken>()).Returns(user);
+        IUserRepository usersRepository = Substitute.For<IUserRepository>();
+        usersRepository.FindAsync(user.Id, Arg.Any<CancellationToken>()).Returns(user);
         ICurrentUser currentUser = Substitute.For<ICurrentUser>();
         currentUser.Id.Returns(user.Id);
 
-        MeDto me = await new GetMeHandler(currentUser, users, Substitute.For<ITeamRepository>()).HandleAsync(new GetMeQuery(), CancellationToken.None);
+        MeDto me = await new GetMeHandler(currentUser, usersRepository, Substitute.For<ITeamRepository>()).HandleAsync(new GetMeQuery(), CancellationToken.None);
 
         me.Should().BeEquivalentTo(new MeDto(user.Id.Value, "Eve", "eve@clockin.test", role, permissions, "en", "24h", null, null));
     }
@@ -37,15 +37,15 @@ public sealed class GetMeHandlerTests
         var team = Team.Create("Warehouse", sam);
         var eve = User.Create(new Email("eve@clockin.test"), "Eve", Role.Employee);
         eve.MoveTo(team);
-        IUserRepository users = Substitute.For<IUserRepository>();
-        users.FindAsync(eve.Id, Arg.Any<CancellationToken>()).Returns(eve);
-        users.FindAsync(sam.Id, Arg.Any<CancellationToken>()).Returns(sam);
-        ITeamRepository teams = Substitute.For<ITeamRepository>();
-        teams.FindAsync(team.Id, Arg.Any<CancellationToken>()).Returns(team);
+        IUserRepository usersRepository = Substitute.For<IUserRepository>();
+        usersRepository.FindAsync(eve.Id, Arg.Any<CancellationToken>()).Returns(eve);
+        usersRepository.FindAsync(sam.Id, Arg.Any<CancellationToken>()).Returns(sam);
+        ITeamRepository teamsRepository = Substitute.For<ITeamRepository>();
+        teamsRepository.FindAsync(team.Id, Arg.Any<CancellationToken>()).Returns(team);
         ICurrentUser currentUser = Substitute.For<ICurrentUser>();
         currentUser.Id.Returns(eve.Id);
 
-        MeDto me = await new GetMeHandler(currentUser, users, teams).HandleAsync(new GetMeQuery(), CancellationToken.None);
+        MeDto me = await new GetMeHandler(currentUser, usersRepository, teamsRepository).HandleAsync(new GetMeQuery(), CancellationToken.None);
 
         me.TeamName.Should().Be("Warehouse");
         me.SupervisorName.Should().Be("Sam");

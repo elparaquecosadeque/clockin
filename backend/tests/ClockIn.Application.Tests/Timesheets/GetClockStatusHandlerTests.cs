@@ -18,14 +18,14 @@ public sealed class GetClockStatusHandlerTests
 
     private readonly UserId _eve = UserId.New();
     private readonly CompanyClock _clock = new("2026-10-30 10:00");
-    private readonly ITimesheetRepository _timesheets = Substitute.For<ITimesheetRepository>();
+    private readonly ITimesheetRepository _timesheetsRepository = Substitute.For<ITimesheetRepository>();
     private readonly GetClockStatusHandler _handler;
 
     public GetClockStatusHandlerTests()
     {
         ICurrentUser currentUser = Substitute.For<ICurrentUser>();
         currentUser.Id.Returns(_eve);
-        _handler = new GetClockStatusHandler(currentUser, _timesheets, _clock);
+        _handler = new GetClockStatusHandler(currentUser, _timesheetsRepository, _clock);
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public sealed class GetClockStatusHandlerTests
         HasOpen(lastWeek);
         var thisWeek = Timesheet.Start(_eve, ThisWeek);
         Punch(thisWeek, "2026-10-27 08:00", "2026-10-27 09:30");
-        _timesheets.FindAsync(_eve, ThisWeek, Arg.Any<CancellationToken>()).Returns(thisWeek);
+        _timesheetsRepository.FindAsync(_eve, ThisWeek, Arg.Any<CancellationToken>()).Returns(thisWeek);
 
         ClockStatusDto status = await _handler.HandleAsync(new GetClockStatusQuery(), CancellationToken.None);
 
@@ -83,7 +83,7 @@ public sealed class GetClockStatusHandlerTests
         _clock.Set("2026-10-30 21:00");
         var timesheet = Timesheet.Start(_eve, ThisWeek);
         Punch(timesheet, "2026-10-30 19:00", "2026-10-30 20:00");
-        _timesheets.FindAsync(_eve, ThisWeek, Arg.Any<CancellationToken>()).Returns(timesheet);
+        _timesheetsRepository.FindAsync(_eve, ThisWeek, Arg.Any<CancellationToken>()).Returns(timesheet);
 
         ClockStatusDto status = await _handler.HandleAsync(new GetClockStatusQuery(), CancellationToken.None);
 
@@ -98,7 +98,7 @@ public sealed class GetClockStatusHandlerTests
 
     private void HasOpen(Timesheet timesheet)
     {
-        _timesheets.FindWithOpenEntryAsync(_eve, Arg.Any<CancellationToken>()).Returns(timesheet);
-        _timesheets.FindAsync(_eve, timesheet.Week, Arg.Any<CancellationToken>()).Returns(timesheet);
+        _timesheetsRepository.FindWithOpenEntryAsync(_eve, Arg.Any<CancellationToken>()).Returns(timesheet);
+        _timesheetsRepository.FindAsync(_eve, timesheet.Week, Arg.Any<CancellationToken>()).Returns(timesheet);
     }
 }

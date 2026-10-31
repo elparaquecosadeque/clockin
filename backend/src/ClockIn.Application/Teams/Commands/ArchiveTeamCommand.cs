@@ -11,11 +11,11 @@ namespace ClockIn.Application.Teams.Commands;
 /// <summary>Admins only (permission policy). Frees the supervisor; history keeps the team's name.</summary>
 public sealed record ArchiveTeamCommand(Guid TeamId);
 
-public sealed class ArchiveTeamHandler(ITeamRepository teams, IReportingReads reads)
+public sealed class ArchiveTeamHandler(ITeamRepository teamsRepository, IReportingReads reads)
 {
     public async Task HandleAsync(ArchiveTeamCommand command, CancellationToken ct)
     {
-        Team team = await teams.FindAsync(new TeamId(command.TeamId), ct) ?? throw new NotFoundException("Team not found.");
+        Team team = await teamsRepository.FindAsync(new TeamId(command.TeamId), ct) ?? throw new NotFoundException("Team not found.");
         List<PersonRow> members = [.. (await reads.PeopleAsync(ct)).Where(p => p.TeamId == team.Id.Value)];
         if (members.Exists(p => p.Status != UserStatus.Deactivated))
         {
@@ -30,6 +30,6 @@ public sealed class ArchiveTeamHandler(ITeamRepository teams, IReportingReads re
         }
 
         team.Archive();
-        await teams.SaveAsync(team, ct);
+        await teamsRepository.SaveOrUpdateAsync(team, ct);
     }
 }

@@ -23,8 +23,8 @@ public static class CurrentUserCheck
             return;
         }
 
-        IUserRepository users = context.HttpContext.RequestServices.GetRequiredService<IUserRepository>();
-        User? user = await users.FindAsync(new UserId(userId), context.HttpContext.RequestAborted);
+        IUserRepository usersRepository = context.HttpContext.RequestServices.GetRequiredService<IUserRepository>();
+        User? user = await usersRepository.FindAsync(new UserId(userId), context.HttpContext.RequestAborted);
         if (user is not { Status: UserStatus.Active } || user.SecurityStamp != stamp)
         {
             context.Fail("The session is no longer valid.");

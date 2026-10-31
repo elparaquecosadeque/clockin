@@ -14,8 +14,8 @@ namespace ClockIn.Application.Tests.Accounts;
 public sealed class RefreshSessionHandlerTests
 {
     private readonly CompanyClock _clock = new("2026-10-30 08:00");
-    private readonly IUserRepository _users = Substitute.For<IUserRepository>();
-    private readonly ISessionRepository _sessions = Substitute.For<ISessionRepository>();
+    private readonly IUserRepository _usersRepository = Substitute.For<IUserRepository>();
+    private readonly ISessionRepository _sessionsRepository = Substitute.For<ISessionRepository>();
     private readonly IAuditLog _audit = Substitute.For<IAuditLog>();
     private readonly RefreshSessionHandler _handler;
     private readonly User _eve = User.Create(new Email("eve@clockin.test"), "Eve", Role.Employee);
@@ -25,10 +25,10 @@ public sealed class RefreshSessionHandlerTests
     public RefreshSessionHandlerTests()
     {
         _eve.SetPassword("hash");
-        _users.FindAsync(_eve.Id, Arg.Any<CancellationToken>()).Returns(_eve);
+        _usersRepository.FindAsync(_eve.Id, Arg.Any<CancellationToken>()).Returns(_eve);
         (_session, _token) = Session.Start(_eve.Id, _eve.SecurityStamp, _clock.GetUtcNow());
-        _sessions.FindAsync(_session.Id, Arg.Any<CancellationToken>()).Returns(_session);
-        _handler = new RefreshSessionHandler(_users, _sessions, _audit, _clock);
+        _sessionsRepository.FindAsync(_session.Id, Arg.Any<CancellationToken>()).Returns(_session);
+        _handler = new RefreshSessionHandler(_usersRepository, _sessionsRepository, _audit, _clock);
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public sealed class RefreshSessionHandlerTests
         result.UserId.Should().Be(_eve.Id.Value);
         result.RefreshToken.Should().NotBe(_token.Value);
         result.RefreshTokenExpiresAt.Should().Be(_clock.GetUtcNow().AddHours(12));
-        await _sessions.Received(1).SaveAsync(_session, Arg.Any<CancellationToken>());
+        await _sessionsRepository.Received(1).SaveOrUpdateAsync(_session, Arg.Any<CancellationToken>());
     }
 
     [Theory]
@@ -72,7 +72,7 @@ public sealed class RefreshSessionHandlerTests
         var act = () => _handler.HandleAsync(new RefreshSessionCommand(_token.Value), CancellationToken.None);
 
         await act.Should().ThrowAsync<UnauthorizedException>();
-        await _sessions.Received(1).RevokeAllAsync(_eve.Id, _clock.GetUtcNow(), Arg.Any<CancellationToken>());
+        await _sessionsRepository.Received(1).RevokeAllAsync(_eve.Id, _clock.GetUtcNow(), Arg.Any<CancellationToken>());
         _audit.Received(1).RefreshTokenReused(_eve.Id);
     }
 
@@ -84,7 +84,7 @@ public sealed class RefreshSessionHandlerTests
         var act = () => _handler.HandleAsync(new RefreshSessionCommand(_token.Value), CancellationToken.None);
 
         await act.Should().ThrowAsync<UnauthorizedException>();
-        await _sessions.DidNotReceiveWithAnyArgs().SaveAsync(default!, TestContext.Current.CancellationToken);
+        await _sessionsRepository.DidNotReceiveWithAnyArgs().SaveOrUpdateAsync(default!, TestContext.Current.CancellationToken);
     }
 
     [Fact]

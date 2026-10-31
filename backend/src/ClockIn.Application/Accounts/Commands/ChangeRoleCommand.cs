@@ -26,22 +26,22 @@ public sealed class ChangeRoleValidator : AbstractValidator<ChangeRoleCommand>
     }
 }
 
-public sealed class ChangeRoleHandler(ICurrentUser currentUser, IUserRepository users, ITeamRepository teams, IAuditLog audit)
+public sealed class ChangeRoleHandler(ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, IAuditLog audit)
 {
     public async Task HandleAsync(ChangeRoleCommand command, CancellationToken ct)
     {
-        User user = await users.FindAsync(new UserId(command.UserId), ct) ?? throw new NotFoundException("User not found.");
+        User user = await usersRepository.FindAsync(new UserId(command.UserId), ct) ?? throw new NotFoundException("User not found.");
         var role = Enum.Parse<Role>(command.Role);
         Team? team = command.TeamId is { } teamId
-            ? await teams.FindAsync(new TeamId(teamId), ct) ?? throw new NotFoundException("Team not found.")
+            ? await teamsRepository.FindAsync(new TeamId(teamId), ct) ?? throw new NotFoundException("Team not found.")
             : null;
-        if (user.Role == Role.Supervisor && role == Role.Employee && await teams.LeadsActiveTeamAsync(user.Id, ct))
+        if (user.Role == Role.Supervisor && role == Role.Employee && await teamsRepository.LeadsActiveTeamAsync(user.Id, ct))
         {
             throw new DomainException("TeamNeedsNewSupervisor", "This supervisor leads a team. Give the team a new supervisor first.");
         }
 
         user.ChangeRole(role, team);
-        await users.SaveAsync(user, ct);
+        await usersRepository.SaveOrUpdateAsync(user, ct);
         audit.RoleChanged(currentUser.Id, user.Id, role);
     }
 }

@@ -18,18 +18,18 @@ public sealed class SubmitTimesheetValidator : AbstractValidator<SubmitTimesheet
 }
 
 public sealed class SubmitTimesheetHandler(
-    ICurrentUser currentUser, IUserRepository users, ITeamRepository teams, ITimesheetRepository timesheets, TimeProvider time)
+    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ITimesheetRepository timesheetsRepository, TimeProvider time)
 {
     public async Task HandleAsync(SubmitTimesheetCommand command, CancellationToken ct)
     {
         UserId ownerId = command.OwnerId is { } id ? new UserId(id) : currentUser.Id;
-        TimesheetParties parties = await TimesheetParties.LoadAsync(users, teams, currentUser.Id, ownerId, ct);
+        TimesheetParties parties = await TimesheetParties.LoadAsync(usersRepository, teamsRepository, currentUser.Id, ownerId, ct);
         TimesheetParties.Require(parties.CanChange);
 
         var week = new Week(command.WeekStart);
         // A week with no entries can be submitted too: it then exists with 0 hours.
-        Timesheet timesheet = await timesheets.FindAsync(ownerId, week, ct) ?? Timesheet.Start(ownerId, week);
+        Timesheet timesheet = await timesheetsRepository.FindAsync(ownerId, week, ct) ?? Timesheet.Start(ownerId, week);
         timesheet.Submit(currentUser.Id, time.GetUtcNow(), time.LocalTimeZone);
-        await timesheets.SaveAsync(timesheet, ct);
+        await timesheetsRepository.SaveOrUpdateAsync(timesheet, ct);
     }
 }

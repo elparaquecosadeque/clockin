@@ -10,19 +10,19 @@ namespace ClockIn.Application.Teams.Commands;
 /// <summary>Admins only (permission policy). Pending work follows the team; past approvals keep their approver.</summary>
 public sealed record ChangeTeamSupervisorCommand(Guid TeamId, Guid SupervisorId);
 
-public sealed class ChangeTeamSupervisorHandler(IUserRepository users, ITeamRepository teams)
+public sealed class ChangeTeamSupervisorHandler(IUserRepository usersRepository, ITeamRepository teamsRepository)
 {
     public async Task HandleAsync(ChangeTeamSupervisorCommand command, CancellationToken ct)
     {
-        Team team = await teams.FindAsync(new TeamId(command.TeamId), ct) ?? throw new NotFoundException("Team not found.");
-        User supervisor = await users.FindAsync(new UserId(command.SupervisorId), ct)
+        Team team = await teamsRepository.FindAsync(new TeamId(command.TeamId), ct) ?? throw new NotFoundException("Team not found.");
+        User supervisor = await usersRepository.FindAsync(new UserId(command.SupervisorId), ct)
             ?? throw new NotFoundException("Supervisor not found.");
-        if (await teams.LeadsActiveTeamAsync(supervisor.Id, ct))
+        if (await teamsRepository.LeadsActiveTeamAsync(supervisor.Id, ct))
         {
             throw new DomainException("SupervisorAlreadyLeadsTeam", "This supervisor already leads a team.");
         }
 
         team.ChangeSupervisor(supervisor);
-        await teams.SaveAsync(team, ct);
+        await teamsRepository.SaveOrUpdateAsync(team, ct);
     }
 }

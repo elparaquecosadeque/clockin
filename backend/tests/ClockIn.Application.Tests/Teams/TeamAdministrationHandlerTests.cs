@@ -23,9 +23,9 @@ public sealed class TeamAdministrationHandlerTests
 
     public TeamAdministrationHandlerTests()
     {
-        _world.Teams.LeadsActiveTeamAsync(Arg.Any<UserId>(), Arg.Any<CancellationToken>())
+        _world.TeamsRepository.LeadsActiveTeamAsync(Arg.Any<UserId>(), Arg.Any<CancellationToken>())
             .Returns(c => c.Arg<UserId>() == _world.Warehouse.SupervisorId || c.Arg<UserId>() == _world.Office.SupervisorId);
-        _world.Teams.NameInUseAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _world.TeamsRepository.NameInUseAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns(c => new[] { "warehouse", "office" }.Contains(c.Arg<string>().Trim().ToLowerInvariant()));
         _reads.PeopleAsync(Arg.Any<CancellationToken>()).Returns(_ => _people);
         _reads.TimesheetsAsync(Arg.Any<IReadOnlyCollection<Guid>>(), null, Arg.Any<CancellationToken>())
@@ -42,7 +42,7 @@ public sealed class TeamAdministrationHandlerTests
         await Rename().HandleAsync(new RenameTeamCommand(_world.Warehouse.Id.Value, "WAREHOUSE"), Ct);
 
         _world.Warehouse.Name.Should().Be("WAREHOUSE");
-        await _world.Teams.Received(1).SaveAsync(_world.Warehouse, Ct);
+        await _world.TeamsRepository.Received(1).SaveOrUpdateAsync(_world.Warehouse, Ct);
     }
 
     [Fact]
@@ -127,11 +127,11 @@ public sealed class TeamAdministrationHandlerTests
         teams.Select(t => (t.Name, t.SupervisorName, t.EmployeeCount)).Should().Equal(("Warehouse", "Sam", 1), ("Archived", "Sam", 0));
     }
 
-    private RenameTeamHandler Rename() => new(_world.Teams);
+    private RenameTeamHandler Rename() => new(_world.TeamsRepository);
 
-    private ChangeTeamSupervisorHandler ChangeSupervisor() => new(_world.Users, _world.Teams);
+    private ChangeTeamSupervisorHandler ChangeSupervisor() => new(_world.UsersRepository, _world.TeamsRepository);
 
-    private ArchiveTeamHandler Archive() => new(_world.Teams, _reads);
+    private ArchiveTeamHandler Archive() => new(_world.TeamsRepository, _reads);
 
     private PersonRow Member(UserStatus status)
     {
@@ -143,7 +143,7 @@ public sealed class TeamAdministrationHandlerTests
     private User Supervisor(string name)
     {
         var user = User.Create(new Email($"{name.ToLowerInvariant()}@clockin.test"), name, Role.Supervisor);
-        _world.Users.FindAsync(user.Id, Arg.Any<CancellationToken>()).Returns(user);
+        _world.UsersRepository.FindAsync(user.Id, Arg.Any<CancellationToken>()).Returns(user);
         return user;
     }
 }

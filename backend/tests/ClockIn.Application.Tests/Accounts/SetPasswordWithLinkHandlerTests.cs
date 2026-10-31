@@ -13,16 +13,16 @@ namespace ClockIn.Application.Tests.Accounts;
 public sealed class SetPasswordWithLinkHandlerTests
 {
     private readonly CompanyClock _clock = new();
-    private readonly IUserRepository _users = Substitute.For<IUserRepository>();
+    private readonly IUserRepository _usersRepository = Substitute.For<IUserRepository>();
     private readonly IPasswordHasher _hasher = Substitute.For<IPasswordHasher>();
     private readonly SetPasswordWithLinkHandler _handler;
     private readonly User _fay = User.Create(new Email("fay@clockin.test"), "Fay", Role.Employee);
 
     public SetPasswordWithLinkHandlerTests()
     {
-        _users.FindAsync(_fay.Id, Arg.Any<CancellationToken>()).Returns(_fay);
+        _usersRepository.FindAsync(_fay.Id, Arg.Any<CancellationToken>()).Returns(_fay);
         _hasher.Hash(Arg.Any<string>()).Returns(call => $"hashed:{call.Arg<string>()}");
-        _handler = new SetPasswordWithLinkHandler(_users, _hasher, _clock);
+        _handler = new SetPasswordWithLinkHandler(_usersRepository, _hasher, _clock);
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public sealed class SetPasswordWithLinkHandlerTests
 
         _fay.Status.Should().Be(UserStatus.Active);
         _fay.PasswordHash.Should().Be("hashed:correct horse battery");
-        await _users.Received(1).SaveAsync(_fay, Arg.Any<CancellationToken>());
+        await _usersRepository.Received(1).SaveOrUpdateAsync(_fay, Arg.Any<CancellationToken>());
     }
 
     [Theory]

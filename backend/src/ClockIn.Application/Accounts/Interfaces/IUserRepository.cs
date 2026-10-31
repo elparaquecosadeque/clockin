@@ -14,5 +14,5 @@ public interface IUserRepository
     Task<IReadOnlyDictionary<UserId, string>> NamesAsync(IEnumerable<UserId> ids, CancellationToken ct);
 
     /// <summary>Inserts or updates the whole aggregate.</summary>
-    Task SaveAsync(User user, CancellationToken ct);
+    Task SaveOrUpdateAsync(User user, CancellationToken ct);
 }

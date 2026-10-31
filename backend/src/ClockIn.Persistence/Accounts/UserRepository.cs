@@ -42,7 +42,7 @@ public sealed class UserRepository(AppDataConnection db) : IUserRepository
             .ToDictionaryAsync(u => new UserId(u.Id), u => u.Name, ct);
     }
 
-    public async Task SaveAsync(User user, CancellationToken ct)
+    public async Task SaveOrUpdateAsync(User user, CancellationToken ct)
     {
         if (user.Version == 0)
         {

@@ -140,11 +140,11 @@ public sealed class TimesheetWorkflowEndpointTests(ApiFactory factory)
         using (var scopes = new Scopes(factory))
         {
             var team = Team.Create($"Team {Guid.CreateVersion7():N}", sam);
-            await scopes.Get<ITeamRepository>().SaveAsync(team, Ct);
-            IUserRepository users = scopes.Get<IUserRepository>();
-            User saved = (await users.FindAsync(eve.Id, Ct))!;
+            await scopes.Get<ITeamRepository>().SaveOrUpdateAsync(team, Ct);
+            IUserRepository usersRepository = scopes.Get<IUserRepository>();
+            User saved = (await usersRepository.FindAsync(eve.Id, Ct))!;
             saved.MoveTo(team);
-            await users.SaveAsync(saved, Ct);
+            await usersRepository.SaveOrUpdateAsync(saved, Ct);
         }
 
         return (await SignedInAsync(eve), await SignedInAsync(sam), eve.Id.Value);

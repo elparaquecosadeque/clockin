@@ -18,22 +18,22 @@ public sealed class RequestCorrectionValidator : AbstractValidator<RequestCorrec
 }
 
 public sealed class RequestCorrectionHandler(
-    ICurrentUser currentUser, IUserRepository users, ITeamRepository teams, ITimesheetRepository timesheets,
-    ICorrectionRequestRepository corrections, TimeProvider time)
+    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ITimesheetRepository timesheetsRepository,
+    ICorrectionRequestRepository correctionsRepository, TimeProvider time)
 {
     public async Task<Guid> HandleAsync(RequestCorrectionCommand command, CancellationToken ct)
     {
-        Timesheet timesheet = await timesheets.GetAsync(command.TimesheetId, ct);
-        TimesheetParties parties = await TimesheetParties.LoadAsync(users, teams, currentUser.Id, timesheet.OwnerId, ct);
+        Timesheet timesheet = await timesheetsRepository.GetAsync(command.TimesheetId, ct);
+        TimesheetParties parties = await TimesheetParties.LoadAsync(usersRepository, teamsRepository, currentUser.Id, timesheet.OwnerId, ct);
         TimesheetParties.Require(parties.IsOwner && parties.CanChange);
-        if (await corrections.FindPendingAsync(timesheet.Id, ct) is not null)
+        if (await correctionsRepository.FindPendingAsync(timesheet.Id, ct) is not null)
         {
             throw new ConflictException("CorrectionRequestAlreadyPending", "A correction request on this week is already waiting.");
         }
 
         // The timesheet records it, and rejects a Draft, through CorrectionRequested in this transaction.
         var request = CorrectionRequest.Create(timesheet.Id, timesheet.OwnerId, command.Reason, time.GetUtcNow());
-        await corrections.SaveAsync(request, ct);
+        await correctionsRepository.SaveOrUpdateAsync(request, ct);
         return request.Id.Value;
     }
 }

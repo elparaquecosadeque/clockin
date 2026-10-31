@@ -18,14 +18,14 @@ public sealed class ClockInHandlerTests
 
     private readonly UserId _eve = UserId.New();
     private readonly CompanyClock _clock = new("2026-10-30 08:00");
-    private readonly ITimesheetRepository _timesheets = Substitute.For<ITimesheetRepository>();
+    private readonly ITimesheetRepository _timesheetsRepository = Substitute.For<ITimesheetRepository>();
     private readonly ClockInHandler _handler;
 
     public ClockInHandlerTests()
     {
         ICurrentUser currentUser = Substitute.For<ICurrentUser>();
         currentUser.Id.Returns(_eve);
-        _handler = new ClockInHandler(currentUser, _timesheets, _clock);
+        _handler = new ClockInHandler(currentUser, _timesheetsRepository, _clock);
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public sealed class ClockInHandlerTests
     {
         var result = await _handler.HandleAsync(new ClockInCommand("203.0.113.7", "Mobile Safari"), CancellationToken.None);
 
-        await _timesheets.Received(1).SaveAsync(
+        await _timesheetsRepository.Received(1).SaveOrUpdateAsync(
             Arg.Is<Timesheet>(t =>
                 t.OwnerId == _eve
                 && t.Week == new Week(new DateOnly(2026, 10, 26))
@@ -48,13 +48,13 @@ public sealed class ClockInHandlerTests
     public async Task Adds_the_entry_to_the_existing_timesheet_when_the_week_already_has_one()
     {
         Timesheet existing = TimesheetWithClosedEntry("2026-10-30 06:00", "2026-10-30 07:00");
-        _timesheets.FindAsync(_eve, existing.Week, Arg.Any<CancellationToken>()).Returns(existing);
+        _timesheetsRepository.FindAsync(_eve, existing.Week, Arg.Any<CancellationToken>()).Returns(existing);
 
         await _handler.HandleAsync(new ClockInCommand("203.0.113.7", "Mobile Safari"), CancellationToken.None);
 
         existing.Entries.Should().HaveCount(2);
         existing.OpenEntry!.Start.Should().Be(CompanyClock.At("2026-10-30 08:00"));
-        await _timesheets.Received(1).SaveAsync(existing, Arg.Any<CancellationToken>());
+        await _timesheetsRepository.Received(1).SaveOrUpdateAsync(existing, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -62,12 +62,12 @@ public sealed class ClockInHandlerTests
     {
         var lastWeek = Timesheet.Start(_eve, new Week(new DateOnly(2026, 10, 19)));
         lastWeek.ClockIn(CompanyClock.At("2026-10-25 22:00"), Phone, CompanyClock.Zone);
-        _timesheets.FindWithOpenEntryAsync(_eve, Arg.Any<CancellationToken>()).Returns(lastWeek);
+        _timesheetsRepository.FindWithOpenEntryAsync(_eve, Arg.Any<CancellationToken>()).Returns(lastWeek);
 
         var act = () => _handler.HandleAsync(new ClockInCommand("203.0.113.7", "Mobile Safari"), CancellationToken.None);
 
         (await act.Should().ThrowAsync<DomainException>()).Which.Code.Should().Be("EntryAlreadyOpen");
-        await _timesheets.DidNotReceiveWithAnyArgs().SaveAsync(default!, TestContext.Current.CancellationToken);
+        await _timesheetsRepository.DidNotReceiveWithAnyArgs().SaveOrUpdateAsync(default!, TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -77,7 +77,7 @@ public sealed class ClockInHandlerTests
 
         await _handler.HandleAsync(new ClockInCommand("203.0.113.7", "Mobile Safari"), CancellationToken.None);
 
-        await _timesheets.Received(1).SaveAsync(
+        await _timesheetsRepository.Received(1).SaveOrUpdateAsync(
             Arg.Is<Timesheet>(t => t.Week == new Week(new DateOnly(2026, 10, 26))),
             Arg.Any<CancellationToken>());
     }
@@ -85,7 +85,7 @@ public sealed class ClockInHandlerTests
     [Fact]
     public async Task Reports_the_open_entry_when_a_simultaneous_punch_saved_first()
     {
-        _timesheets.SaveAsync(Arg.Any<Timesheet>(), Arg.Any<CancellationToken>())
+        _timesheetsRepository.SaveOrUpdateAsync(Arg.Any<Timesheet>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromException(new ConflictException("ConcurrencyConflict", "Changed by someone else.")));
 
         var act = () => _handler.HandleAsync(new ClockInCommand("203.0.113.7", "Mobile Safari"), CancellationToken.None);

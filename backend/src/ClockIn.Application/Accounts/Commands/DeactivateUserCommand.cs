@@ -13,10 +13,10 @@ public sealed record DeactivateUserCommand(Guid UserId) : ITransactional;
 
 public sealed class DeactivateUserHandler(
     ICurrentUser currentUser,
-    IUserRepository users,
-    ISessionRepository sessions,
-    ITeamRepository teams,
-    ITimesheetRepository timesheets,
+    IUserRepository usersRepository,
+    ISessionRepository sessionsRepository,
+    ITeamRepository teamsRepository,
+    ITimesheetRepository timesheetsRepository,
     IAuditLog audit,
     TimeProvider time)
 {
@@ -28,20 +28,20 @@ public sealed class DeactivateUserHandler(
             throw new DomainException("CannotDeactivateSelf", "You cannot deactivate your own account.");
         }
 
-        User user = await users.FindAsync(userId, ct) ?? throw new NotFoundException("User not found.");
-        if (await timesheets.FindWithOpenEntryAsync(userId, ct) is not null)
+        User user = await usersRepository.FindAsync(userId, ct) ?? throw new NotFoundException("User not found.");
+        if (await timesheetsRepository.FindWithOpenEntryAsync(userId, ct) is not null)
         {
             throw new DomainException("OpenEntryMustBeClosed", "The user is clocked in. Close the open entry first.");
         }
 
-        if (await teams.LeadsActiveTeamAsync(userId, ct))
+        if (await teamsRepository.LeadsActiveTeamAsync(userId, ct))
         {
             throw new DomainException("TeamNeedsNewSupervisor", "This supervisor leads a team. Give the team a new supervisor first.");
         }
 
         user.Deactivate();
-        await users.SaveAsync(user, ct);
-        await sessions.RevokeAllAsync(userId, time.GetUtcNow(), ct);
+        await usersRepository.SaveOrUpdateAsync(user, ct);
+        await sessionsRepository.RevokeAllAsync(userId, time.GetUtcNow(), ct);
         audit.UserDeactivated(currentUser.Id, userId);
     }
 }

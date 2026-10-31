@@ -20,11 +20,11 @@ public sealed class LogInValidator : AbstractValidator<LogInCommand>
 }
 
 public sealed class LogInHandler(
-    IUserRepository users, ISessionRepository sessions, IPasswordHasher hasher, IAuditLog audit, TimeProvider time)
+    IUserRepository usersRepository, ISessionRepository sessionsRepository, IPasswordHasher hasher, IAuditLog audit, TimeProvider time)
 {
     public async Task<SessionResult> HandleAsync(LogInCommand command, CancellationToken ct)
     {
-        User? user = Email.TryCreate(command.Email, out Email? email) ? await users.FindByEmailAsync(email, ct) : null;
+        User? user = Email.TryCreate(command.Email, out Email? email) ? await usersRepository.FindByEmailAsync(email, ct) : null;
         // Always verify, even with no user, so timing doesn't reveal which emails exist.
         bool passwordMatches = hasher.Verify(user?.PasswordHash, command.Password);
         if (user is null)
@@ -35,7 +35,7 @@ public sealed class LogInHandler(
         DateTimeOffset now = time.GetUtcNow();
         SignInOutcome outcome = user.SignIn(passwordMatches, now);
         // ponytail: the failure count is saved before throwing; a transaction-per-command middleware must not roll it back.
-        await users.SaveAsync(user, ct);
+        await usersRepository.SaveOrUpdateAsync(user, ct);
         if (outcome == SignInOutcome.LockedOut)
         {
             audit.LockedOut(user.Id);
@@ -47,7 +47,7 @@ public sealed class LogInHandler(
         }
 
         (Session session, RefreshToken token) = Session.Start(user.Id, user.SecurityStamp, now);
-        await sessions.SaveAsync(session, ct);
+        await sessionsRepository.SaveOrUpdateAsync(session, ct);
         audit.SignedIn(user.Id);
         return session.ToResult(token);
     }

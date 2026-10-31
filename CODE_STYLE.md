@@ -71,6 +71,7 @@ Api, PublicApi ──► Application ──► Domain
 - File-scoped namespaces.
 - Classes are `sealed` by default; unseal only for a reason.
 - Primary constructors for dependency injection.
+- Variables of a repository type end in `Repository`: `ITimesheetRepository timesheetsRepository` ([ADR 0006](docs/adr/0006-repository-suffix-on-variables.md)).
 - Async methods end in `Async`, take a `CancellationToken` as the last parameter and always pass it on.
 - `var` only when the type is obvious from the right-hand side.
 - Implicit usings only for BCL namespaces.
@@ -237,12 +238,12 @@ public sealed class CreateOrderValidator : AbstractValidator<CreateOrderCommand>
     }
 }
 
-public sealed class CreateOrderHandler(IOrderRepository orders)
+public sealed class CreateOrderHandler(IOrderRepository ordersRepository)
 {
     public async Task<OrderDto> HandleAsync(CreateOrderCommand command, CancellationToken ct)
     {
         var order = Order.Create(new CustomerId(command.CustomerId), command.Lines);
-        await orders.AddAsync(order, ct);
+        await ordersRepository.AddAsync(order, ct);
         return order.ToDto();
     }
 }

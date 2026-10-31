@@ -19,12 +19,12 @@ public sealed class UpdatePreferencesValidator : AbstractValidator<UpdatePrefere
     }
 }
 
-public sealed class UpdatePreferencesHandler(ICurrentUser currentUser, IUserRepository users)
+public sealed class UpdatePreferencesHandler(ICurrentUser currentUser, IUserRepository usersRepository)
 {
     public async Task HandleAsync(UpdatePreferencesCommand command, CancellationToken ct)
     {
-        User user = await users.FindAsync(currentUser.Id, ct) ?? throw new UnauthorizedException();
+        User user = await usersRepository.FindAsync(currentUser.Id, ct) ?? throw new UnauthorizedException();
         user.UpdatePreferences(command.Language, command.TimeFormat);
-        await users.SaveAsync(user, ct);
+        await usersRepository.SaveOrUpdateAsync(user, ct);
     }
 }

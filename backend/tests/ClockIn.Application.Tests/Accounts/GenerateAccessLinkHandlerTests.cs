@@ -15,7 +15,7 @@ namespace ClockIn.Application.Tests.Accounts;
 public sealed class GenerateAccessLinkHandlerTests
 {
     private readonly CompanyClock _clock = new();
-    private readonly IUserRepository _users = Substitute.For<IUserRepository>();
+    private readonly IUserRepository _usersRepository = Substitute.For<IUserRepository>();
     private readonly IAuditLog _audit = Substitute.For<IAuditLog>();
     private readonly UserId _ada = UserId.New();
     private readonly User _eve = User.Create(new Email("eve@clockin.test"), "Eve", Role.Employee);
@@ -24,10 +24,10 @@ public sealed class GenerateAccessLinkHandlerTests
     public GenerateAccessLinkHandlerTests()
     {
         _eve.SetPassword("hash");
-        _users.FindAsync(_eve.Id, Arg.Any<CancellationToken>()).Returns(_eve);
+        _usersRepository.FindAsync(_eve.Id, Arg.Any<CancellationToken>()).Returns(_eve);
         ICurrentUser currentUser = Substitute.For<ICurrentUser>();
         currentUser.Id.Returns(_ada);
-        _handler = new GenerateAccessLinkHandler(currentUser, _users, _audit, _clock);
+        _handler = new GenerateAccessLinkHandler(currentUser, _usersRepository, _audit, _clock);
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public sealed class GenerateAccessLinkHandlerTests
         link.ExpiresAt.Should().Be(_clock.GetUtcNow().AddHours(72));
         AccessLink.TryParse(link.Token, out UserId userId, out _).Should().BeTrue();
         userId.Should().Be(_eve.Id);
-        await _users.Received(1).SaveAsync(_eve, Arg.Any<CancellationToken>());
+        await _usersRepository.Received(1).SaveOrUpdateAsync(_eve, Arg.Any<CancellationToken>());
         _audit.Received(1).AccessLinkGenerated(_ada, _eve.Id);
     }
 

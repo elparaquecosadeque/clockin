@@ -8,11 +8,11 @@ namespace ClockIn.Application.Accounts.Commands;
 /// <param name="Email">The <c>FirstAdmin:Email</c> deploy setting; ignored once any admin is active.</param>
 public sealed record SeedFirstAdminCommand(string? Email);
 
-public sealed class SeedFirstAdminHandler(IUserRepository users, IAuditLog audit, TimeProvider time)
+public sealed class SeedFirstAdminHandler(IUserRepository usersRepository, IAuditLog audit, TimeProvider time)
 {
     public async Task HandleAsync(SeedFirstAdminCommand command, CancellationToken ct)
     {
-        IReadOnlyList<User> admins = await users.FindByRoleAsync(Role.Admin, ct);
+        IReadOnlyList<User> admins = await usersRepository.FindByRoleAsync(Role.Admin, ct);
         if (admins.Any(a => a.Status == UserStatus.Active))
         {
             return;
@@ -20,7 +20,7 @@ public sealed class SeedFirstAdminHandler(IUserRepository users, IAuditLog audit
 
         User admin = admins.FirstOrDefault(a => a.Status == UserStatus.PendingActivation) ?? NewAdmin(command.Email);
         AccessLink link = admin.IssueAccessLink(time.GetUtcNow());
-        await users.SaveAsync(admin, ct);
+        await usersRepository.SaveOrUpdateAsync(admin, ct);
         audit.FirstAdminLinkIssued(admin.Email, link.Token);
     }
 

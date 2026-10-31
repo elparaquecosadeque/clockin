@@ -21,17 +21,17 @@ public sealed class SetPasswordWithLinkValidator : AbstractValidator<SetPassword
     }
 }
 
-public sealed class SetPasswordWithLinkHandler(IUserRepository users, IPasswordHasher hasher, TimeProvider time)
+public sealed class SetPasswordWithLinkHandler(IUserRepository usersRepository, IPasswordHasher hasher, TimeProvider time)
 {
     public async Task HandleAsync(SetPasswordWithLinkCommand command, CancellationToken ct)
     {
         if (!AccessLink.TryParse(command.Token, out UserId userId, out string? secret)
-            || await users.FindAsync(userId, ct) is not { } user)
+            || await usersRepository.FindAsync(userId, ct) is not { } user)
         {
             throw new DomainException("InvalidOrExpiredLink", "The link is invalid or has expired. Ask an admin for a new one.");
         }
 
         user.SetPasswordWithLink(secret, hasher.Hash(command.Password), time.GetUtcNow());
-        await users.SaveAsync(user, ct);
+        await usersRepository.SaveOrUpdateAsync(user, ct);
     }
 }

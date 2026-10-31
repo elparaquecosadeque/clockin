@@ -15,15 +15,15 @@ namespace ClockIn.Application.Tests.Teams;
 /// <summary>create-team.feature, as the use case sees it. Only admins reach it (permission policy).</summary>
 public sealed class CreateTeamHandlerTests
 {
-    private readonly IUserRepository _users = Substitute.For<IUserRepository>();
-    private readonly ITeamRepository _teams = Substitute.For<ITeamRepository>();
+    private readonly IUserRepository _usersRepository = Substitute.For<IUserRepository>();
+    private readonly ITeamRepository _teamsRepository = Substitute.For<ITeamRepository>();
     private readonly User _sid = User.Create(new Email("sid@clockin.test"), "Sid", Role.Supervisor);
     private readonly CreateTeamHandler _handler;
 
     public CreateTeamHandlerTests()
     {
-        _users.FindAsync(_sid.Id, Arg.Any<CancellationToken>()).Returns(_sid);
-        _handler = new CreateTeamHandler(_users, _teams);
+        _usersRepository.FindAsync(_sid.Id, Arg.Any<CancellationToken>()).Returns(_sid);
+        _handler = new CreateTeamHandler(_usersRepository, _teamsRepository);
     }
 
     [Fact]
@@ -34,13 +34,13 @@ public sealed class CreateTeamHandlerTests
         team.Name.Should().Be("Night Shift");
         team.SupervisorId.Should().Be(_sid.Id.Value);
         team.IsArchived.Should().BeFalse();
-        await _teams.Received(1).SaveAsync(Arg.Is<Team>(t => t.Name == "Night Shift"), Arg.Any<CancellationToken>());
+        await _teamsRepository.Received(1).SaveOrUpdateAsync(Arg.Is<Team>(t => t.Name == "Night Shift"), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Rejects_a_name_already_in_use_including_archived_teams()
     {
-        _teams.NameInUseAsync(" warehouse", Arg.Any<CancellationToken>()).Returns(true);
+        _teamsRepository.NameInUseAsync(" warehouse", Arg.Any<CancellationToken>()).Returns(true);
 
         var act = () => _handler.HandleAsync(new CreateTeamCommand(" warehouse", _sid.Id.Value), CancellationToken.None);
 
@@ -50,7 +50,7 @@ public sealed class CreateTeamHandlerTests
     [Fact]
     public async Task Rejects_a_supervisor_who_already_leads_a_team()
     {
-        _teams.LeadsActiveTeamAsync(_sid.Id, Arg.Any<CancellationToken>()).Returns(true);
+        _teamsRepository.LeadsActiveTeamAsync(_sid.Id, Arg.Any<CancellationToken>()).Returns(true);
 
         var act = () => _handler.HandleAsync(new CreateTeamCommand("Night Shift", _sid.Id.Value), CancellationToken.None);
 

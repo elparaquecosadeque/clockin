@@ -18,14 +18,14 @@ public sealed class ClockOutHandlerTests
 
     private readonly UserId _eve = UserId.New();
     private readonly CompanyClock _clock = new("2026-10-30 16:30");
-    private readonly ITimesheetRepository _timesheets = Substitute.For<ITimesheetRepository>();
+    private readonly ITimesheetRepository _timesheetsRepository = Substitute.For<ITimesheetRepository>();
     private readonly ClockOutHandler _handler;
 
     public ClockOutHandlerTests()
     {
         ICurrentUser currentUser = Substitute.For<ICurrentUser>();
         currentUser.Id.Returns(_eve);
-        _handler = new ClockOutHandler(currentUser, _timesheets, _clock);
+        _handler = new ClockOutHandler(currentUser, _timesheetsRepository, _clock);
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public sealed class ClockOutHandlerTests
         result.End.Should().Be(CompanyClock.At("2026-10-30 16:30"));
         timesheet.OpenEntry.Should().BeNull();
         timesheet.Entries.Single().ClockOutSource.Should().Be(Laptop);
-        await _timesheets.Received(1).SaveAsync(timesheet, Arg.Any<CancellationToken>());
+        await _timesheetsRepository.Received(1).SaveOrUpdateAsync(timesheet, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public sealed class ClockOutHandlerTests
 
         lastWeek.Week.Should().Be(new Week(new DateOnly(2026, 10, 19)));
         lastWeek.Entries.Single().Duration.Should().Be(TimeSpan.FromHours(8));
-        await _timesheets.Received(1).SaveAsync(lastWeek, Arg.Any<CancellationToken>());
+        await _timesheetsRepository.Received(1).SaveOrUpdateAsync(lastWeek, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -72,14 +72,14 @@ public sealed class ClockOutHandlerTests
 
         (await act.Should().ThrowAsync<DomainException>()).Which.Code.Should().Be("EntryTooLong");
         timesheet.OpenEntry.Should().NotBeNull();
-        await _timesheets.DidNotReceiveWithAnyArgs().SaveAsync(default!, TestContext.Current.CancellationToken);
+        await _timesheetsRepository.DidNotReceiveWithAnyArgs().SaveOrUpdateAsync(default!, TestContext.Current.CancellationToken);
     }
 
     private Timesheet OpenSince(string start)
     {
         var timesheet = Timesheet.Start(_eve, Week.Containing(CompanyClock.At(start), CompanyClock.Zone));
         timesheet.ClockIn(CompanyClock.At(start), Phone, CompanyClock.Zone);
-        _timesheets.FindWithOpenEntryAsync(_eve, Arg.Any<CancellationToken>()).Returns(timesheet);
+        _timesheetsRepository.FindWithOpenEntryAsync(_eve, Arg.Any<CancellationToken>()).Returns(timesheet);
         return timesheet;
     }
 }

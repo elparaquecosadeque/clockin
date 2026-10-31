@@ -22,19 +22,19 @@ public sealed class ChangeOwnPasswordValidator : AbstractValidator<ChangeOwnPass
 }
 
 public sealed class ChangeOwnPasswordHandler(
-    ICurrentUser currentUser, IUserRepository users, ISessionRepository sessions, IPasswordHasher hasher, TimeProvider time)
+    ICurrentUser currentUser, IUserRepository usersRepository, ISessionRepository sessionsRepository, IPasswordHasher hasher, TimeProvider time)
 {
     public async Task<SessionResult> HandleAsync(ChangeOwnPasswordCommand command, CancellationToken ct)
     {
-        User user = await users.FindAsync(currentUser.Id, ct) ?? throw new UnauthorizedException();
+        User user = await usersRepository.FindAsync(currentUser.Id, ct) ?? throw new UnauthorizedException();
         bool matches = hasher.Verify(user.PasswordHash, command.CurrentPassword);
         user.ChangePassword(matches, matches ? hasher.Hash(command.NewPassword) : "");
-        await users.SaveAsync(user, ct);
+        await usersRepository.SaveOrUpdateAsync(user, ct);
 
         DateTimeOffset now = time.GetUtcNow();
-        await sessions.RevokeAllAsync(user.Id, now, ct);
+        await sessionsRepository.RevokeAllAsync(user.Id, now, ct);
         (Session session, RefreshToken token) = Session.Start(user.Id, user.SecurityStamp, now);
-        await sessions.SaveAsync(session, ct);
+        await sessionsRepository.SaveOrUpdateAsync(session, ct);
         return session.ToResult(token);
     }
 }

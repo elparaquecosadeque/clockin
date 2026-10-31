@@ -45,7 +45,7 @@ public sealed class TimesheetRepository(AppDataConnection db) : ITimesheetReposi
         return record is null ? null : await LoadAsync(record, ct);
     }
 
-    public async Task SaveAsync(Timesheet timesheet, CancellationToken ct)
+    public async Task SaveOrUpdateAsync(Timesheet timesheet, CancellationToken ct)
     {
         await SaveTimesheetAsync(timesheet, ct);
         await SaveEntriesAsync(timesheet, ct);

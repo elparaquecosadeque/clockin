@@ -25,7 +25,7 @@ public sealed class CorrectionRequestRepository(AppDataConnection db, PendingDom
             .OrderByDescending(r => r.RequestedAt)
             .FirstOrDefaultAsync(ct));
 
-    public async Task SaveAsync(CorrectionRequest request, CancellationToken ct)
+    public async Task SaveOrUpdateAsync(CorrectionRequest request, CancellationToken ct)
     {
         if (request.Version == 0)
         {

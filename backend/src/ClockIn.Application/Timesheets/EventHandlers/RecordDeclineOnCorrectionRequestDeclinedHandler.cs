@@ -4,12 +4,12 @@ using ClockIn.Domain.Timesheets;
 
 namespace ClockIn.Application.Timesheets.EventHandlers;
 
-public sealed class RecordDeclineOnCorrectionRequestDeclinedHandler(ITimesheetRepository timesheets) : DomainEventSubscriber<CorrectionRequestDeclined>
+public sealed class RecordDeclineOnCorrectionRequestDeclinedHandler(ITimesheetRepository timesheetsRepository) : DomainEventSubscriber<CorrectionRequestDeclined>
 {
     protected override async Task HandleAsync(CorrectionRequestDeclined domainEvent, CancellationToken ct)
     {
-        Timesheet timesheet = await timesheets.GetAsync(domainEvent.TimesheetId.Value, ct);
+        Timesheet timesheet = await timesheetsRepository.GetAsync(domainEvent.TimesheetId.Value, ct);
         timesheet.RecordCorrectionDeclined(domainEvent.ApproverId, domainEvent.Comment, domainEvent.At);
-        await timesheets.SaveAsync(timesheet, ct);
+        await timesheetsRepository.SaveOrUpdateAsync(timesheet, ct);
     }
 }

@@ -17,13 +17,13 @@ public sealed class DeleteEntryValidator : AbstractValidator<DeleteEntryCommand>
 }
 
 public sealed class DeleteEntryHandler(
-    ICurrentUser currentUser, IUserRepository users, ITeamRepository teams, ITimesheetRepository timesheets, TimeProvider time)
+    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ITimesheetRepository timesheetsRepository, TimeProvider time)
 {
     public async Task HandleAsync(DeleteEntryCommand command, CancellationToken ct)
     {
         var entryId = new TimeEntryId(command.EntryId);
-        Timesheet timesheet = await timesheets.ForEntryChangeAsync(currentUser, users, teams, entryId, command.Version, ct);
+        Timesheet timesheet = await timesheetsRepository.ForEntryChangeAsync(currentUser, usersRepository, teamsRepository, entryId, command.Version, ct);
         timesheet.DeleteEntry(currentUser.Id, entryId, command.Note, time.GetUtcNow());
-        await timesheets.SaveAsync(timesheet, ct);
+        await timesheetsRepository.SaveOrUpdateAsync(timesheet, ct);
     }
 }

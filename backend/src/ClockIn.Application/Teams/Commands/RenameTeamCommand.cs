@@ -17,18 +17,18 @@ public sealed class RenameTeamValidator : AbstractValidator<RenameTeamCommand>
     }
 }
 
-public sealed class RenameTeamHandler(ITeamRepository teams)
+public sealed class RenameTeamHandler(ITeamRepository teamsRepository)
 {
     public async Task HandleAsync(RenameTeamCommand command, CancellationToken ct)
     {
-        Team team = await teams.FindAsync(new TeamId(command.TeamId), ct) ?? throw new NotFoundException("Team not found.");
+        Team team = await teamsRepository.FindAsync(new TeamId(command.TeamId), ct) ?? throw new NotFoundException("Team not found.");
         // Changing only the case keeps the normalized name, which the team itself holds.
-        if (Team.NormalizeName(command.Name) != Team.NormalizeName(team.Name) && await teams.NameInUseAsync(command.Name, ct))
+        if (Team.NormalizeName(command.Name) != Team.NormalizeName(team.Name) && await teamsRepository.NameInUseAsync(command.Name, ct))
         {
             throw new ConflictException("TeamNameInUse", "Another team, maybe archived, already has this name.");
         }
 
         team.Rename(command.Name);
-        await teams.SaveAsync(team, ct);
+        await teamsRepository.SaveOrUpdateAsync(team, ct);
     }
 }

@@ -30,7 +30,7 @@ public sealed class TimesheetRepositoryTests(ApiFactory factory) : IDisposable
         timesheet.ClockIn(CompanyClock.At("2026-10-30 08:00"), Phone, CompanyClock.Zone);
         timesheet.ClockOut(CompanyClock.At("2026-10-30 12:00"), Laptop);
         timesheet.ClockIn(CompanyClock.At("2026-10-30 13:00"), Phone, CompanyClock.Zone);
-        await SaveAsync(timesheet);
+        await SaveOrUpdateAsync(timesheet);
 
         Timesheet? loaded = await Repository().FindAsync(_eve, ThisWeek, Ct);
 
@@ -56,7 +56,7 @@ public sealed class TimesheetRepositoryTests(ApiFactory factory) : IDisposable
     {
         var lastWeek = Timesheet.Start(_eve, LastWeek);
         lastWeek.ClockIn(CompanyClock.At("2026-10-25 22:00"), Phone, CompanyClock.Zone);
-        await SaveAsync(lastWeek);
+        await SaveOrUpdateAsync(lastWeek);
 
         Timesheet? found = await Repository().FindWithOpenEntryAsync(_eve, Ct);
 
@@ -70,7 +70,7 @@ public sealed class TimesheetRepositoryTests(ApiFactory factory) : IDisposable
         var timesheet = Timesheet.Start(_eve, ThisWeek);
         timesheet.ClockIn(CompanyClock.At("2026-10-30 08:00"), Phone, CompanyClock.Zone);
         timesheet.ClockOut(CompanyClock.At("2026-10-30 12:00"), Laptop);
-        await SaveAsync(timesheet);
+        await SaveOrUpdateAsync(timesheet);
 
         Timesheet? found = await Repository().FindWithOpenEntryAsync(_eve, Ct);
 
@@ -82,11 +82,11 @@ public sealed class TimesheetRepositoryTests(ApiFactory factory) : IDisposable
     {
         var timesheet = Timesheet.Start(_eve, ThisWeek);
         timesheet.ClockIn(CompanyClock.At("2026-10-30 08:00"), Phone, CompanyClock.Zone);
-        await SaveAsync(timesheet);
+        await SaveOrUpdateAsync(timesheet);
 
         Timesheet loaded = (await Repository().FindAsync(_eve, ThisWeek, Ct))!;
         loaded.ClockOut(CompanyClock.At("2026-10-30 12:00"), Laptop);
-        await SaveAsync(loaded);
+        await SaveOrUpdateAsync(loaded);
 
         Timesheet reloaded = (await Repository().FindAsync(_eve, ThisWeek, Ct))!;
         reloaded.Version.Should().Be(2);
@@ -99,14 +99,14 @@ public sealed class TimesheetRepositoryTests(ApiFactory factory) : IDisposable
     {
         var timesheet = Timesheet.Start(_eve, ThisWeek);
         timesheet.ClockIn(CompanyClock.At("2026-10-30 08:00"), Phone, CompanyClock.Zone);
-        await SaveAsync(timesheet);
+        await SaveOrUpdateAsync(timesheet);
         Timesheet first = (await Repository().FindAsync(_eve, ThisWeek, Ct))!;
         Timesheet second = (await Repository().FindAsync(_eve, ThisWeek, Ct))!;
         first.ClockOut(CompanyClock.At("2026-10-30 12:00"), Laptop);
         second.ClockOut(CompanyClock.At("2026-10-30 12:01"), Phone);
-        await SaveAsync(first);
+        await SaveOrUpdateAsync(first);
 
-        var act = () => SaveAsync(second);
+        var act = () => SaveOrUpdateAsync(second);
 
         (await act.Should().ThrowAsync<ConflictException>()).Which.Code.Should().Be("ConcurrencyConflict");
     }
@@ -114,9 +114,9 @@ public sealed class TimesheetRepositoryTests(ApiFactory factory) : IDisposable
     [Fact]
     public async Task Rejects_a_second_timesheet_when_the_week_already_has_one()
     {
-        await SaveAsync(Timesheet.Start(_eve, ThisWeek));
+        await SaveOrUpdateAsync(Timesheet.Start(_eve, ThisWeek));
 
-        var act = () => SaveAsync(Timesheet.Start(_eve, ThisWeek));
+        var act = () => SaveOrUpdateAsync(Timesheet.Start(_eve, ThisWeek));
 
         (await act.Should().ThrowAsync<ConflictException>()).Which.Code.Should().Be("ConcurrencyConflict");
     }
@@ -126,7 +126,7 @@ public sealed class TimesheetRepositoryTests(ApiFactory factory) : IDisposable
     {
         var lastWeek = Timesheet.Start(_eve, LastWeek);
         lastWeek.ClockIn(CompanyClock.At("2026-10-25 22:00"), Phone, CompanyClock.Zone);
-        await SaveAsync(lastWeek);
+        await SaveOrUpdateAsync(lastWeek);
         var thisWeek = Timesheet.Start(_eve, ThisWeek);
         thisWeek.ClockIn(CompanyClock.At("2026-10-30 08:00"), Phone, CompanyClock.Zone);
 
@@ -135,7 +135,7 @@ public sealed class TimesheetRepositoryTests(ApiFactory factory) : IDisposable
         IUnitOfWork unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
         await unitOfWork.BeginAsync(Ct);
 
-        var act = () => scope.ServiceProvider.GetRequiredService<ITimesheetRepository>().SaveAsync(thisWeek, Ct);
+        var act = () => scope.ServiceProvider.GetRequiredService<ITimesheetRepository>().SaveOrUpdateAsync(thisWeek, Ct);
 
         (await act.Should().ThrowAsync<ConflictException>()).Which.Code.Should().Be("EntryAlreadyOpen");
         await unitOfWork.DisposeAsync();
@@ -146,5 +146,5 @@ public sealed class TimesheetRepositoryTests(ApiFactory factory) : IDisposable
 
     private ITimesheetRepository Repository() => _scopes.Get<ITimesheetRepository>();
 
-    private Task SaveAsync(Timesheet timesheet) => Repository().SaveAsync(timesheet, Ct);
+    private Task SaveOrUpdateAsync(Timesheet timesheet) => Repository().SaveOrUpdateAsync(timesheet, Ct);
 }

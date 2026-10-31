@@ -14,5 +14,5 @@ public interface ITeamRepository
     Task<bool> LeadsActiveTeamAsync(UserId supervisorId, CancellationToken ct);
 
     /// <summary>Inserts or updates the whole aggregate.</summary>
-    Task SaveAsync(Team team, CancellationToken ct);
+    Task SaveOrUpdateAsync(Team team, CancellationToken ct);
 }

@@ -4,6 +4,14 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-10-31: Code review naming
+
+| Decision | Why | By |
+|---|---|---|
+| Repository variables end in `Repository`. | [ADR 0006](docs/adr/0006-repository-suffix-on-variables.md). | user |
+| Repositories' save method is `SaveOrUpdateAsync`: it inserts a new aggregate (`Version` 0) and otherwise updates with the version check. | The name says it does both. | user |
+| `TimesheetLoading.NeighboursAsync` keeps its lookups sequential, not `Task.WhenAll`. | They share one database connection, which isn't thread-safe. | user |
+
 ## 2026-10-31: Demo sign-in list and own team
 
 | Decision | Why | By |
@@ -221,4 +229,4 @@ The interview decisions are in [`docs/specs/`](docs/specs/) and [`docs/glossary.
 | The "declined request" badge counts the last 7 days. | user |
 | Deactivation and correction requests need no reason. | user |
 
-Larger decisions: [ADR 0001](docs/adr/0001-internationalization.md) (i18n), [ADR 0002](docs/adr/0002-reqnroll-for-api-specs.md) (Reqnroll), [ADR 0003](docs/adr/0003-adopt-baseline-code-style-and-stack.md) (baseline and ADR sync), [ADR 0004](docs/adr/0004-http-tests-instead-of-reqnroll.md) (no Reqnroll; supersedes 0002).
+Larger decisions: [ADR 0001](docs/adr/0001-internationalization.md) (i18n), [ADR 0002](docs/adr/0002-reqnroll-for-api-specs.md) (Reqnroll), [ADR 0003](docs/adr/0003-adopt-baseline-code-style-and-stack.md) (baseline and ADR sync), [ADR 0004](docs/adr/0004-http-tests-instead-of-reqnroll.md) (no Reqnroll; supersedes 0002), [ADR 0006](docs/adr/0006-repository-suffix-on-variables.md) (repository variable names).

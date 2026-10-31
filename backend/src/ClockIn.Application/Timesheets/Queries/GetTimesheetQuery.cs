@@ -19,20 +19,20 @@ public sealed class GetTimesheetValidator : AbstractValidator<GetTimesheetQuery>
 }
 
 public sealed class GetTimesheetHandler(
-    ICurrentUser currentUser, IUserRepository users, ITeamRepository teams, ITimesheetRepository timesheets,
-    ICorrectionRequestRepository corrections, TimeProvider time)
+    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ITimesheetRepository timesheetsRepository,
+    ICorrectionRequestRepository correctionsRepository, TimeProvider time)
 {
     // ponytail: reads through the aggregate, which already holds everything this page shows.
     public async Task<TimesheetDto> HandleAsync(GetTimesheetQuery query, CancellationToken ct)
     {
         UserId ownerId = query.OwnerId is { } id ? new UserId(id) : currentUser.Id;
-        TimesheetParties parties = await TimesheetParties.LoadAsync(users, teams, currentUser.Id, ownerId, ct);
+        TimesheetParties parties = await TimesheetParties.LoadAsync(usersRepository, teamsRepository, currentUser.Id, ownerId, ct);
         TimesheetParties.Require(parties.CanView);
 
         var week = new Week(query.WeekStart);
-        Timesheet? timesheet = await timesheets.FindAsync(ownerId, week, ct);
-        CorrectionRequest? correction = timesheet is null ? null : await corrections.FindLatestAsync(timesheet.Id, ct);
-        IReadOnlyDictionary<UserId, string> names = await users.NamesAsync(PeopleIn(timesheet, correction), ct);
+        Timesheet? timesheet = await timesheetsRepository.FindAsync(ownerId, week, ct);
+        CorrectionRequest? correction = timesheet is null ? null : await correctionsRepository.FindLatestAsync(timesheet.Id, ct);
+        IReadOnlyDictionary<UserId, string> names = await usersRepository.NamesAsync(PeopleIn(timesheet, correction), ct);
 
         DateTimeOffset now = time.GetUtcNow();
         TimeZoneInfo zone = time.LocalTimeZone;

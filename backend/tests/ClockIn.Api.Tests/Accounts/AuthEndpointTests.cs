@@ -134,7 +134,7 @@ public sealed class AuthEndpointTests(ApiFactory factory)
         using var scopes = new Scopes(factory);
         User loaded = (await scopes.Get<IUserRepository>().FindAsync(user.Id, Ct))!;
         loaded.SetPassword(scopes.Get<IPasswordHasher>().Hash("a brand new passphrase"));
-        await scopes.Get<IUserRepository>().SaveAsync(loaded, Ct);
+        await scopes.Get<IUserRepository>().SaveOrUpdateAsync(loaded, Ct);
     }
 
     private async Task<JsonElement> JsonAsync(HttpResponseMessage response) =>

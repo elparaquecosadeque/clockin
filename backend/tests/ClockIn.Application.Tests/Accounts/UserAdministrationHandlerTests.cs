@@ -23,13 +23,13 @@ public sealed class UserAdministrationHandlerTests
 {
     private readonly TimesheetWorld _world = new();
     private readonly IAuditLog _audit = Substitute.For<IAuditLog>();
-    private readonly ISessionRepository _sessions = Substitute.For<ISessionRepository>();
+    private readonly ISessionRepository _sessionsRepository = Substitute.For<ISessionRepository>();
     private readonly IPasswordHasher _hasher = Substitute.For<IPasswordHasher>();
 
     public UserAdministrationHandlerTests()
     {
         _world.SignIn(_world.Ada);
-        _world.Teams.LeadsActiveTeamAsync(Arg.Any<UserId>(), Arg.Any<CancellationToken>())
+        _world.TeamsRepository.LeadsActiveTeamAsync(Arg.Any<UserId>(), Arg.Any<CancellationToken>())
             .Returns(c => c.Arg<UserId>() == _world.Sam.Id || c.Arg<UserId>() == _world.Sue.Id);
         _hasher.Hash(Arg.Any<string>()).Returns(c => "hash:" + c.Arg<string>());
         _hasher.Verify(Arg.Any<string?>(), Arg.Any<string>()).Returns(c => c.ArgAt<string?>(0) == "hash:" + c.ArgAt<string>(1));
@@ -55,7 +55,7 @@ public sealed class UserAdministrationHandlerTests
     {
         var oldStore = Team.Create("Old Store", User.Create(new Email("sid@clockin.test"), "Sid", Role.Supervisor));
         oldStore.Archive();
-        _world.Teams.FindAsync(oldStore.Id, Arg.Any<CancellationToken>()).Returns(oldStore);
+        _world.TeamsRepository.FindAsync(oldStore.Id, Arg.Any<CancellationToken>()).Returns(oldStore);
 
         var archived = () => CreateUser().HandleAsync(new CreateUserCommand("fay@clockin.test", "Fay", "Employee", oldStore.Id.Value), Ct);
         var unknown = () => CreateUser().HandleAsync(new CreateUserCommand("fay@clockin.test", "Fay", "Employee", Guid.CreateVersion7()), Ct);
@@ -88,7 +88,7 @@ public sealed class UserAdministrationHandlerTests
         await ChangeRole().HandleAsync(new ChangeRoleCommand(_world.Eve.Id.Value, "Supervisor", null), Ct);
 
         (_world.Eve.Role, _world.Eve.TeamId).Should().Be((Role.Supervisor, (TeamId?)null));
-        await _world.Users.Received(1).SaveAsync(_world.Eve, Ct);
+        await _world.UsersRepository.Received(1).SaveOrUpdateAsync(_world.Eve, Ct);
         _audit.Received(1).RoleChanged(_world.Ada.Id, _world.Eve.Id, Role.Supervisor);
     }
 
@@ -123,7 +123,7 @@ public sealed class UserAdministrationHandlerTests
         await Deactivate().HandleAsync(new DeactivateUserCommand(_world.Eve.Id.Value), Ct);
 
         _world.Eve.Status.Should().Be(UserStatus.Deactivated);
-        await _sessions.Received(1).RevokeAllAsync(_world.Eve.Id, _world.Clock.GetUtcNow(), Ct);
+        await _sessionsRepository.Received(1).RevokeAllAsync(_world.Eve.Id, _world.Clock.GetUtcNow(), Ct);
         _audit.Received(1).UserDeactivated(_world.Ada.Id, _world.Eve.Id);
     }
 
@@ -165,10 +165,10 @@ public sealed class UserAdministrationHandlerTests
             _world.Eve.SignIn(passwordMatches: false, _world.Clock.GetUtcNow());
         }
 
-        await new UnlockUserHandler(_world.Users).HandleAsync(new UnlockUserCommand(_world.Eve.Id.Value), Ct);
+        await new UnlockUserHandler(_world.UsersRepository).HandleAsync(new UnlockUserCommand(_world.Eve.Id.Value), Ct);
 
         _world.Eve.IsLockedOut(_world.Clock.GetUtcNow()).Should().BeFalse();
-        await _world.Users.Received(1).SaveAsync(_world.Eve, Ct);
+        await _world.UsersRepository.Received(1).SaveOrUpdateAsync(_world.Eve, Ct);
     }
 
     [Fact]
@@ -184,8 +184,8 @@ public sealed class UserAdministrationHandlerTests
         session.SecurityStamp.Should().Be(_world.Eve.SecurityStamp);
         Received.InOrder(() =>
         {
-            _sessions.RevokeAllAsync(_world.Eve.Id, Arg.Any<DateTimeOffset>(), Ct);
-            _sessions.SaveAsync(Arg.Any<Session>(), Ct);
+            _sessionsRepository.RevokeAllAsync(_world.Eve.Id, Arg.Any<DateTimeOffset>(), Ct);
+            _sessionsRepository.SaveOrUpdateAsync(Arg.Any<Session>(), Ct);
         });
     }
 
@@ -213,7 +213,7 @@ public sealed class UserAdministrationHandlerTests
     {
         _world.SignIn(_world.Eve);
 
-        await new UpdatePreferencesHandler(_world.CurrentUser, _world.Users).HandleAsync(new UpdatePreferencesCommand("es", "12h"), Ct);
+        await new UpdatePreferencesHandler(_world.CurrentUser, _world.UsersRepository).HandleAsync(new UpdatePreferencesCommand("es", "12h"), Ct);
 
         (_world.Eve.Language, _world.Eve.TimeFormat).Should().Be(("es", "12h"));
     }
@@ -227,16 +227,16 @@ public sealed class UserAdministrationHandlerTests
         new UpdatePreferencesValidator().TestValidate(new UpdatePreferencesCommand(language, timeFormat)).ShouldHaveValidationErrorFor(field);
     }
 
-    private CreateUserHandler CreateUser() => new(_world.CurrentUser, _world.Users, _world.Teams, _audit, _world.Clock);
+    private CreateUserHandler CreateUser() => new(_world.CurrentUser, _world.UsersRepository, _world.TeamsRepository, _audit, _world.Clock);
 
-    private ChangeRoleHandler ChangeRole() => new(_world.CurrentUser, _world.Users, _world.Teams, _audit);
+    private ChangeRoleHandler ChangeRole() => new(_world.CurrentUser, _world.UsersRepository, _world.TeamsRepository, _audit);
 
     private DeactivateUserHandler Deactivate() =>
-        new(_world.CurrentUser, _world.Users, _sessions, _world.Teams, _world.Timesheets, _audit, _world.Clock);
+        new(_world.CurrentUser, _world.UsersRepository, _sessionsRepository, _world.TeamsRepository, _world.TimesheetsRepository, _audit, _world.Clock);
 
-    private ReactivateUserHandler Reactivate() => new(_world.CurrentUser, _world.Users, _world.Teams, _audit, _world.Clock);
+    private ReactivateUserHandler Reactivate() => new(_world.CurrentUser, _world.UsersRepository, _world.TeamsRepository, _audit, _world.Clock);
 
-    private ChangeOwnPasswordHandler ChangePassword() => new(_world.CurrentUser, _world.Users, _sessions, _hasher, _world.Clock);
+    private ChangeOwnPasswordHandler ChangePassword() => new(_world.CurrentUser, _world.UsersRepository, _sessionsRepository, _hasher, _world.Clock);
 
-    private User SavedUser() => (User)_world.Users.ReceivedCalls().Single(c => c.GetMethodInfo().Name == "SaveAsync").GetArguments()[0]!;
+    private User SavedUser() => (User)_world.UsersRepository.ReceivedCalls().Single(c => c.GetMethodInfo().Name == "SaveOrUpdateAsync").GetArguments()[0]!;
 }

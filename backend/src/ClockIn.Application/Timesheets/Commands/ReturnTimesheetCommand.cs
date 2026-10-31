@@ -17,17 +17,17 @@ public sealed class ReturnTimesheetValidator : AbstractValidator<ReturnTimesheet
 }
 
 public sealed class ReturnTimesheetHandler(
-    ICurrentUser currentUser, IUserRepository users, ITeamRepository teams, ITimesheetRepository timesheets,
-    ICorrectionRequestRepository corrections, TimeProvider time)
+    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ITimesheetRepository timesheetsRepository,
+    ICorrectionRequestRepository correctionsRepository, TimeProvider time)
 {
     public async Task HandleAsync(ReturnTimesheetCommand command, CancellationToken ct)
     {
-        Timesheet timesheet = await timesheets.GetAsync(command.TimesheetId, ct);
-        TimesheetParties parties = await TimesheetParties.LoadAsync(users, teams, currentUser.Id, timesheet.OwnerId, ct);
+        Timesheet timesheet = await timesheetsRepository.GetAsync(command.TimesheetId, ct);
+        TimesheetParties parties = await TimesheetParties.LoadAsync(usersRepository, teamsRepository, currentUser.Id, timesheet.OwnerId, ct);
         TimesheetParties.Require(parties.IsApprover);
-        await corrections.EnsureNonePendingAsync(timesheet.Id, ct);
+        await correctionsRepository.EnsureNonePendingAsync(timesheet.Id, ct);
 
         timesheet.Return(currentUser.Id, command.Comment, time.GetUtcNow());
-        await timesheets.SaveAsync(timesheet, ct);
+        await timesheetsRepository.SaveOrUpdateAsync(timesheet, ct);
     }
 }

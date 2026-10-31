@@ -12,16 +12,16 @@ namespace ClockIn.Application.Accounts.Commands;
 public sealed record ReactivateUserCommand(Guid UserId, Guid? TeamId);
 
 public sealed class ReactivateUserHandler(
-    ICurrentUser currentUser, IUserRepository users, ITeamRepository teams, IAuditLog audit, TimeProvider time)
+    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, IAuditLog audit, TimeProvider time)
 {
     public async Task<AccessLinkDto> HandleAsync(ReactivateUserCommand command, CancellationToken ct)
     {
-        User user = await users.FindAsync(new UserId(command.UserId), ct) ?? throw new NotFoundException("User not found.");
+        User user = await usersRepository.FindAsync(new UserId(command.UserId), ct) ?? throw new NotFoundException("User not found.");
         Team? team = (command.TeamId is { } chosen ? new TeamId(chosen) : user.TeamId) is { } teamId
-            ? await teams.FindAsync(teamId, ct) ?? throw new NotFoundException("Team not found.")
+            ? await teamsRepository.FindAsync(teamId, ct) ?? throw new NotFoundException("Team not found.")
             : null;
         AccessLink link = user.Reactivate(team, time.GetUtcNow());
-        await users.SaveAsync(user, ct);
+        await usersRepository.SaveOrUpdateAsync(user, ct);
         audit.AccessLinkGenerated(currentUser.Id, user.Id);
         return new AccessLinkDto(link.Token, link.ExpiresAt);
     }

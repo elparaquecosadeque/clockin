@@ -34,26 +34,26 @@ public sealed class TimesheetWorld
         Ed = Person("Ed", Role.Employee, Warehouse);
         Olga = Person("Olga", Role.Employee, Office);
 
-        Users.FindAsync(Arg.Any<UserId>(), Arg.Any<CancellationToken>()).Returns(c => _people.GetValueOrDefault(c.Arg<UserId>()));
-        Users.NamesAsync(Arg.Any<IEnumerable<UserId>>(), Arg.Any<CancellationToken>())
+        UsersRepository.FindAsync(Arg.Any<UserId>(), Arg.Any<CancellationToken>()).Returns(c => _people.GetValueOrDefault(c.Arg<UserId>()));
+        UsersRepository.NamesAsync(Arg.Any<IEnumerable<UserId>>(), Arg.Any<CancellationToken>())
             .Returns(c => (IReadOnlyDictionary<UserId, string>)c.Arg<IEnumerable<UserId>>().ToDictionary(id => id, id => _people[id].Name));
-        Teams.FindAsync(Arg.Any<TeamId>(), Arg.Any<CancellationToken>())
+        TeamsRepository.FindAsync(Arg.Any<TeamId>(), Arg.Any<CancellationToken>())
             .Returns(c => new[] { Warehouse, Office }.FirstOrDefault(t => t.Id == c.Arg<TeamId>()));
 
-        Timesheets.FindAsync(Arg.Any<TimesheetId>(), Arg.Any<CancellationToken>())
+        TimesheetsRepository.FindAsync(Arg.Any<TimesheetId>(), Arg.Any<CancellationToken>())
             .Returns(c => _timesheets.FirstOrDefault(t => t.Id == c.Arg<TimesheetId>()));
-        Timesheets.FindAsync(Arg.Any<UserId>(), Arg.Any<Week>(), Arg.Any<CancellationToken>())
+        TimesheetsRepository.FindAsync(Arg.Any<UserId>(), Arg.Any<Week>(), Arg.Any<CancellationToken>())
             .Returns(c => _timesheets.FirstOrDefault(t => t.OwnerId == c.Arg<UserId>() && t.Week == c.Arg<Week>()));
-        Timesheets.FindByEntryAsync(Arg.Any<TimeEntryId>(), Arg.Any<CancellationToken>())
+        TimesheetsRepository.FindByEntryAsync(Arg.Any<TimeEntryId>(), Arg.Any<CancellationToken>())
             .Returns(c => _timesheets.FirstOrDefault(t => t.Entries.Any(e => e.Id == c.Arg<TimeEntryId>())));
-        Timesheets.FindWithOpenEntryAsync(Arg.Any<UserId>(), Arg.Any<CancellationToken>())
+        TimesheetsRepository.FindWithOpenEntryAsync(Arg.Any<UserId>(), Arg.Any<CancellationToken>())
             .Returns(c => _timesheets.FirstOrDefault(t => t.OwnerId == c.Arg<UserId>() && t.OpenEntry is not null));
 
-        Corrections.FindAsync(Arg.Any<CorrectionRequestId>(), Arg.Any<CancellationToken>())
+        CorrectionsRepository.FindAsync(Arg.Any<CorrectionRequestId>(), Arg.Any<CancellationToken>())
             .Returns(c => _requests.FirstOrDefault(r => r.Id == c.Arg<CorrectionRequestId>()));
-        Corrections.FindPendingAsync(Arg.Any<TimesheetId>(), Arg.Any<CancellationToken>())
+        CorrectionsRepository.FindPendingAsync(Arg.Any<TimesheetId>(), Arg.Any<CancellationToken>())
             .Returns(c => _requests.FirstOrDefault(r => r.TimesheetId == c.Arg<TimesheetId>() && r.Status == CorrectionStatus.Pending));
-        Corrections.FindLatestAsync(Arg.Any<TimesheetId>(), Arg.Any<CancellationToken>())
+        CorrectionsRepository.FindLatestAsync(Arg.Any<TimesheetId>(), Arg.Any<CancellationToken>())
             .Returns(c => _requests.LastOrDefault(r => r.TimesheetId == c.Arg<TimesheetId>()));
 
         SignIn(Eve);
@@ -81,13 +81,13 @@ public sealed class TimesheetWorld
 
     public ICurrentUser CurrentUser { get; } = Substitute.For<ICurrentUser>();
 
-    public IUserRepository Users { get; } = Substitute.For<IUserRepository>();
+    public IUserRepository UsersRepository { get; } = Substitute.For<IUserRepository>();
 
-    public ITeamRepository Teams { get; } = Substitute.For<ITeamRepository>();
+    public ITeamRepository TeamsRepository { get; } = Substitute.For<ITeamRepository>();
 
-    public ITimesheetRepository Timesheets { get; } = Substitute.For<ITimesheetRepository>();
+    public ITimesheetRepository TimesheetsRepository { get; } = Substitute.For<ITimesheetRepository>();
 
-    public ICorrectionRequestRepository Corrections { get; } = Substitute.For<ICorrectionRequestRepository>();
+    public ICorrectionRequestRepository CorrectionsRepository { get; } = Substitute.For<ICorrectionRequestRepository>();
 
     public static Week WeekOf(int year, int month, int day) => new(new DateOnly(year, month, day));
 

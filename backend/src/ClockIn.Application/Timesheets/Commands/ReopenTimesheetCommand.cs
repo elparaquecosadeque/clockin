@@ -17,17 +17,17 @@ public sealed class ReopenTimesheetValidator : AbstractValidator<ReopenTimesheet
 }
 
 public sealed class ReopenTimesheetHandler(
-    ICurrentUser currentUser, IUserRepository users, ITeamRepository teams, ITimesheetRepository timesheets,
-    ICorrectionRequestRepository corrections, TimeProvider time)
+    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ITimesheetRepository timesheetsRepository,
+    ICorrectionRequestRepository correctionsRepository, TimeProvider time)
 {
     public async Task HandleAsync(ReopenTimesheetCommand command, CancellationToken ct)
     {
-        Timesheet timesheet = await timesheets.GetAsync(command.TimesheetId, ct);
-        TimesheetParties parties = await TimesheetParties.LoadAsync(users, teams, currentUser.Id, timesheet.OwnerId, ct);
+        Timesheet timesheet = await timesheetsRepository.GetAsync(command.TimesheetId, ct);
+        TimesheetParties parties = await TimesheetParties.LoadAsync(usersRepository, teamsRepository, currentUser.Id, timesheet.OwnerId, ct);
         TimesheetParties.Require(parties.CanReopen);
-        await corrections.EnsureNonePendingAsync(timesheet.Id, ct);
+        await correctionsRepository.EnsureNonePendingAsync(timesheet.Id, ct);
 
         timesheet.Reopen(currentUser.Id, command.Reason, time.GetUtcNow());
-        await timesheets.SaveAsync(timesheet, ct);
+        await timesheetsRepository.SaveOrUpdateAsync(timesheet, ct);
     }
 }

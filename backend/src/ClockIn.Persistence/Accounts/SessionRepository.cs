@@ -15,7 +15,7 @@ public sealed class SessionRepository(AppDataConnection db) : ISessionRepository
         return record is null ? null : ToDomain(record);
     }
 
-    public async Task SaveAsync(Session session, CancellationToken ct)
+    public async Task SaveOrUpdateAsync(Session session, CancellationToken ct)
     {
         if (session.Version == 0)
         {

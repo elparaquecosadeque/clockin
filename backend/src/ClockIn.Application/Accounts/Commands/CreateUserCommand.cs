@@ -31,14 +31,14 @@ public sealed class CreateUserValidator : AbstractValidator<CreateUserCommand>
 }
 
 public sealed class CreateUserHandler(
-    ICurrentUser currentUser, IUserRepository users, ITeamRepository teams, IAuditLog audit, TimeProvider time)
+    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, IAuditLog audit, TimeProvider time)
 {
     public async Task<AccessLinkDto> HandleAsync(CreateUserCommand command, CancellationToken ct)
     {
         var user = User.Create(new Email(command.Email), command.Name, Enum.Parse<Role>(command.Role), command.Language, command.TimeFormat);
         if (command.TeamId is { } teamId)
         {
-            Team team = await teams.FindAsync(new TeamId(teamId), ct) ?? throw new NotFoundException("Team not found.");
+            Team team = await teamsRepository.FindAsync(new TeamId(teamId), ct) ?? throw new NotFoundException("Team not found.");
             if (team.IsArchived)
             {
                 throw new DomainException("TeamIsArchived", "The team is archived. Choose an active team.");
@@ -48,7 +48,7 @@ public sealed class CreateUserHandler(
         }
 
         AccessLink link = user.IssueAccessLink(time.GetUtcNow());
-        await users.SaveAsync(user, ct);
+        await usersRepository.SaveOrUpdateAsync(user, ct);
         audit.AccessLinkGenerated(currentUser.Id, user.Id);
         return new AccessLinkDto(link.Token, link.ExpiresAt);
     }

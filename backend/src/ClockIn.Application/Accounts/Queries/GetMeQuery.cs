@@ -10,18 +10,18 @@ namespace ClockIn.Application.Accounts.Queries;
 
 public sealed record GetMeQuery;
 
-public sealed class GetMeHandler(ICurrentUser currentUser, IUserRepository users, ITeamRepository teams)
+public sealed class GetMeHandler(ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository)
 {
     // ponytail: reads through the repositories; switch to an IUserReads projection when this query grows.
     public async Task<MeDto> HandleAsync(GetMeQuery query, CancellationToken ct)
     {
-        User user = await users.FindAsync(currentUser.Id, ct) ?? throw new UnauthorizedException();
-        if (user.TeamId is not { } teamId || await teams.FindAsync(teamId, ct) is not { } team)
+        User user = await usersRepository.FindAsync(currentUser.Id, ct) ?? throw new UnauthorizedException();
+        if (user.TeamId is not { } teamId || await teamsRepository.FindAsync(teamId, ct) is not { } team)
         {
             return user.ToMeDto();
         }
 
-        User? supervisor = await users.FindAsync(team.SupervisorId, ct);
+        User? supervisor = await usersRepository.FindAsync(team.SupervisorId, ct);
         return user.ToMeDto(team.Name, supervisor?.Name);
     }
 }

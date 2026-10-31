@@ -17,12 +17,12 @@ public sealed class DeclineCorrectionValidator : AbstractValidator<DeclineCorrec
 }
 
 public sealed class DeclineCorrectionHandler(
-    ICurrentUser currentUser, IUserRepository users, ITeamRepository teams, ICorrectionRequestRepository corrections, TimeProvider time)
+    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ICorrectionRequestRepository correctionsRepository, TimeProvider time)
 {
     public async Task HandleAsync(DeclineCorrectionCommand command, CancellationToken ct)
     {
-        CorrectionRequest request = await corrections.GetForApproverAsync(command.RequestId, currentUser, users, teams, ct);
+        CorrectionRequest request = await correctionsRepository.GetForApproverAsync(command.RequestId, currentUser, usersRepository, teamsRepository, ct);
         request.Decline(currentUser.Id, command.Comment, time.GetUtcNow());
-        await corrections.SaveAsync(request, ct);
+        await correctionsRepository.SaveOrUpdateAsync(request, ct);
     }
 }
