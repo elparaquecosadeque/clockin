@@ -4,6 +4,19 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-10-30: Reporting and administration (backend)
+
+| Decision | Why | By |
+|---|---|---|
+| Reports, queues, user and team lists read through one flat `IReportingReads` port that loads whole tables; handlers scope and shape the rows. | A small company fits in memory, and one port keeps the SQL in one place. Marked `ponytail:`: filter in SQL per report past a few thousand rows. | dev |
+| Exceptions skip Approved timesheets. | Approved weeks were already reviewed; flagging them again is noise. | dev |
+| The admin queue holds timesheets of anyone who punches time and has no team, which means supervisors. | Their approver is derived from the team, and they have none. | dev |
+| The CSV writes "manually changed" as `true`/`false`. | Neutral across locales and easy to filter in a spreadsheet. | dev |
+| Language and time format are stored as `users.language` and `users.time_format`, defaulting to `en` and `24h`. | ADR 0001: preferences follow the user across devices. | dev |
+| Archive checks (active members, pending reviews) reuse `IReportingReads` instead of new repository queries. | Same data the queues already read; no new SQL to test. | dev |
+| Changing one's own password revokes every session and returns new tokens for the device that asked; it shares the sign-in rate limit. | change-own-password.feature; it also checks a password, like sign-in. | dev |
+| Role changes and deactivations are audited; creating and reactivating a user audit the access link they issue. | CODE_STYLE: security events go to the Audit log, never with tokens. | dev |
+
 ## 2026-10-30: Timesheet workflow (backend)
 
 | Decision | Why | By |

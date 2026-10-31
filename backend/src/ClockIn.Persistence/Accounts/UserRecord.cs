@@ -41,6 +41,12 @@ public sealed class UserRecord
     [Column("team_id")]
     public required Guid? TeamId { get; init; }
 
+    [Column("language")]
+    public required string Language { get; init; }
+
+    [Column("time_format")]
+    public required string TimeFormat { get; init; }
+
     [Column("version")]
     public required int Version { get; init; }
 }

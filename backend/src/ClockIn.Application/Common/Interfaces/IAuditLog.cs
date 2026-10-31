@@ -15,6 +15,10 @@ public interface IAuditLog
 
     void AccessLinkGenerated(UserId actorId, UserId userId);
 
+    void RoleChanged(UserId actorId, UserId userId, Role role);
+
+    void UserDeactivated(UserId actorId, UserId userId);
+
     /// <summary>The one event that carries a token: the deploy log is how the first admin receives it.</summary>
     void FirstAdminLinkIssued(Email email, string token);
 }

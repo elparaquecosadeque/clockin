@@ -265,6 +265,8 @@ public sealed class DemoSeed(AppDataConnection db, TimeProvider time) : IDemoDat
         AccessLinkHash = null,
         AccessLinkExpiresAt = null,
         TeamId = null,
+        Language = Preferences.English,
+        TimeFormat = Preferences.TwentyFourHour,
         Version = 1,
     };
 

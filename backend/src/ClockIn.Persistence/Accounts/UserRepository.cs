@@ -61,6 +61,8 @@ public sealed class UserRepository(AppDataConnection db) : IUserRepository
 
         int updated = await db.GetTable<UserRecord>()
             .Where(u => u.Id == user.Id.Value && u.Version == user.Version)
+            .Set(u => u.Name, user.Name)
+            .Set(u => u.Role, user.Role.ToString())
             .Set(u => u.Status, user.Status.ToString())
             .Set(u => u.PasswordHash, user.PasswordHash)
             .Set(u => u.SecurityStamp, user.SecurityStamp)
@@ -69,6 +71,8 @@ public sealed class UserRepository(AppDataConnection db) : IUserRepository
             .Set(u => u.AccessLinkHash, user.AccessLinkHash)
             .Set(u => u.AccessLinkExpiresAt, user.AccessLinkExpiresAt)
             .Set(u => u.TeamId, user.TeamId == null ? null : user.TeamId.Value.Value)
+            .Set(u => u.Language, user.Language)
+            .Set(u => u.TimeFormat, user.TimeFormat)
             .Set(u => u.Version, user.Version + 1)
             .UpdateAsync(ct);
         if (updated == 0)
@@ -91,6 +95,8 @@ public sealed class UserRepository(AppDataConnection db) : IUserRepository
             record.AccessLinkHash,
             record.AccessLinkExpiresAt,
             record.TeamId is { } teamId ? new TeamId(teamId) : null,
+            record.Language,
+            record.TimeFormat,
             record.Version);
 
     private static UserRecord ToRecord(User user, int version) => new()
@@ -107,6 +113,8 @@ public sealed class UserRepository(AppDataConnection db) : IUserRepository
         AccessLinkHash = user.AccessLinkHash,
         AccessLinkExpiresAt = user.AccessLinkExpiresAt,
         TeamId = user.TeamId?.Value,
+        Language = user.Language,
+        TimeFormat = user.TimeFormat,
         Version = version,
     };
 }

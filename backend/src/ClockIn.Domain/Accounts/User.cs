@@ -25,7 +25,7 @@ public sealed class User
 
     public string Name { get; }
 
-    public Role Role { get; }
+    public Role Role { get; private set; }
 
     public UserStatus Status { get; private set; } = UserStatus.PendingActivation;
 
@@ -47,24 +47,37 @@ public sealed class User
     /// <summary>The team an employee belongs to. Null for supervisors and admins, who belong to no team.</summary>
     public TeamId? TeamId { get; private set; }
 
+    /// <summary>One of <see cref="Preferences.Languages"/>.</summary>
+    public string Language { get; private set; } = Preferences.English;
+
+    /// <summary>One of <see cref="Preferences.TimeFormats"/>.</summary>
+    public string TimeFormat { get; private set; } = Preferences.TwentyFourHour;
+
     /// <summary>0 until first saved; the repository checks and bumps it on every save.</summary>
     public int Version { get; private init; }
 
-    public static User Create(Email email, string name, Role role)
+    public bool IsLockedOut(DateTimeOffset now) => LockedUntil > now;
+
+    public static User Create(
+        Email email, string name, Role role, string language = Preferences.English, string timeFormat = Preferences.TwentyFourHour)
     {
         Guard.Against.NullOrWhiteSpace(name);
         Guard.Against.StringTooLong(name.Trim(), MaxNameLength);
-        return new User(UserId.New(), email, name.Trim(), role);
+        var user = new User(UserId.New(), email, name.Trim(), role);
+        user.UpdatePreferences(language, timeFormat);
+        return user;
     }
 
     /// <summary>Rebuilds a saved user. For repositories only; it checks no rules.</summary>
     public static User Restore(
         UserId id, Email email, string name, Role role, UserStatus status, string? passwordHash,
         Guid securityStamp, int failedSignIns, DateTimeOffset? lockedUntil,
-        string? accessLinkHash, DateTimeOffset? accessLinkExpiresAt, TeamId? teamId, int version) =>
+        string? accessLinkHash, DateTimeOffset? accessLinkExpiresAt, TeamId? teamId, string language, string timeFormat, int version) =>
         new(id, email, name, role)
         {
             TeamId = teamId,
+            Language = language,
+            TimeFormat = timeFormat,
             Status = status,
             PasswordHash = passwordHash,
             SecurityStamp = securityStamp,
@@ -109,10 +122,87 @@ public sealed class User
         SetPassword(passwordHash);
     }
 
+    /// <summary>Blocks access at once and voids any access link. The handler checks open entries and led teams.</summary>
     public void Deactivate()
     {
+        EnsureNotDeactivated();
         Status = UserStatus.Deactivated;
+        AccessLinkHash = null;
+        AccessLinkExpiresAt = null;
         SecurityStamp = Guid.CreateVersion7();
+    }
+
+    /// <summary>Back to PendingActivation with a fresh link; the old password no longer works.</summary>
+    /// <remarks>An employee needs an active team: the chosen one, or else the one they had.</remarks>
+    public AccessLink Reactivate(Team? team, DateTimeOffset now)
+    {
+        if (Status != UserStatus.Deactivated)
+        {
+            throw new DomainException("UserIsNotDeactivated", "The user is not deactivated.");
+        }
+
+        if (Role == Role.Employee)
+        {
+            if (team is null || team.IsArchived)
+            {
+                throw new DomainException("TeamIsArchived", "The team is archived. Choose an active team.");
+            }
+
+            TeamId = team.Id;
+        }
+
+        Status = UserStatus.PendingActivation;
+        PasswordHash = null;
+        FailedSignIns = 0;
+        LockedUntil = null;
+        SecurityStamp = Guid.CreateVersion7();
+        return IssueAccessLink(now);
+    }
+
+    /// <summary>Swaps Employee and Supervisor. Admin is never granted or removed this way.</summary>
+    /// <remarks>The handler checks that a supervisor leads no team before demoting.</remarks>
+    public void ChangeRole(Role role, Team? team)
+    {
+        if (Role == Role.Admin || role == Role.Admin)
+        {
+            throw new DomainException("AdminRoleIsFixed", "Admin is never granted or removed by a role change.");
+        }
+
+        EnsureNotDeactivated();
+        Role = role;
+        TeamId = null;
+        if (role == Role.Employee)
+        {
+            MoveTo(Guard.Against.Null(team));
+        }
+
+        SecurityStamp = Guid.CreateVersion7();
+    }
+
+    public void Unlock()
+    {
+        FailedSignIns = 0;
+        LockedUntil = null;
+    }
+
+    /// <summary>A new password ends every other session; the caller starts a fresh one for this device.</summary>
+    public void ChangePassword(bool currentPasswordMatches, string newPasswordHash)
+    {
+        if (!currentPasswordMatches)
+        {
+            throw new DomainException("InvalidCurrentPassword", "The current password is incorrect.");
+        }
+
+        SetPassword(newPasswordHash);
+    }
+
+    /// <summary>Keeps every session valid.</summary>
+    public void UpdatePreferences(string language, string timeFormat)
+    {
+        Guard.Against.InvalidInput(language, nameof(language), Preferences.Languages.Contains);
+        Guard.Against.InvalidInput(timeFormat, nameof(timeFormat), Preferences.TimeFormats.Contains);
+        Language = language;
+        TimeFormat = timeFormat;
     }
 
     /// <summary>Puts an employee in a team. Pending work follows, since the approver is derived from the team.</summary>

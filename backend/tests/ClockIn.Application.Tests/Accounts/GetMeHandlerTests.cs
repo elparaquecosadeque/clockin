@@ -25,6 +25,6 @@ public sealed class GetMeHandlerTests
 
         MeDto me = await new GetMeHandler(currentUser, users).HandleAsync(new GetMeQuery(), CancellationToken.None);
 
-        me.Should().BeEquivalentTo(new MeDto(user.Id.Value, "Eve", "eve@clockin.test", role, permissions));
+        me.Should().BeEquivalentTo(new MeDto(user.Id.Value, "Eve", "eve@clockin.test", role, permissions, "en", "24h"));
     }
 }
