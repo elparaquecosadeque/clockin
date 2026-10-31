@@ -12,6 +12,7 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { correlationIdInterceptor } from './core/interceptors/correlation-id.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { SessionService } from './core/services/session.service';
+import { TIME_FORMAT } from './shared/models/time-format.model';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,6 +22,13 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([errorInterceptor, correlationIdInterceptor, authInterceptor]),
     ),
+    {
+      provide: TIME_FORMAT,
+      useFactory: () => {
+        const session = inject(SessionService);
+        return () => session.user()?.timeFormat ?? '24h';
+      },
+    },
     provideAppInitializer(() => {
       // index.html loads Material Symbols; icons use `fontIcon`, so no ligature text reaches the DOM.
       inject(MatIconRegistry).setDefaultFontSetClass(

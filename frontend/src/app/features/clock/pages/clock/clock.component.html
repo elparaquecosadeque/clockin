@@ -31,6 +31,9 @@
           An entry can't be longer than 16 hours, so it can't be closed now. It looks like you
           forgot to clock out. Set its end time by hand, or ask your supervisor.
         </p>
+        <a mat-stroked-button [routerLink]="['/timesheets', openEntryWeek()]" i18n="@@setEndTime">
+          Set the end time
+        </a>
       </div>
     </section>
   }

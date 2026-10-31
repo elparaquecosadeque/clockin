@@ -1,0 +1,21 @@
+<h2 mat-dialog-title i18n="@@accessLinkTitle">Link for {{ data.name }}</h2>
+<mat-dialog-content>
+  <p i18n="@@accessLinkMessage">
+    Send this link to {{ data.name }} to set a password. It works once and expires on {{ expires }}.
+    It won't be shown again.
+  </p>
+  <p class="url">
+    <code>{{ url }}</code>
+  </p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="copy()">
+    <mat-icon aria-hidden="true" [fontIcon]="copied() ? 'check' : 'content_copy'" />
+    @if (copied()) {
+      <ng-container i18n="@@copied">Copied</ng-container>
+    } @else {
+      <ng-container i18n="@@copyLink">Copy link</ng-container>
+    }
+  </button>
+  <button mat-flat-button mat-dialog-close i18n="@@done">Done</button>
+</mat-dialog-actions>

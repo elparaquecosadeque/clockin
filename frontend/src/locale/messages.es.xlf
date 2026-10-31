@@ -3,7 +3,7 @@
   <file id="ngi18n" original="ng.template">
     <unit id="signInTitle">
       <notes>
-        <note category="location">src/app/app.routes.ts:12</note>
+        <note category="location">src/app/app.routes.ts:14</note>
       </notes>
       <segment>
         <source>Sign in · ClockIn</source>
@@ -12,20 +12,11 @@
     </unit>
     <unit id="setPasswordTitle">
       <notes>
-        <note category="location">src/app/app.routes.ts:18</note>
+        <note category="location">src/app/app.routes.ts:20</note>
       </notes>
       <segment>
         <source>Set your password · ClockIn</source>
         <target>Crea tu contraseña · ClockIn</target>
-      </segment>
-    </unit>
-    <unit id="homeTitle">
-      <notes>
-        <note category="location">src/app/app.routes.ts:42</note>
-      </notes>
-      <segment>
-        <source>ClockIn</source>
-        <target>ClockIn</target>
       </segment>
     </unit>
     <unit id="dismiss">
@@ -82,13 +73,834 @@
         <target>Cuenta</target>
       </segment>
     </unit>
+    <unit id="navSettings">
+      <notes>
+        <note category="location">src/app/core/layout/shell/shell.component.html:22,24</note>
+      </notes>
+      <segment>
+        <source>Settings</source>
+        <target>Ajustes</target>
+      </segment>
+    </unit>
     <unit id="signOut">
       <notes>
-        <note category="location">src/app/core/layout/shell/shell.component.html:22,23</note>
+        <note category="location">src/app/core/layout/shell/shell.component.html:26,27</note>
       </notes>
       <segment>
         <source>Sign out</source>
         <target>Cerrar sesión</target>
+      </segment>
+    </unit>
+    <unit id="mainNav">
+      <notes>
+        <note category="location">src/app/core/layout/shell/shell.component.html:32</note>
+      </notes>
+      <segment>
+        <source>Main</source>
+        <target>Principal</target>
+      </segment>
+    </unit>
+    <unit id="navClock">
+      <notes>
+        <note category="location">src/app/core/layout/shell/shell.component.ts:59</note>
+      </notes>
+      <segment>
+        <source>Clock</source>
+        <target>Reloj</target>
+      </segment>
+    </unit>
+    <unit id="navTimesheets">
+      <notes>
+        <note category="location">src/app/core/layout/shell/shell.component.ts:66</note>
+      </notes>
+      <segment>
+        <source>My timesheets</source>
+        <target>Mis hojas de horas</target>
+      </segment>
+    </unit>
+    <unit id="navReview">
+      <notes>
+        <note category="location">src/app/core/layout/shell/shell.component.ts:73</note>
+      </notes>
+      <segment>
+        <source>Review</source>
+        <target>Revisión</target>
+      </segment>
+    </unit>
+    <unit id="navTeam">
+      <notes>
+        <note category="location">src/app/core/layout/shell/shell.component.ts:80</note>
+      </notes>
+      <segment>
+        <source>Team week</source>
+        <target>Semana del equipo</target>
+      </segment>
+    </unit>
+    <unit id="navUsers">
+      <notes>
+        <note category="location">src/app/core/layout/shell/shell.component.ts:87</note>
+      </notes>
+      <segment>
+        <source>Users</source>
+        <target>Usuarios</target>
+      </segment>
+    </unit>
+    <unit id="navTeams">
+      <notes>
+        <note category="location">src/app/core/layout/shell/shell.component.ts:94</note>
+      </notes>
+      <segment>
+        <source>Teams</source>
+        <target>Equipos</target>
+      </segment>
+    </unit>
+    <unit id="usersPageTitle">
+      <notes>
+        <note category="location">src/app/features/admin/admin.routes.ts:6</note>
+      </notes>
+      <segment>
+        <source>Users · ClockIn</source>
+        <target>Usuarios · ClockIn</target>
+      </segment>
+    </unit>
+    <unit id="teamsPageTitle">
+      <notes>
+        <note category="location">src/app/features/admin/admin.routes.ts:10</note>
+      </notes>
+      <segment>
+        <source>Teams · ClockIn</source>
+        <target>Equipos · ClockIn</target>
+      </segment>
+    </unit>
+    <unit id="accessLinkTitle">
+      <notes>
+        <note category="location">src/app/features/admin/components/link-dialog/link-dialog.component.html:1,2</note>
+      </notes>
+      <segment>
+        <source>Link for <ph id="0" equiv="INTERPOLATION" disp="{{ data.name }}"/></source>
+        <target>Enlace para <ph id="0" equiv="INTERPOLATION" disp="{{ data.name }}"/></target>
+      </segment>
+    </unit>
+    <unit id="accessLinkMessage">
+      <notes>
+        <note category="location">src/app/features/admin/components/link-dialog/link-dialog.component.html:4,7</note>
+      </notes>
+      <segment>
+        <source> Send this link to <ph id="0" equiv="INTERPOLATION" disp="{{ data.name }}"/> to set a password. It works once and expires on <ph id="1" equiv="INTERPOLATION_1" disp="{{ expires }}"/>. It won&apos;t be shown again. </source>
+        <target>Envía este enlace a <ph id="0" equiv="INTERPOLATION" disp="{{ data.name }}"/> para que cree su contraseña. Funciona una sola vez y caduca el <ph id="1" equiv="INTERPOLATION_1" disp="{{ expires }}"/>. No se volverá a mostrar.</target>
+      </segment>
+    </unit>
+    <unit id="copied">
+      <notes>
+        <note category="location">src/app/features/admin/components/link-dialog/link-dialog.component.html:13,14</note>
+      </notes>
+      <segment>
+        <source>Copied</source>
+        <target>Copiado</target>
+      </segment>
+    </unit>
+    <unit id="copyLink">
+      <notes>
+        <note category="location">src/app/features/admin/components/link-dialog/link-dialog.component.html:15,17</note>
+      </notes>
+      <segment>
+        <source>Copy link</source>
+        <target>Copiar enlace</target>
+      </segment>
+    </unit>
+    <unit id="done">
+      <notes>
+        <note category="location">src/app/features/admin/components/link-dialog/link-dialog.component.html:18,19</note>
+      </notes>
+      <segment>
+        <source>Done</source>
+        <target>Listo</target>
+      </segment>
+    </unit>
+    <unit id="renameTeamTitle">
+      <notes>
+        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:3,5</note>
+      </notes>
+      <segment>
+        <source>Rename team</source>
+        <target>Renombrar equipo</target>
+      </segment>
+    </unit>
+    <unit id="newTeamTitle">
+      <notes>
+        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:5,8</note>
+      </notes>
+      <segment>
+        <source>New team</source>
+        <target>Nuevo equipo</target>
+      </segment>
+    </unit>
+    <unit id="name">
+      <notes>
+        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:11,12</note>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:5,6</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:14,15</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:14,15</note>
+      </notes>
+      <segment>
+        <source>Name</source>
+        <target>Nombre</target>
+      </segment>
+    </unit>
+    <unit id="nameRequired">
+      <notes>
+        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:13,14</note>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:7,8</note>
+      </notes>
+      <segment>
+        <source>Enter a name of at most 100 characters.</source>
+        <target>Escribe un nombre de 100 caracteres como máximo.</target>
+      </segment>
+    </unit>
+    <unit id="supervisor">
+      <notes>
+        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:17,18</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:15,16</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:76</note>
+      </notes>
+      <segment>
+        <source>Supervisor</source>
+        <target>Supervisor</target>
+      </segment>
+    </unit>
+    <unit id="noFreeSupervisors">
+      <notes>
+        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:24,26</note>
+      </notes>
+      <segment>
+        <source>Every supervisor leads a team. Create or promote one first.</source>
+        <target>Todos los supervisores ya dirigen un equipo. Crea o promueve uno primero.</target>
+      </segment>
+    </unit>
+    <unit id="supervisorRequired">
+      <notes>
+        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:26,27</note>
+      </notes>
+      <segment>
+        <source>Choose a supervisor.</source>
+        <target>Elige un supervisor.</target>
+      </segment>
+    </unit>
+    <unit id="cancel">
+      <notes>
+        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:34,35</note>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:54,55</note>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:43,44</note>
+        <note category="location">src/app/shared/components/choice-dialog/choice-dialog.component.html:18,19</note>
+        <note category="location">src/app/shared/components/text-dialog/text-dialog.component.html:27,28</note>
+      </notes>
+      <segment>
+        <source>Cancel</source>
+        <target>Cancelar</target>
+      </segment>
+    </unit>
+    <unit id="save">
+      <notes>
+        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:35,36</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:77</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:138</note>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:44,45</note>
+      </notes>
+      <segment>
+        <source>Save</source>
+        <target>Guardar</target>
+      </segment>
+    </unit>
+    <unit id="newUserTitle">
+      <notes>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:1,2</note>
+      </notes>
+      <segment>
+        <source>New user</source>
+        <target>Nuevo usuario</target>
+      </segment>
+    </unit>
+    <unit id="email">
+      <notes>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:10,11</note>
+        <note category="location">src/app/features/auth/pages/sign-in/sign-in.component.html:12,13</note>
+      </notes>
+      <segment>
+        <source>Email</source>
+        <target>Correo electrónico</target>
+      </segment>
+    </unit>
+    <unit id="emailInvalid">
+      <notes>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:12,13</note>
+        <note category="location">src/app/features/auth/pages/sign-in/sign-in.component.html:17,19</note>
+      </notes>
+      <segment>
+        <source>Enter a valid email.</source>
+        <target>Escribe un correo electrónico válido.</target>
+      </segment>
+    </unit>
+    <unit id="role">
+      <notes>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:15,16</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:15,16</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:80</note>
+      </notes>
+      <segment>
+        <source>Role</source>
+        <target>Rol</target>
+      </segment>
+    </unit>
+    <unit id="roleEmployee">
+      <notes>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:17,18</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:83</note>
+        <note category="location">src/app/features/admin/pipes/role-label.pipe.ts:10</note>
+        <note category="location">src/app/features/auth/components/demo-accounts/demo-accounts.component.html:24,25</note>
+      </notes>
+      <segment>
+        <source>Employee</source>
+        <target>Empleado</target>
+      </segment>
+    </unit>
+    <unit id="roleSupervisor">
+      <notes>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:18,19</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:84</note>
+        <note category="location">src/app/features/admin/pipes/role-label.pipe.ts:12</note>
+        <note category="location">src/app/features/auth/components/demo-accounts/demo-accounts.component.html:21,22</note>
+      </notes>
+      <segment>
+        <source>Supervisor</source>
+        <target>Supervisor</target>
+      </segment>
+    </unit>
+    <unit id="roleAdmin">
+      <notes>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:19,20</note>
+        <note category="location">src/app/features/admin/pipes/role-label.pipe.ts:14</note>
+        <note category="location">src/app/features/auth/components/demo-accounts/demo-accounts.component.html:18,19</note>
+      </notes>
+      <segment>
+        <source>Admin</source>
+        <target>Administrador</target>
+      </segment>
+    </unit>
+    <unit id="team">
+      <notes>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:24,25</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:16,17</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:137</note>
+      </notes>
+      <segment>
+        <source>Team</source>
+        <target>Equipo</target>
+      </segment>
+    </unit>
+    <unit id="teamRequired">
+      <notes>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:30,31</note>
+      </notes>
+      <segment>
+        <source>Choose a team.</source>
+        <target>Elige un equipo.</target>
+      </segment>
+    </unit>
+    <unit id="language">
+      <notes>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:35,36</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:8,9</note>
+      </notes>
+      <segment>
+        <source>Language</source>
+        <target>Idioma</target>
+      </segment>
+    </unit>
+    <unit id="timeFormat">
+      <notes>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:42,43</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:15,16</note>
+      </notes>
+      <segment>
+        <source>Time format</source>
+        <target>Formato de hora</target>
+      </segment>
+    </unit>
+    <unit id="timeFormat24">
+      <notes>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:44,45</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:17,18</note>
+      </notes>
+      <segment>
+        <source>24-hour (17:30)</source>
+        <target>24 horas (17:30)</target>
+      </segment>
+    </unit>
+    <unit id="timeFormat12">
+      <notes>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:45,46</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:18,19</note>
+      </notes>
+      <segment>
+        <source>12-hour (5:30 PM)</source>
+        <target>12 horas (5:30 p. m.)</target>
+      </segment>
+    </unit>
+    <unit id="createUser">
+      <notes>
+        <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:55,56</note>
+      </notes>
+      <segment>
+        <source>Create user</source>
+        <target>Crear usuario</target>
+      </segment>
+    </unit>
+    <unit id="teamsTitle">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:2,3</note>
+      </notes>
+      <segment>
+        <source>Teams</source>
+        <target>Equipos</target>
+      </segment>
+    </unit>
+    <unit id="newTeam">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:5,6</note>
+      </notes>
+      <segment>
+        <source>New team</source>
+        <target>Nuevo equipo</target>
+      </segment>
+    </unit>
+    <unit id="employees">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:16,17</note>
+      </notes>
+      <segment>
+        <source>Employees</source>
+        <target>Empleados</target>
+      </segment>
+    </unit>
+    <unit id="actions">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:17,18</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:18,19</note>
+      </notes>
+      <segment>
+        <source>Actions</source>
+        <target>Acciones</target>
+      </segment>
+    </unit>
+    <unit id="archived">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:26,27</note>
+      </notes>
+      <segment>
+        <source>Archived</source>
+        <target>Archivado</target>
+      </segment>
+    </unit>
+    <unit id="actionsFor">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:38,39</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:52,53</note>
+      </notes>
+      <segment>
+        <source>Actions for <ph id="0" equiv="INTERPOLATION" disp="{{ team.name }}"/></source>
+        <target>Acciones para <ph id="0" equiv="INTERPOLATION" disp="{{ team.name }}"/></target>
+      </segment>
+    </unit>
+    <unit id="rename">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:43,44</note>
+      </notes>
+      <segment>
+        <source>Rename</source>
+        <target>Renombrar</target>
+      </segment>
+    </unit>
+    <unit id="changeSupervisor">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:47,48</note>
+      </notes>
+      <segment>
+        <source>Change supervisor</source>
+        <target>Cambiar supervisor</target>
+      </segment>
+    </unit>
+    <unit id="archive">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:51,52</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:95</note>
+      </notes>
+      <segment>
+        <source>Archive</source>
+        <target>Archivar</target>
+      </segment>
+    </unit>
+    <unit id="noTeams">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:59,61</note>
+      </notes>
+      <segment>
+        <source>No teams yet.</source>
+        <target>Todavía no hay equipos.</target>
+      </segment>
+    </unit>
+    <unit id="teamsLoadFailed">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:67,68</note>
+      </notes>
+      <segment>
+        <source>The teams couldn&apos;t be loaded.</source>
+        <target>No se pudieron cargar los equipos.</target>
+      </segment>
+    </unit>
+    <unit id="tryAgain">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:68,70</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:100,102</note>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:76,78</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:95,97</note>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:49,51</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:198,200</note>
+      </notes>
+      <segment>
+        <source>Try again</source>
+        <target>Reintentar</target>
+      </segment>
+    </unit>
+    <unit id="loading">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.html:71,73</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:103,105</note>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:84,86</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:98,101</note>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:52,54</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:201,203</note>
+      </notes>
+      <segment>
+        <source>Loading</source>
+        <target>Cargando</target>
+      </segment>
+    </unit>
+    <unit id="teamCreated">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:61</note>
+      </notes>
+      <segment>
+        <source>Team created.</source>
+        <target>Equipo creado.</target>
+      </segment>
+    </unit>
+    <unit id="teamRenamed">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:68</note>
+      </notes>
+      <segment>
+        <source>Team renamed.</source>
+        <target>Equipo renombrado.</target>
+      </segment>
+    </unit>
+    <unit id="changeSupervisorTitle">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:74</note>
+      </notes>
+      <segment>
+        <source>New supervisor for <ph id="0" equiv="name" disp="team.name"/></source>
+        <target>Nuevo supervisor para <ph id="0" equiv="name" disp="team.name"/></target>
+      </segment>
+    </unit>
+    <unit id="changeSupervisorMessage">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:75</note>
+      </notes>
+      <segment>
+        <source>Pending timesheets and correction requests move to the new supervisor.</source>
+        <target>Las hojas de horas y solicitudes de corrección pendientes pasan al nuevo supervisor.</target>
+      </segment>
+    </unit>
+    <unit id="supervisorChanged">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:86</note>
+      </notes>
+      <segment>
+        <source>Supervisor changed.</source>
+        <target>Supervisor cambiado.</target>
+      </segment>
+    </unit>
+    <unit id="archiveTeamTitle">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:93</note>
+      </notes>
+      <segment>
+        <source>Archive <ph id="0" equiv="name" disp="team.name"/>?</source>
+        <target>¿Archivar <ph id="0" equiv="name" disp="team.name"/>?</target>
+      </segment>
+    </unit>
+    <unit id="archiveTeamMessage">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:94</note>
+      </notes>
+      <segment>
+        <source>The team keeps its name in history and exports, but nobody can join it again.</source>
+        <target>El equipo conserva su nombre en el historial y las exportaciones, pero nadie podrá volver a unirse.</target>
+      </segment>
+    </unit>
+    <unit id="teamArchived">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:101</note>
+      </notes>
+      <segment>
+        <source>Team archived.</source>
+        <target>Equipo archivado.</target>
+      </segment>
+    </unit>
+    <unit id="usersTitle">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:2,3</note>
+      </notes>
+      <segment>
+        <source>Users</source>
+        <target>Usuarios</target>
+      </segment>
+    </unit>
+    <unit id="newUser">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:5,6</note>
+      </notes>
+      <segment>
+        <source>New user</source>
+        <target>Nuevo usuario</target>
+      </segment>
+    </unit>
+    <unit id="status">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:17,18</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:67,68</note>
+      </notes>
+      <segment>
+        <source>Status</source>
+        <target>Estado</target>
+      </segment>
+    </unit>
+    <unit id="statusPending">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:33,35</note>
+      </notes>
+      <segment>
+        <source>Pending activation</source>
+        <target>Pendiente de activación</target>
+      </segment>
+    </unit>
+    <unit id="statusActive">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:36,38</note>
+      </notes>
+      <segment>
+        <source>Active</source>
+        <target>Activo</target>
+      </segment>
+    </unit>
+    <unit id="statusDeactivated">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:39,41</note>
+      </notes>
+      <segment>
+        <source>Deactivated</source>
+        <target>Desactivado</target>
+      </segment>
+    </unit>
+    <unit id="statusLocked">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:43,45</note>
+      </notes>
+      <segment>
+        <source>Locked</source>
+        <target>Bloqueado</target>
+      </segment>
+    </unit>
+    <unit id="reactivate">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:58,59</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:125</note>
+      </notes>
+      <segment>
+        <source>Reactivate</source>
+        <target>Reactivar</target>
+      </segment>
+    </unit>
+    <unit id="accessLink">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:63,64</note>
+      </notes>
+      <segment>
+        <source>Activation or reset link</source>
+        <target>Enlace de activación o restablecimiento</target>
+      </segment>
+    </unit>
+    <unit id="changeRole">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:68,69</note>
+      </notes>
+      <segment>
+        <source>Change role</source>
+        <target>Cambiar rol</target>
+      </segment>
+    </unit>
+    <unit id="moveToTeam">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:74,75</note>
+      </notes>
+      <segment>
+        <source>Move to another team</source>
+        <target>Mover a otro equipo</target>
+      </segment>
+    </unit>
+    <unit id="unlock">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:80,81</note>
+      </notes>
+      <segment>
+        <source>Unlock</source>
+        <target>Desbloquear</target>
+      </segment>
+    </unit>
+    <unit id="deactivate">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:86,87</note>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:108</note>
+      </notes>
+      <segment>
+        <source>Deactivate</source>
+        <target>Desactivar</target>
+      </segment>
+    </unit>
+    <unit id="usersLoadFailed">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.html:99,100</note>
+      </notes>
+      <segment>
+        <source>The users couldn&apos;t be loaded.</source>
+        <target>No se pudieron cargar los usuarios.</target>
+      </segment>
+    </unit>
+    <unit id="theNewUser">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:67</note>
+      </notes>
+      <segment>
+        <source>the new user</source>
+        <target>el nuevo usuario</target>
+      </segment>
+    </unit>
+    <unit id="changeRoleTitle">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:78</note>
+      </notes>
+      <segment>
+        <source>Change the role of <ph id="0" equiv="name" disp="user.name"/></source>
+        <target>Cambiar el rol de <ph id="0" equiv="name" disp="user.name"/></target>
+      </segment>
+    </unit>
+    <unit id="changeRoleMessage">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:79</note>
+      </notes>
+      <segment>
+        <source>Their sessions end, so they sign in again with the new permissions.</source>
+        <target>Sus sesiones terminan, así que vuelve a iniciar sesión con los nuevos permisos.</target>
+      </segment>
+    </unit>
+    <unit id="next">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:81</note>
+      </notes>
+      <segment>
+        <source>Next</source>
+        <target>Siguiente</target>
+      </segment>
+    </unit>
+    <unit id="roleChanged">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:90</note>
+      </notes>
+      <segment>
+        <source>Role changed.</source>
+        <target>Rol cambiado.</target>
+      </segment>
+    </unit>
+    <unit id="employeeMoved">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:96</note>
+      </notes>
+      <segment>
+        <source>Employee moved.</source>
+        <target>Empleado movido.</target>
+      </segment>
+    </unit>
+    <unit id="userUnlocked">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:101</note>
+      </notes>
+      <segment>
+        <source><ph id="0" equiv="name" disp="user.name"/> can sign in again.</source>
+        <target><ph id="0" equiv="name" disp="user.name"/> ya puede iniciar sesión.</target>
+      </segment>
+    </unit>
+    <unit id="deactivateTitle">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:106</note>
+      </notes>
+      <segment>
+        <source>Deactivate <ph id="0" equiv="name" disp="user.name"/>?</source>
+        <target>¿Desactivar a <ph id="0" equiv="name" disp="user.name"/>?</target>
+      </segment>
+    </unit>
+    <unit id="deactivateMessage">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:107</note>
+      </notes>
+      <segment>
+        <source>They are signed out everywhere at once. Their records stay, and you can reactivate them later.</source>
+        <target>Se cierran todas sus sesiones al instante. Sus registros se conservan y puedes reactivarlo más adelante.</target>
+      </segment>
+    </unit>
+    <unit id="userDeactivated">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:111</note>
+      </notes>
+      <segment>
+        <source>User deactivated.</source>
+        <target>Usuario desactivado.</target>
+      </segment>
+    </unit>
+    <unit id="reactivateTitle">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:123</note>
+      </notes>
+      <segment>
+        <source>Reactivate <ph id="0" equiv="name" disp="user.name"/>?</source>
+        <target>¿Reactivar a <ph id="0" equiv="name" disp="user.name"/>?</target>
+      </segment>
+    </unit>
+    <unit id="reactivateMessage">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:124</note>
+      </notes>
+      <segment>
+        <source>They get a new link to set a password; the old one no longer works.</source>
+        <target>Recibe un enlace nuevo para crear su contraseña; la anterior deja de funcionar.</target>
+      </segment>
+    </unit>
+    <unit id="chooseTeamTitle">
+      <notes>
+        <note category="location">src/app/features/admin/pages/users/users.component.ts:136</note>
+      </notes>
+      <segment>
+        <source>Team for <ph id="0" equiv="name" disp="user.name"/></source>
+        <target>Equipo de <ph id="0" equiv="name" disp="user.name"/></target>
       </segment>
     </unit>
     <unit id="demoTitle">
@@ -108,33 +920,6 @@
         <source> Sample data, rebuilt every day. Don&apos;t enter real information. Every account uses the password <pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong
     &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ demo().password }}"/></pc>. </source>
         <target>Datos de ejemplo que se reconstruyen cada día. No escribas información real. Todas las cuentas usan la contraseña <pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ demo().password }}"/></pc>.</target>
-      </segment>
-    </unit>
-    <unit id="roleAdmin">
-      <notes>
-        <note category="location">src/app/features/auth/components/demo-accounts/demo-accounts.component.html:18,19</note>
-      </notes>
-      <segment>
-        <source>Admin</source>
-        <target>Administrador</target>
-      </segment>
-    </unit>
-    <unit id="roleSupervisor">
-      <notes>
-        <note category="location">src/app/features/auth/components/demo-accounts/demo-accounts.component.html:21,22</note>
-      </notes>
-      <segment>
-        <source>Supervisor</source>
-        <target>Supervisor</target>
-      </segment>
-    </unit>
-    <unit id="roleEmployee">
-      <notes>
-        <note category="location">src/app/features/auth/components/demo-accounts/demo-accounts.component.html:24,25</note>
-      </notes>
-      <segment>
-        <source>Employee</source>
-        <target>Empleado</target>
       </segment>
     </unit>
     <unit id="demoClockedIn">
@@ -221,6 +1006,7 @@
     <unit id="newPassword">
       <notes>
         <note category="location">src/app/features/auth/pages/set-password/set-password.component.html:16,17</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:41,42</note>
       </notes>
       <segment>
         <source>New password</source>
@@ -230,6 +1016,7 @@
     <unit id="passwordLengthHint">
       <notes>
         <note category="location">src/app/features/auth/pages/set-password/set-password.component.html:19,21</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:43,44</note>
       </notes>
       <segment>
         <source>12 to 128 characters. A few words work well.</source>
@@ -249,6 +1036,7 @@
     <unit id="passwordLength">
       <notes>
         <note category="location">src/app/features/auth/pages/set-password/set-password.component.html:27,28</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:44,45</note>
       </notes>
       <segment>
         <source>Use 12 to 128 characters.</source>
@@ -283,15 +1071,6 @@
         <target>Tu contraseña está lista. Inicia sesión con ella.</target>
       </segment>
     </unit>
-    <unit id="email">
-      <notes>
-        <note category="location">src/app/features/auth/pages/sign-in/sign-in.component.html:12,13</note>
-      </notes>
-      <segment>
-        <source>Email</source>
-        <target>Correo electrónico</target>
-      </segment>
-    </unit>
     <unit id="emailRequired">
       <notes>
         <note category="location">src/app/features/auth/pages/sign-in/sign-in.component.html:15,16</note>
@@ -299,15 +1078,6 @@
       <segment>
         <source>Enter your email.</source>
         <target>Escribe tu correo electrónico.</target>
-      </segment>
-    </unit>
-    <unit id="emailInvalid">
-      <notes>
-        <note category="location">src/app/features/auth/pages/sign-in/sign-in.component.html:17,19</note>
-      </notes>
-      <segment>
-        <source>Enter a valid email.</source>
-        <target>Escribe un correo electrónico válido.</target>
       </segment>
     </unit>
     <unit id="password">
@@ -391,9 +1161,18 @@
         <target>Un registro no puede durar más de 16 horas, así que no se puede cerrar ahora. Parece que olvidaste marcar la salida. Pon la hora de salida a mano o pídeselo a tu supervisor.</target>
       </segment>
     </unit>
+    <unit id="setEndTime">
+      <notes>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:35,37</note>
+      </notes>
+      <segment>
+        <source> Set the end time </source>
+        <target>Poner la hora de salida</target>
+      </segment>
+    </unit>
     <unit id="today">
       <notes>
-        <note category="location">src/app/features/clock/pages/clock/clock.component.html:40,41</note>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:43,44</note>
       </notes>
       <segment>
         <source>Today</source>
@@ -402,7 +1181,7 @@
     </unit>
     <unit id="thisWeek">
       <notes>
-        <note category="location">src/app/features/clock/pages/clock/clock.component.html:44,45</note>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:47,48</note>
       </notes>
       <segment>
         <source>This week</source>
@@ -411,7 +1190,7 @@
     </unit>
     <unit id="todaysEntries">
       <notes>
-        <note category="location">src/app/features/clock/pages/clock/clock.component.html:50,51</note>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:53,54</note>
       </notes>
       <segment>
         <source>Today&apos;s entries</source>
@@ -420,7 +1199,8 @@
     </unit>
     <unit id="openEntry">
       <notes>
-        <note category="location">src/app/features/clock/pages/clock/clock.component.html:60,62</note>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:63,65</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:145,146</note>
       </notes>
       <segment>
         <source>Open</source>
@@ -429,7 +1209,7 @@
     </unit>
     <unit id="noEntriesToday">
       <notes>
-        <note category="location">src/app/features/clock/pages/clock/clock.component.html:67,70</note>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:70,73</note>
       </notes>
       <segment>
         <source>No entries yet today.</source>
@@ -438,47 +1218,1210 @@
     </unit>
     <unit id="clockLoadFailed">
       <notes>
-        <note category="location">src/app/features/clock/pages/clock/clock.component.html:72,73</note>
+        <note category="location">src/app/features/clock/pages/clock/clock.component.html:75,76</note>
       </notes>
       <segment>
         <source>Your clock couldn&apos;t be loaded.</source>
         <target>No se pudo cargar tu reloj.</target>
       </segment>
     </unit>
-    <unit id="tryAgain">
+    <unit id="teamWeekTitle">
       <notes>
-        <note category="location">src/app/features/clock/pages/clock/clock.component.html:73,75</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:2,3</note>
       </notes>
       <segment>
-        <source>Try again</source>
-        <target>Reintentar</target>
+        <source>Team week</source>
+        <target>Semana del equipo</target>
       </segment>
     </unit>
-    <unit id="loading">
+    <unit id="weekNavigation">
       <notes>
-        <note category="location">src/app/features/clock/pages/clock/clock.component.html:81,83</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:4</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:18</note>
       </notes>
       <segment>
-        <source>Loading</source>
-        <target>Cargando</target>
+        <source>Week</source>
+        <target>Semana</target>
       </segment>
     </unit>
-    <unit id="welcome">
+    <unit id="previousWeek">
       <notes>
-        <note category="location">src/app/features/home/pages/home/home.component.html:1,2</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:4,5</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:18,19</note>
       </notes>
       <segment>
-        <source>Welcome, <ph id="0" equiv="INTERPOLATION" disp="{{ user()?.name }}"/></source>
-        <target>Hola, <ph id="0" equiv="INTERPOLATION" disp="{{ user()?.name }}"/></target>
+        <source>Previous week</source>
+        <target>Semana anterior</target>
       </segment>
     </unit>
-    <unit id="homeNothingYet">
+    <unit id="weekOf">
       <notes>
-        <note category="location">src/app/features/home/pages/home/home.component.html:2,3</note>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:7,8</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:21,22</note>
       </notes>
       <segment>
-        <source>There&apos;s nothing to do here yet for your role.</source>
-        <target>Todavía no hay nada que hacer aquí para tu rol.</target>
+        <source>Week of <ph id="0" equiv="INTERPOLATION" disp="{{ week() + &apos;T12:00:00Z&apos; | companyTime: &apos;UTC&apos; : &apos;date&apos; }}"/></source>
+        <target>Semana del <ph id="0" equiv="INTERPOLATION" disp="{{ week() + &apos;T12:00:00Z&apos; | companyTime: &apos;UTC&apos; : &apos;date&apos; }}"/></target>
+      </segment>
+    </unit>
+    <unit id="nextWeek">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:8,9</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:22,23</note>
+      </notes>
+      <segment>
+        <source>Next week</source>
+        <target>Semana siguiente</target>
+      </segment>
+    </unit>
+    <unit id="teamFilter">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:15,16</note>
+      </notes>
+      <segment>
+        <source>Team</source>
+        <target>Equipo</target>
+      </segment>
+    </unit>
+    <unit id="allTeams">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:17,18</note>
+      </notes>
+      <segment>
+        <source>All teams</source>
+        <target>Todos los equipos</target>
+      </segment>
+    </unit>
+    <unit id="exportCsv">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:28,29</note>
+      </notes>
+      <segment>
+        <source>Approved CSV</source>
+        <target>CSV de aprobadas</target>
+      </segment>
+    </unit>
+    <unit id="print">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:32,33</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:124,125</note>
+      </notes>
+      <segment>
+        <source>Print</source>
+        <target>Imprimir</target>
+      </segment>
+    </unit>
+    <unit id="supervisorsGroup">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:43,44</note>
+      </notes>
+      <segment>
+        <source>Supervisors</source>
+        <target>Supervisores</target>
+      </segment>
+    </unit>
+    <unit id="ledBy">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:49,50</note>
+      </notes>
+      <segment>
+        <source>Led by <ph id="0" equiv="INTERPOLATION" disp="{{ group.supervisorName }}"/></source>
+        <target>Dirigido por <ph id="0" equiv="INTERPOLATION" disp="{{ group.supervisorName }}"/></target>
+      </segment>
+    </unit>
+    <unit id="countNotStarted">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:52,53</note>
+      </notes>
+      <segment>
+        <source><ph id="0" equiv="INTERPOLATION" disp="{{ group.summary.notStarted }}"/> not started</source>
+        <target><ph id="0" equiv="INTERPOLATION" disp="{{ group.summary.notStarted }}"/> sin empezar</target>
+      </segment>
+    </unit>
+    <unit id="countDraft">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:53,54</note>
+      </notes>
+      <segment>
+        <source><ph id="0" equiv="INTERPOLATION" disp="{{ group.summary.draft }}"/> draft</source>
+        <target><ph id="0" equiv="INTERPOLATION" disp="{{ group.summary.draft }}"/> en borrador</target>
+      </segment>
+    </unit>
+    <unit id="countSubmitted">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:54,55</note>
+      </notes>
+      <segment>
+        <source><ph id="0" equiv="INTERPOLATION" disp="{{ group.summary.submitted }}"/> submitted</source>
+        <target><ph id="0" equiv="INTERPOLATION" disp="{{ group.summary.submitted }}"/> enviadas</target>
+      </segment>
+    </unit>
+    <unit id="countApproved">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:55,56</note>
+      </notes>
+      <segment>
+        <source><ph id="0" equiv="INTERPOLATION" disp="{{ group.summary.approved }}"/> approved</source>
+        <target><ph id="0" equiv="INTERPOLATION" disp="{{ group.summary.approved }}"/> aprobadas</target>
+      </segment>
+    </unit>
+    <unit id="person">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:62,63</note>
+      </notes>
+      <segment>
+        <source>Person</source>
+        <target>Persona</target>
+      </segment>
+    </unit>
+    <unit id="total">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:66,67</note>
+      </notes>
+      <segment>
+        <source>Total</source>
+        <target>Total</target>
+      </segment>
+    </unit>
+    <unit id="nobodyToShow">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:90,92</note>
+      </notes>
+      <segment>
+        <source>Nobody to show for this week.</source>
+        <target>No hay nadie que mostrar esta semana.</target>
+      </segment>
+    </unit>
+    <unit id="teamWeekLoadFailed">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:94,95</note>
+      </notes>
+      <segment>
+        <source>The team week couldn&apos;t be loaded.</source>
+        <target>No se pudo cargar la semana del equipo.</target>
+      </segment>
+    </unit>
+    <unit id="clockedInNow">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:103,104</note>
+      </notes>
+      <segment>
+        <source>Clocked in now</source>
+        <target>Con entrada ahora</target>
+      </segment>
+    </unit>
+    <unit id="since">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:109,110</note>
+      </notes>
+      <segment>
+        <source>since <ph id="0" equiv="INTERPOLATION" disp="{{ person.since | companyTime: grid()?.timeZone ?? &apos;UTC&apos; : &apos;dateTime&apos; }}"/></source>
+        <target>desde <ph id="0" equiv="INTERPOLATION" disp="{{ person.since | companyTime: grid()?.timeZone ?? &apos;UTC&apos; : &apos;dateTime&apos; }}"/></target>
+      </segment>
+    </unit>
+    <unit id="overLimit">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:112,114</note>
+      </notes>
+      <segment>
+        <source>Over 16 h</source>
+        <target>Más de 16 h</target>
+      </segment>
+    </unit>
+    <unit id="nobodyClockedIn">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:118,122</note>
+      </notes>
+      <segment>
+        <source>Nobody is clocked in.</source>
+        <target>Nadie tiene entrada registrada.</target>
+      </segment>
+    </unit>
+    <unit id="exceptions">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:123,124</note>
+      </notes>
+      <segment>
+        <source>Exceptions</source>
+        <target>Excepciones</target>
+      </segment>
+    </unit>
+    <unit id="exceptionOverdue">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:132,133</note>
+      </notes>
+      <segment>
+        <source>Not submitted: week of <ph id="0" equiv="INTERPOLATION" disp="{{ item.weekStart + &apos;T12:00:00Z&apos; | companyTime: &apos;UTC&apos; : &apos;date&apos; }}"/></source>
+        <target>Sin enviar: semana del <ph id="0" equiv="INTERPOLATION" disp="{{ item.weekStart + &apos;T12:00:00Z&apos; | companyTime: &apos;UTC&apos; : &apos;date&apos; }}"/></target>
+      </segment>
+    </unit>
+    <unit id="exceptionLongEntry">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:135,136</note>
+      </notes>
+      <segment>
+        <source>Entry over 10 h (<ph id="0" equiv="INTERPOLATION" disp="{{ (item.seconds ?? 0) | duration }}"/>)</source>
+        <target>Registro de más de 10 h (<ph id="0" equiv="INTERPOLATION" disp="{{ (item.seconds ?? 0) | duration }}"/>)</target>
+      </segment>
+    </unit>
+    <unit id="exceptionManualChanges">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:138,139</note>
+      </notes>
+      <segment>
+        <source><ph id="0" equiv="INTERPOLATION" disp="{{ item.count }}"/> entries changed by hand</source>
+        <target><ph id="0" equiv="INTERPOLATION" disp="{{ item.count }}"/> registros cambiados a mano</target>
+      </segment>
+    </unit>
+    <unit id="noExceptions">
+      <notes>
+        <note category="location">src/app/features/reports/pages/team-week/team-week.component.html:146,149</note>
+      </notes>
+      <segment>
+        <source>No exceptions.</source>
+        <target>No hay excepciones.</target>
+      </segment>
+    </unit>
+    <unit id="teamWeekPageTitle">
+      <notes>
+        <note category="location">src/app/features/reports/reports.routes.ts:4</note>
+      </notes>
+      <segment>
+        <source>Team week · ClockIn</source>
+        <target>Semana del equipo · ClockIn</target>
+      </segment>
+    </unit>
+    <unit id="settingsTitle">
+      <notes>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:1,3</note>
+      </notes>
+      <segment>
+        <source>Settings</source>
+        <target>Ajustes</target>
+      </segment>
+    </unit>
+    <unit id="preferences">
+      <notes>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:4,5</note>
+      </notes>
+      <segment>
+        <source>Preferences</source>
+        <target>Preferencias</target>
+      </segment>
+    </unit>
+    <unit id="preferencesHint">
+      <notes>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:5,6</note>
+      </notes>
+      <segment>
+        <source>They follow you on every device. Saving reloads the app.</source>
+        <target>Te acompañan en todos tus dispositivos. Al guardar, la aplicación se recarga.</target>
+      </segment>
+    </unit>
+    <unit id="savePreferences">
+      <notes>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:22,25</note>
+      </notes>
+      <segment>
+        <source> Save preferences </source>
+        <target>Guardar preferencias</target>
+      </segment>
+    </unit>
+    <unit id="changePassword">
+      <notes>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:28,29</note>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:54,56</note>
+      </notes>
+      <segment>
+        <source>Change password</source>
+        <target>Cambiar contraseña</target>
+      </segment>
+    </unit>
+    <unit id="changePasswordHint">
+      <notes>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:29,30</note>
+      </notes>
+      <segment>
+        <source>Your other devices are signed out; this one stays signed in.</source>
+        <target>Se cierra la sesión en tus otros dispositivos; en este sigues dentro.</target>
+      </segment>
+    </unit>
+    <unit id="currentPassword">
+      <notes>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:32,33</note>
+      </notes>
+      <segment>
+        <source>Current password</source>
+        <target>Contraseña actual</target>
+      </segment>
+    </unit>
+    <unit id="wrongCurrentPassword">
+      <notes>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:35,37</note>
+      </notes>
+      <segment>
+        <source>The current password is incorrect.</source>
+        <target>La contraseña actual no es correcta.</target>
+      </segment>
+    </unit>
+    <unit id="currentPasswordRequired">
+      <notes>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:37,39</note>
+      </notes>
+      <segment>
+        <source>Enter your current password.</source>
+        <target>Escribe tu contraseña actual.</target>
+      </segment>
+    </unit>
+    <unit id="confirmPassword">
+      <notes>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:47,48</note>
+      </notes>
+      <segment>
+        <source>Confirm new password</source>
+        <target>Confirma la nueva contraseña</target>
+      </segment>
+    </unit>
+    <unit id="confirmPasswordRequired">
+      <notes>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:49,51</note>
+      </notes>
+      <segment>
+        <source>Enter the new password again.</source>
+        <target>Escribe otra vez la nueva contraseña.</target>
+      </segment>
+    </unit>
+    <unit id="passwordsDiffer">
+      <notes>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.html:52,54</note>
+      </notes>
+      <segment>
+        <source>The passwords don&apos;t match.</source>
+        <target>Las contraseñas no coinciden.</target>
+      </segment>
+    </unit>
+    <unit id="passwordChanged">
+      <notes>
+        <note category="location">src/app/features/settings/pages/settings/settings.component.ts:86</note>
+      </notes>
+      <segment>
+        <source>Password changed. Your other devices are signed out.</source>
+        <target>Contraseña cambiada. Se cerró la sesión en tus otros dispositivos.</target>
+      </segment>
+    </unit>
+    <unit id="settingsPageTitle">
+      <notes>
+        <note category="location">src/app/features/settings/settings.routes.ts:5</note>
+      </notes>
+      <segment>
+        <source>Settings · ClockIn</source>
+        <target>Ajustes · ClockIn</target>
+      </segment>
+    </unit>
+    <unit id="editEntryTitle">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:3,5</note>
+      </notes>
+      <segment>
+        <source>Edit entry</source>
+        <target>Editar registro</target>
+      </segment>
+    </unit>
+    <unit id="addEntryTitle">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:5,8</note>
+      </notes>
+      <segment>
+        <source>Add entry</source>
+        <target>Añadir registro</target>
+      </segment>
+    </unit>
+    <unit id="entryDate">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:11,12</note>
+      </notes>
+      <segment>
+        <source>Date</source>
+        <target>Fecha</target>
+      </segment>
+    </unit>
+    <unit id="entryDateRequired">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:13,14</note>
+      </notes>
+      <segment>
+        <source>Choose a date in this week.</source>
+        <target>Elige una fecha de esta semana.</target>
+      </segment>
+    </unit>
+    <unit id="entryStart">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:17,18</note>
+      </notes>
+      <segment>
+        <source>Start</source>
+        <target>Entrada</target>
+      </segment>
+    </unit>
+    <unit id="entryStartRequired">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:19,20</note>
+      </notes>
+      <segment>
+        <source>Enter a start time.</source>
+        <target>Escribe la hora de entrada.</target>
+      </segment>
+    </unit>
+    <unit id="entryEnd">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:22,23</note>
+      </notes>
+      <segment>
+        <source>End</source>
+        <target>Salida</target>
+      </segment>
+    </unit>
+    <unit id="entryEndOpenHint">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:25,27</note>
+      </notes>
+      <segment>
+        <source>Leave empty to keep it running.</source>
+        <target>Déjala vacía para que siga abierto.</target>
+      </segment>
+    </unit>
+    <unit id="entryEndHint">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:27,29</note>
+      </notes>
+      <segment>
+        <source>Earlier than the start means the next day.</source>
+        <target>Si es anterior a la entrada, cuenta como el día siguiente.</target>
+      </segment>
+    </unit>
+    <unit id="entryEndRequired">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:29,30</note>
+      </notes>
+      <segment>
+        <source>Enter an end time.</source>
+        <target>Escribe la hora de salida.</target>
+      </segment>
+    </unit>
+    <unit id="entryNote">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:33,34</note>
+      </notes>
+      <segment>
+        <source>Why is this changed by hand?</source>
+        <target>¿Por qué se cambia a mano?</target>
+      </segment>
+    </unit>
+    <unit id="entryNoteRequired">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:36,37</note>
+      </notes>
+      <segment>
+        <source>Add a note of at most 500 characters.</source>
+        <target>Añade una nota de 500 caracteres como máximo.</target>
+      </segment>
+    </unit>
+    <unit id="historySubmitted">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:9,10</note>
+      </notes>
+      <segment>
+        <source>Submitted by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
+        <target>Enviada por <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></target>
+      </segment>
+    </unit>
+    <unit id="historySubmittedOnBehalf">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:11,12</note>
+      </notes>
+      <segment>
+        <source>Submitted by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/> on the owner&apos;s behalf</source>
+        <target>Enviada por <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/> en nombre de su titular</target>
+      </segment>
+    </unit>
+    <unit id="historyReturned">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:15,16</note>
+      </notes>
+      <segment>
+        <source>Returned by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
+        <target>Devuelta por <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></target>
+      </segment>
+    </unit>
+    <unit id="historyApproved">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:18,19</note>
+      </notes>
+      <segment>
+        <source>Approved by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
+        <target>Aprobada por <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></target>
+      </segment>
+    </unit>
+    <unit id="historyReopened">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:21,22</note>
+      </notes>
+      <segment>
+        <source>Reopened by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
+        <target>Reabierta por <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></target>
+      </segment>
+    </unit>
+    <unit id="historyCorrectionRequested">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:24,25</note>
+      </notes>
+      <segment>
+        <source>Correction requested by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
+        <target>Corrección solicitada por <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></target>
+      </segment>
+    </unit>
+    <unit id="historyCorrectionDeclined">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:27,28</note>
+      </notes>
+      <segment>
+        <source>Correction declined by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
+        <target>Corrección rechazada por <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></target>
+      </segment>
+    </unit>
+    <unit id="historyEntryAdded">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:30,31</note>
+      </notes>
+      <segment>
+        <source>Entry added by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
+        <target>Registro añadido por <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></target>
+      </segment>
+    </unit>
+    <unit id="historyEntryEdited">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:33,34</note>
+      </notes>
+      <segment>
+        <source>Entry edited by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
+        <target>Registro editado por <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></target>
+      </segment>
+    </unit>
+    <unit id="historyEntryDeleted">
+      <notes>
+        <note category="location">src/app/features/timesheets/components/history/history.component.html:36,37</note>
+      </notes>
+      <segment>
+        <source>Entry deleted by <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></source>
+        <target>Registro eliminado por <ph id="0" equiv="INTERPOLATION" disp="{{ item.actorName }}"/></target>
+      </segment>
+    </unit>
+    <unit id="reviewTitle">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:1,3</note>
+      </notes>
+      <segment>
+        <source>Review</source>
+        <target>Revisión</target>
+      </segment>
+    </unit>
+    <unit id="timesheetsToReview">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:5,6</note>
+      </notes>
+      <segment>
+        <source>Timesheets to review</source>
+        <target>Hojas de horas por revisar</target>
+      </segment>
+    </unit>
+    <unit id="weekOfShort">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:13,14</note>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:36,37</note>
+      </notes>
+      <segment>
+        <source>Week of <ph id="0" equiv="INTERPOLATION" disp="{{ item.weekStart + &apos;T12:00:00Z&apos; | companyTime: &apos;UTC&apos; : &apos;date&apos; }}"/></source>
+        <target>Semana del <ph id="0" equiv="INTERPOLATION" disp="{{ item.weekStart + &apos;T12:00:00Z&apos; | companyTime: &apos;UTC&apos; : &apos;date&apos; }}"/></target>
+      </segment>
+    </unit>
+    <unit id="nothingToReview">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:23,27</note>
+      </notes>
+      <segment>
+        <source>Nothing to review.</source>
+        <target>No hay nada que revisar.</target>
+      </segment>
+    </unit>
+    <unit id="correctionsToDecide">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:28,29</note>
+      </notes>
+      <segment>
+        <source>Correction requests</source>
+        <target>Solicitudes de corrección</target>
+      </segment>
+    </unit>
+    <unit id="noCorrections">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:43,46</note>
+      </notes>
+      <segment>
+        <source>No correction requests.</source>
+        <target>No hay solicitudes de corrección.</target>
+      </segment>
+    </unit>
+    <unit id="reviewLoadFailed">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/review-queue/review-queue.component.html:48,49</note>
+      </notes>
+      <segment>
+        <source>The review queue couldn&apos;t be loaded.</source>
+        <target>No se pudo cargar la cola de revisión.</target>
+      </segment>
+    </unit>
+    <unit id="backToReview">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:5,6</note>
+      </notes>
+      <segment>
+        <source>Back to review</source>
+        <target>Volver a revisión</target>
+      </segment>
+    </unit>
+    <unit id="weekTotal">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:30,31</note>
+      </notes>
+      <segment>
+        <source>Week total</source>
+        <target>Total de la semana</target>
+      </segment>
+    </unit>
+    <unit id="returnedBanner">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:40,41</note>
+      </notes>
+      <segment>
+        <source>Returned for changes</source>
+        <target>Devuelta para cambios</target>
+      </segment>
+    </unit>
+    <unit id="approvedBanner">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:50,52</note>
+      </notes>
+      <segment>
+        <source> Approved by <ph id="0" equiv="INTERPOLATION" disp="{{ approval.approverName }}"/> on <ph id="1" equiv="INTERPOLATION_1" disp="{{ approval.at | companyTime: sheet.timeZone : &apos;dateTime&apos; }}"/> </source>
+        <target>Aprobada por <ph id="0" equiv="INTERPOLATION" disp="{{ approval.approverName }}"/> el <ph id="1" equiv="INTERPOLATION_1" disp="{{ approval.at | companyTime: sheet.timeZone : &apos;dateTime&apos; }}"/></target>
+      </segment>
+    </unit>
+    <unit id="correctionPendingBanner">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:60,61</note>
+      </notes>
+      <segment>
+        <source>Correction requested</source>
+        <target>Corrección solicitada</target>
+      </segment>
+    </unit>
+    <unit id="correctionDeclinedBanner">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:68,69</note>
+      </notes>
+      <segment>
+        <source>Correction declined by <ph id="0" equiv="INTERPOLATION" disp="{{ correction.decidedByName }}"/></source>
+        <target>Corrección rechazada por <ph id="0" equiv="INTERPOLATION" disp="{{ correction.decidedByName }}"/></target>
+      </segment>
+    </unit>
+    <unit id="addEntry">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:79,80</note>
+      </notes>
+      <segment>
+        <source>Add entry</source>
+        <target>Añadir registro</target>
+      </segment>
+    </unit>
+    <unit id="submit">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:85,86</note>
+      </notes>
+      <segment>
+        <source>Submit</source>
+        <target>Enviar</target>
+      </segment>
+    </unit>
+    <unit id="approve">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:91,92</note>
+      </notes>
+      <segment>
+        <source>Approve</source>
+        <target>Aprobar</target>
+      </segment>
+    </unit>
+    <unit id="return">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:97,98</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:145</note>
+      </notes>
+      <segment>
+        <source>Return</source>
+        <target>Devolver</target>
+      </segment>
+    </unit>
+    <unit id="acceptCorrection">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:103,104</note>
+      </notes>
+      <segment>
+        <source>Accept correction</source>
+        <target>Aceptar corrección</target>
+      </segment>
+    </unit>
+    <unit id="declineCorrection">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:107,109</note>
+      </notes>
+      <segment>
+        <source>Decline correction</source>
+        <target>Rechazar corrección</target>
+      </segment>
+    </unit>
+    <unit id="requestCorrection">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:113,115</note>
+      </notes>
+      <segment>
+        <source>Request correction</source>
+        <target>Solicitar corrección</target>
+      </segment>
+    </unit>
+    <unit id="reopen">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:119,120</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:162</note>
+      </notes>
+      <segment>
+        <source>Reopen</source>
+        <target>Reabrir</target>
+      </segment>
+    </unit>
+    <unit id="addedBy">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:154,155</note>
+      </notes>
+      <segment>
+        <source>Added by hand by <ph id="0" equiv="INTERPOLATION" disp="{{ entry.changedByName }}"/></source>
+        <target>Añadido a mano por <ph id="0" equiv="INTERPOLATION" disp="{{ entry.changedByName }}"/></target>
+      </segment>
+    </unit>
+    <unit id="editedBy">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:156,157</note>
+      </notes>
+      <segment>
+        <source>Edited by <ph id="0" equiv="INTERPOLATION" disp="{{ entry.changedByName }}"/></source>
+        <target>Editado por <ph id="0" equiv="INTERPOLATION" disp="{{ entry.changedByName }}"/></target>
+      </segment>
+    </unit>
+    <unit id="punchedValues">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:165,167</note>
+      </notes>
+      <segment>
+        <source> Punched <ph id="0" equiv="INTERPOLATION" disp="{{ entry.punchedStart | companyTime: sheet.timeZone }}"/> – <ph id="1" equiv="INTERPOLATION_1" disp="{{ entry.punchedEnd ? (entry.punchedEnd | companyTime: sheet.timeZone) : &apos;…&apos; }}"/> </source>
+        <target>Marcado <ph id="0" equiv="INTERPOLATION" disp="{{ entry.punchedStart | companyTime: sheet.timeZone }}"/> – <ph id="1" equiv="INTERPOLATION_1" disp="{{ entry.punchedEnd ? (entry.punchedEnd | companyTime: sheet.timeZone) : &apos;…&apos; }}"/></target>
+      </segment>
+    </unit>
+    <unit id="editEntry">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:171</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:171,172</note>
+      </notes>
+      <segment>
+        <source>Edit entry</source>
+        <target>Editar registro</target>
+      </segment>
+    </unit>
+    <unit id="deleteEntry">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:174</note>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:174,175</note>
+      </notes>
+      <segment>
+        <source>Delete entry</source>
+        <target>Eliminar registro</target>
+      </segment>
+    </unit>
+    <unit id="history">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:190,191</note>
+      </notes>
+      <segment>
+        <source>History</source>
+        <target>Historial</target>
+      </segment>
+    </unit>
+    <unit id="timesheetLoadFailed">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.html:197,198</note>
+      </notes>
+      <segment>
+        <source>This timesheet couldn&apos;t be loaded.</source>
+        <target>No se pudo cargar esta hoja de horas.</target>
+      </segment>
+    </unit>
+    <unit id="deleteEntryTitle">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:111</note>
+      </notes>
+      <segment>
+        <source>Delete this entry?</source>
+        <target>¿Eliminar este registro?</target>
+      </segment>
+    </unit>
+    <unit id="deleteEntryMessage">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:112</note>
+      </notes>
+      <segment>
+        <source>It stays in the history with its last times.</source>
+        <target>Se conserva en el historial con sus últimas horas.</target>
+      </segment>
+    </unit>
+    <unit id="deleteEntryNote">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:113</note>
+      </notes>
+      <segment>
+        <source>Why is it deleted?</source>
+        <target>¿Por qué se elimina?</target>
+      </segment>
+    </unit>
+    <unit id="delete">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:114</note>
+      </notes>
+      <segment>
+        <source>Delete</source>
+        <target>Eliminar</target>
+      </segment>
+    </unit>
+    <unit id="entryDeleted">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:121</note>
+      </notes>
+      <segment>
+        <source>Entry deleted.</source>
+        <target>Registro eliminado.</target>
+      </segment>
+    </unit>
+    <unit id="timesheetSubmitted">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:129</note>
+      </notes>
+      <segment>
+        <source>Timesheet submitted for approval.</source>
+        <target>Hoja de horas enviada para aprobación.</target>
+      </segment>
+    </unit>
+    <unit id="timesheetApproved">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:136</note>
+      </notes>
+      <segment>
+        <source>Timesheet approved.</source>
+        <target>Hoja de horas aprobada.</target>
+      </segment>
+    </unit>
+    <unit id="returnTitle">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:142</note>
+      </notes>
+      <segment>
+        <source>Return for changes</source>
+        <target>Devolver para cambios</target>
+      </segment>
+    </unit>
+    <unit id="returnMessage">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:143</note>
+      </notes>
+      <segment>
+        <source>The timesheet goes back to Draft so its owner can fix it.</source>
+        <target>La hoja de horas vuelve a borrador para que su titular la corrija.</target>
+      </segment>
+    </unit>
+    <unit id="returnComment">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:144</note>
+      </notes>
+      <segment>
+        <source>What needs to change?</source>
+        <target>¿Qué hay que cambiar?</target>
+      </segment>
+    </unit>
+    <unit id="timesheetReturned">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:152</note>
+      </notes>
+      <segment>
+        <source>Timesheet returned.</source>
+        <target>Hoja de horas devuelta.</target>
+      </segment>
+    </unit>
+    <unit id="reopenTitle">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:159</note>
+      </notes>
+      <segment>
+        <source>Reopen this approved timesheet?</source>
+        <target>¿Reabrir esta hoja de horas aprobada?</target>
+      </segment>
+    </unit>
+    <unit id="reopenMessage">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:160</note>
+      </notes>
+      <segment>
+        <source>It goes back to Draft and needs approval again.</source>
+        <target>Vuelve a borrador y necesita una nueva aprobación.</target>
+      </segment>
+    </unit>
+    <unit id="reopenReason">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:161</note>
+      </notes>
+      <segment>
+        <source>Reason</source>
+        <target>Motivo</target>
+      </segment>
+    </unit>
+    <unit id="timesheetReopened">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:169</note>
+      </notes>
+      <segment>
+        <source>Timesheet reopened.</source>
+        <target>Hoja de horas reabierta.</target>
+      </segment>
+    </unit>
+    <unit id="requestCorrectionTitle">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:176</note>
+      </notes>
+      <segment>
+        <source>Request a correction</source>
+        <target>Solicitar una corrección</target>
+      </segment>
+    </unit>
+    <unit id="requestCorrectionMessage">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:177</note>
+      </notes>
+      <segment>
+        <source>Your approver decides. If they accept, the week goes back to Draft for you to fix.</source>
+        <target>Tu aprobador decide. Si la acepta, la semana vuelve a borrador para que la corrijas.</target>
+      </segment>
+    </unit>
+    <unit id="requestCorrectionReason">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:178</note>
+      </notes>
+      <segment>
+        <source>What is wrong?</source>
+        <target>¿Qué está mal?</target>
+      </segment>
+    </unit>
+    <unit id="send">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:179</note>
+      </notes>
+      <segment>
+        <source>Send</source>
+        <target>Enviar</target>
+      </segment>
+    </unit>
+    <unit id="correctionRequested">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:186</note>
+      </notes>
+      <segment>
+        <source>Correction requested.</source>
+        <target>Corrección solicitada.</target>
+      </segment>
+    </unit>
+    <unit id="acceptCorrectionTitle">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:193</note>
+      </notes>
+      <segment>
+        <source>Accept the correction?</source>
+        <target>¿Aceptar la corrección?</target>
+      </segment>
+    </unit>
+    <unit id="acceptCorrectionMessage">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:194</note>
+      </notes>
+      <segment>
+        <source>The timesheet goes back to Draft so its owner can fix it.</source>
+        <target>La hoja de horas vuelve a borrador para que su titular la corrija.</target>
+      </segment>
+    </unit>
+    <unit id="optionalComment">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:195</note>
+      </notes>
+      <segment>
+        <source>Comment (optional)</source>
+        <target>Comentario (opcional)</target>
+      </segment>
+    </unit>
+    <unit id="accept">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:196</note>
+      </notes>
+      <segment>
+        <source>Accept</source>
+        <target>Aceptar</target>
+      </segment>
+    </unit>
+    <unit id="correctionAccepted">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:203</note>
+      </notes>
+      <segment>
+        <source>Correction accepted.</source>
+        <target>Corrección aceptada.</target>
+      </segment>
+    </unit>
+    <unit id="declineCorrectionTitle">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:210</note>
+      </notes>
+      <segment>
+        <source>Decline the correction?</source>
+        <target>¿Rechazar la corrección?</target>
+      </segment>
+    </unit>
+    <unit id="declineCorrectionComment">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:211</note>
+      </notes>
+      <segment>
+        <source>Why is it declined?</source>
+        <target>¿Por qué se rechaza?</target>
+      </segment>
+    </unit>
+    <unit id="decline">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:212</note>
+      </notes>
+      <segment>
+        <source>Decline</source>
+        <target>Rechazar</target>
+      </segment>
+    </unit>
+    <unit id="correctionDeclined">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:219</note>
+      </notes>
+      <segment>
+        <source>Correction declined.</source>
+        <target>Corrección rechazada.</target>
+      </segment>
+    </unit>
+    <unit id="entrySaved">
+      <notes>
+        <note category="location">src/app/features/timesheets/pages/timesheet/timesheet.component.ts:253</note>
+      </notes>
+      <segment>
+        <source>Entry saved.</source>
+        <target>Registro guardado.</target>
+      </segment>
+    </unit>
+    <unit id="timesheetTitle">
+      <notes>
+        <note category="location">src/app/features/timesheets/timesheets.routes.ts:4</note>
+      </notes>
+      <segment>
+        <source>Timesheet · ClockIn</source>
+        <target>Hoja de horas · ClockIn</target>
+      </segment>
+    </unit>
+    <unit id="reviewPageTitle">
+      <notes>
+        <note category="location">src/app/features/timesheets/timesheets.routes.ts:16</note>
+      </notes>
+      <segment>
+        <source>Review · ClockIn</source>
+        <target>Revisión · ClockIn</target>
+      </segment>
+    </unit>
+    <unit id="chooseOne">
+      <notes>
+        <note category="location">src/app/shared/components/choice-dialog/choice-dialog.component.html:14,15</note>
+      </notes>
+      <segment>
+        <source>Choose one.</source>
+        <target>Elige una opción.</target>
+      </segment>
+    </unit>
+    <unit id="textTooLong">
+      <notes>
+        <note category="location">src/app/shared/components/text-dialog/text-dialog.component.html:19,20</note>
+      </notes>
+      <segment>
+        <source>Use at most <ph id="0" equiv="INTERPOLATION" disp="{{ data.maxLength }}"/> characters.</source>
+        <target>Usa como máximo <ph id="0" equiv="INTERPOLATION" disp="{{ data.maxLength }}"/> caracteres.</target>
+      </segment>
+    </unit>
+    <unit id="textRequired">
+      <notes>
+        <note category="location">src/app/shared/components/text-dialog/text-dialog.component.html:21,23</note>
+      </notes>
+      <segment>
+        <source>Enter some text.</source>
+        <target>Escribe algo.</target>
+      </segment>
+    </unit>
+    <unit id="statusNotStarted">
+      <notes>
+        <note category="location">src/app/shared/pipes/status-label.pipe.ts:10</note>
+      </notes>
+      <segment>
+        <source>Not started</source>
+        <target>Sin empezar</target>
+      </segment>
+    </unit>
+    <unit id="statusDraft">
+      <notes>
+        <note category="location">src/app/shared/pipes/status-label.pipe.ts:12</note>
+      </notes>
+      <segment>
+        <source>Draft</source>
+        <target>Borrador</target>
+      </segment>
+    </unit>
+    <unit id="statusSubmitted">
+      <notes>
+        <note category="location">src/app/shared/pipes/status-label.pipe.ts:14</note>
+      </notes>
+      <segment>
+        <source>Submitted</source>
+        <target>Enviada</target>
+      </segment>
+    </unit>
+    <unit id="statusApproved">
+      <notes>
+        <note category="location">src/app/shared/pipes/status-label.pipe.ts:16</note>
+      </notes>
+      <segment>
+        <source>Approved</source>
+        <target>Aprobada</target>
       </segment>
     </unit>
   </file>

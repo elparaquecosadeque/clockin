@@ -1,0 +1,76 @@
+<header class="head">
+  <h1 i18n="@@teamsTitle">Teams</h1>
+  <button mat-flat-button (click)="create()">
+    <mat-icon aria-hidden="true" fontIcon="group_add" />
+    <ng-container i18n="@@newTeam">New team</ng-container>
+  </button>
+</header>
+
+@if (teams(); as teams) {
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col" i18n="@@name">Name</th>
+          <th scope="col" i18n="@@supervisor">Supervisor</th>
+          <th scope="col" class="num" i18n="@@employees">Employees</th>
+          <th scope="col"><span class="visually-hidden" i18n="@@actions">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (team of teams; track team.id) {
+          <tr [class.inactive]="team.isArchived">
+            <th scope="row">
+              <span class="name">{{ team.name }}</span>
+              @if (team.isArchived) {
+                <span class="tag" i18n="@@archived">Archived</span>
+              }
+            </th>
+            <td>{{ team.supervisorName }}</td>
+            <td class="num">{{ team.employeeCount }}</td>
+            <td class="menu">
+              @if (!team.isArchived) {
+                <button mat-icon-button [matMenuTriggerFor]="actions">
+                  <mat-icon aria-hidden="true" fontIcon="more_vert" />
+                  <span class="visually-hidden" i18n="@@actionsFor"
+                    >Actions for {{ team.name }}</span
+                  >
+                </button>
+                <mat-menu #actions="matMenu" xPosition="before">
+                  <button mat-menu-item (click)="rename(team)">
+                    <mat-icon aria-hidden="true" fontIcon="edit" />
+                    <span i18n="@@rename">Rename</span>
+                  </button>
+                  <button mat-menu-item (click)="changeSupervisor(team)">
+                    <mat-icon aria-hidden="true" fontIcon="supervisor_account" />
+                    <span i18n="@@changeSupervisor">Change supervisor</span>
+                  </button>
+                  <button mat-menu-item (click)="archive(team)">
+                    <mat-icon aria-hidden="true" fontIcon="archive" />
+                    <span i18n="@@archive">Archive</span>
+                  </button>
+                </mat-menu>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="4" i18n="@@noTeams">No teams yet.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else if (loadFailed()) {
+  <section class="failed" role="alert">
+    <p i18n="@@teamsLoadFailed">The teams couldn't be loaded.</p>
+    <button mat-stroked-button (click)="reload()" i18n="@@tryAgain">Try again</button>
+  </section>
+} @else {
+  <mat-progress-spinner
+    mode="indeterminate"
+    diameter="48"
+    i18n-aria-label="@@loading"
+    aria-label="Loading"
+  />
+}

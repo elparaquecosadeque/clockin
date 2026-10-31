@@ -1,0 +1,78 @@
+<ol>
+  @for (item of items(); track $index) {
+    <li>
+      <time>{{ item.at | companyTime: timeZone() : 'dateTime' }}</time>
+      <p class="what">
+        @switch (item.kind) {
+          @case ('Submitted') {
+            @if (item.byOwner) {
+              <ng-container i18n="@@historySubmitted"
+                >Submitted by {{ item.actorName }}</ng-container
+              >
+            } @else {
+              <ng-container i18n="@@historySubmittedOnBehalf"
+                >Submitted by {{ item.actorName }} on the owner's behalf</ng-container
+              >
+            }
+          }
+          @case ('Returned') {
+            <ng-container i18n="@@historyReturned">Returned by {{ item.actorName }}</ng-container>
+          }
+          @case ('Approved') {
+            <ng-container i18n="@@historyApproved">Approved by {{ item.actorName }}</ng-container>
+          }
+          @case ('Reopened') {
+            <ng-container i18n="@@historyReopened">Reopened by {{ item.actorName }}</ng-container>
+          }
+          @case ('CorrectionRequested') {
+            <ng-container i18n="@@historyCorrectionRequested"
+              >Correction requested by {{ item.actorName }}</ng-container
+            >
+          }
+          @case ('CorrectionDeclined') {
+            <ng-container i18n="@@historyCorrectionDeclined"
+              >Correction declined by {{ item.actorName }}</ng-container
+            >
+          }
+          @case ('EntryAdded') {
+            <ng-container i18n="@@historyEntryAdded"
+              >Entry added by {{ item.actorName }}</ng-container
+            >
+          }
+          @case ('EntryEdited') {
+            <ng-container i18n="@@historyEntryEdited"
+              >Entry edited by {{ item.actorName }}</ng-container
+            >
+          }
+          @case ('EntryDeleted') {
+            <ng-container i18n="@@historyEntryDeleted"
+              >Entry deleted by {{ item.actorName }}</ng-container
+            >
+          }
+        }
+      </p>
+      @if (item.before || item.after) {
+        <p class="change">
+          @if (item.before; as before) {
+            <span class="before">
+              {{ before.start | companyTime: timeZone() : 'dateTime' }} –
+              {{ before.end ? (before.end | companyTime: timeZone()) : '…' }}
+            </span>
+          }
+          @if (item.before && item.after) {
+            <span aria-hidden="true">→</span>
+          }
+          @if (item.after; as after) {
+            <span class="after">
+              {{ after.start | companyTime: timeZone() : 'dateTime' }} –
+              {{ after.end ? (after.end | companyTime: timeZone()) : '…' }}
+            </span>
+          }
+        </p>
+      }
+      @if (item.comment) {
+        <p class="comment">{{ item.comment }}</p>
+      }
+    </li>
+  }
+</ol>

@@ -1,0 +1,85 @@
+<h1 i18n="@@settingsTitle">Settings</h1>
+
+<section aria-labelledby="preferences-title">
+  <h2 id="preferences-title" i18n="@@preferences">Preferences</h2>
+  <p class="hint" i18n="@@preferencesHint">
+    They follow you on every device. Saving reloads the app.
+  </p>
+  <form [formGroup]="preferences" (submit)="savePreferences($event)">
+    <mat-form-field>
+      <mat-label i18n="@@language">Language</mat-label>
+      <mat-select formControlName="language">
+        <mat-option value="en">English</mat-option>
+        <mat-option value="es">Español</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label i18n="@@timeFormat">Time format</mat-label>
+      <mat-select formControlName="timeFormat">
+        <mat-option value="24h" i18n="@@timeFormat24">24-hour (17:30)</mat-option>
+        <mat-option value="12h" i18n="@@timeFormat12">12-hour (5:30 PM)</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button
+      mat-flat-button
+      type="submit"
+      [disabled]="savingPreferences() || preferences.pristine"
+      i18n="@@savePreferences"
+    >
+      Save preferences
+    </button>
+  </form>
+</section>
+
+<section aria-labelledby="password-title">
+  <h2 id="password-title" i18n="@@changePassword">Change password</h2>
+  <p class="hint" i18n="@@changePasswordHint">
+    Your other devices are signed out; this one stays signed in.
+  </p>
+  <form [formGroup]="password" (submit)="changePassword($event)">
+    <mat-form-field>
+      <mat-label i18n="@@currentPassword">Current password</mat-label>
+      <input
+        matInput
+        type="password"
+        formControlName="currentPassword"
+        autocomplete="current-password"
+        required
+      />
+      @if (password.controls.currentPassword.hasError('wrong')) {
+        <mat-error i18n="@@wrongCurrentPassword">The current password is incorrect.</mat-error>
+      } @else {
+        <mat-error i18n="@@currentPasswordRequired">Enter your current password.</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label i18n="@@newPassword">New password</mat-label>
+      <input
+        matInput
+        type="password"
+        formControlName="newPassword"
+        autocomplete="new-password"
+        required
+      />
+      <mat-hint i18n="@@passwordLengthHint">12 to 128 characters. A few words work well.</mat-hint>
+      <mat-error i18n="@@passwordLength">Use 12 to 128 characters.</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label i18n="@@confirmPassword">Confirm new password</mat-label>
+      <input
+        matInput
+        type="password"
+        formControlName="confirmation"
+        autocomplete="new-password"
+        required
+      />
+      <mat-error i18n="@@confirmPasswordRequired">Enter the new password again.</mat-error>
+    </mat-form-field>
+    @if (password.hasError('mismatch') && password.controls.confirmation.touched) {
+      <p class="error" role="alert" i18n="@@passwordsDiffer">The passwords don't match.</p>
+    }
+    <button mat-flat-button type="submit" [disabled]="savingPassword()" i18n="@@changePassword">
+      Change password
+    </button>
+  </form>
+</section>

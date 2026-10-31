@@ -1,5 +1,6 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { ClockStatus } from '../../models/clock-status.model';
 import { ClockService } from '../../services/clock.service';
 import { ClockComponent } from './clock.component';
@@ -50,7 +51,7 @@ describe('ClockComponent', () => {
     status.set(idle);
     TestBed.configureTestingModule({
       imports: [ClockComponent],
-      providers: [{ provide: ClockService, useValue: clock }],
+      providers: [provideRouter([]), { provide: ClockService, useValue: clock }],
     });
     fixture = TestBed.createComponent(ClockComponent);
     await fixture.whenStable();
@@ -102,5 +103,8 @@ describe('ClockComponent', () => {
     await fixture.whenStable();
 
     expect(text()).toContain('This entry is over 16 hours');
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('.warning a')!.getAttribute('href'),
+    ).toBe('/timesheets/2026-10-26');
   });
 });

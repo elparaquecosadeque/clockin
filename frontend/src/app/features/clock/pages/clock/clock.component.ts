@@ -2,9 +2,11 @@ import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { RouterLink } from '@angular/router';
 import { ApiError } from '../../../../core/models/api-error.model';
 import { CompanyTimePipe } from '../../../../shared/pipes/company-time.pipe';
 import { DurationPipe } from '../../../../shared/pipes/duration.pipe';
+import { mondayOf, wallClock } from '../../../../shared/utils/week';
 import { ClockService } from '../../services/clock.service';
 
 /** The main page for employees and supervisors (docs/specs/reporting/clock-screen.feature). */
@@ -16,6 +18,7 @@ import { ClockService } from '../../services/clock.service';
     MatProgressSpinnerModule,
     CompanyTimePipe,
     DurationPipe,
+    RouterLink,
   ],
   templateUrl: './clock.component.html',
   styleUrl: './clock.component.scss',
@@ -32,6 +35,14 @@ export class ClockComponent {
   protected readonly elapsedSeconds = computed(() => {
     const open = this.status()?.openEntry;
     return open ? (this.now() - Date.parse(open.start)) / 1000 : 0;
+  });
+
+  /** The week holding the open entry, where its end can be set by hand. */
+  protected readonly openEntryWeek = computed(() => {
+    const status = this.status();
+    return status?.openEntry
+      ? mondayOf(wallClock(status.openEntry.start, status.timeZone).date)
+      : null;
   });
 
   protected readonly todaySeconds = computed(() => {

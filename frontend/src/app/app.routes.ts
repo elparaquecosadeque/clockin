@@ -6,6 +6,8 @@ import { ShellComponent } from './core/layout/shell/shell.component';
 import { Permissions } from './core/models/permissions.model';
 import { SessionService } from './core/services/session.service';
 
+const review = [Permissions.reviewTeam, Permissions.reviewAll];
+
 export const routes: Routes = [
   {
     path: 'sign-in',
@@ -27,10 +29,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       {
+        // Whoever punches time starts at the clock; admins, who don't, at the review queue.
         path: '',
         pathMatch: 'full',
-        redirectTo: () =>
-          inject(SessionService).hasPermission(Permissions.punchTime) ? 'clock' : 'home',
+        redirectTo: () => {
+          const session = inject(SessionService);
+          if (session.hasPermission(Permissions.punchTime)) return 'clock';
+          return review.some((p) => session.hasPermission(p)) ? 'review' : 'settings';
+        },
       },
       {
         path: 'clock',
@@ -38,10 +44,37 @@ export const routes: Routes = [
         loadChildren: () => import('./features/clock/clock.routes').then((m) => m.clockRoutes),
       },
       {
-        path: 'home',
-        title: $localize`:@@homeTitle:ClockIn`,
-        loadComponent: () =>
-          import('./features/home/pages/home/home.component').then((m) => m.HomeComponent),
+        path: 'timesheets',
+        canActivate: [permissionGuard(Permissions.punchTime)],
+        loadChildren: () =>
+          import('./features/timesheets/timesheets.routes').then((m) => m.ownTimesheetRoutes),
+      },
+      {
+        path: 'review',
+        canActivate: [permissionGuard(...review)],
+        loadChildren: () =>
+          import('./features/timesheets/timesheets.routes').then((m) => m.reviewRoutes),
+      },
+      {
+        path: 'team',
+        canActivate: [permissionGuard(...review)],
+        loadChildren: () =>
+          import('./features/reports/reports.routes').then((m) => m.reportsRoutes),
+      },
+      {
+        path: 'users',
+        canActivate: [permissionGuard(Permissions.manageUsers)],
+        loadChildren: () => import('./features/admin/admin.routes').then((m) => m.usersRoutes),
+      },
+      {
+        path: 'teams',
+        canActivate: [permissionGuard(Permissions.manageTeams)],
+        loadChildren: () => import('./features/admin/admin.routes').then((m) => m.teamsRoutes),
+      },
+      {
+        path: 'settings',
+        loadChildren: () =>
+          import('./features/settings/settings.routes').then((m) => m.settingsRoutes),
       },
     ],
   },

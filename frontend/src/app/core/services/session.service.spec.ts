@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { SessionUser } from '../models/session-user.model';
-import { SessionService } from './session.service';
+import { SessionService, localizedPath } from './session.service';
 
 const eve: SessionUser = {
   id: '0193a1b2-c3d4-7e8f-9a0b-1c2d3e4f5a6b',
@@ -10,6 +10,8 @@ const eve: SessionUser = {
   email: 'eve@clockin.test',
   role: 'Employee',
   permissions: ['time-entries.punch'],
+  language: 'en',
+  timeFormat: '24h',
 };
 
 describe('SessionService', () => {
@@ -81,5 +83,29 @@ describe('SessionService', () => {
     await signedOut;
 
     expect(session.isSignedIn()).toBe(false);
+  });
+
+  it('keeps this session with the new token after a password change', async () => {
+    const changed = session.changePassword('old password!!', 'a new long password');
+    http
+      .expectOne({ method: 'POST', url: '/api/me/password' })
+      .flush({ accessToken: 'token-4', expiresAt: '' });
+    await changed;
+
+    expect(session.accessToken()).toBe('token-4');
+  });
+});
+
+describe('localizedPath', () => {
+  it('swaps the locale segment when the language differs', () => {
+    expect(localizedPath('/en/timesheets/2026-10-26', 'en-US', 'es')).toBe(
+      '/es/timesheets/2026-10-26',
+    );
+    expect(localizedPath('/es/clock', 'es', 'en')).toBe('/en/clock');
+  });
+
+  it('stays put when the build matches or is served at the root', () => {
+    expect(localizedPath('/en/clock', 'en-US', 'en')).toBeNull();
+    expect(localizedPath('/clock', 'en-US', 'es')).toBeNull();
   });
 });

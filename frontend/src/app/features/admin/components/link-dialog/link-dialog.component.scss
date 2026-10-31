@@ -1,0 +1,11 @@
+p {
+  margin: 0 0 12px;
+}
+
+.url {
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--mat-sys-surface-container-high);
+  overflow-wrap: anywhere;
+  user-select: all;
+}

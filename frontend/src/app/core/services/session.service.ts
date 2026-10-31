@@ -1,9 +1,10 @@
 import { HttpClient, HttpContext } from '@angular/common/http';
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { DOCUMENT, Injectable, LOCALE_ID, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { AccessToken } from '../models/access-token.model';
 import { SessionUser } from '../models/session-user.model';
 import { SILENT_ERRORS } from '../models/silent-errors.model';
+import { TimeFormat } from '../../shared/models/time-format.model';
 
 /**
  * The signed-in user and their access token, in memory only (CODE_STYLE.md, HTTP, session and errors).
@@ -12,6 +13,8 @@ import { SILENT_ERRORS } from '../models/silent-errors.model';
 @Injectable({ providedIn: 'root' })
 export class SessionService {
   private readonly http = inject(HttpClient);
+  private readonly locale = inject(LOCALE_ID);
+  private readonly location = inject(DOCUMENT).location;
   private readonly token = signal<string | null>(null);
   private readonly currentUser = signal<SessionUser | null>(null);
   private pendingRefresh: Promise<boolean> | null = null;
@@ -46,6 +49,30 @@ export class SessionService {
     }
   }
 
+  /** Saves the preferences and reloads, into the other language's build if it changed (ADR 0001). */
+  async updatePreferences(
+    language: SessionUser['language'],
+    timeFormat: TimeFormat,
+  ): Promise<void> {
+    await firstValueFrom(this.http.put<void>('/api/me/preferences', { language, timeFormat }));
+    this.location.assign(
+      localizedPath(this.location.pathname, this.locale, language) ?? this.location.href,
+    );
+  }
+
+  /** Every other session ends; this one continues with the new token. Throws the ApiError. */
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    const context = new HttpContext().set(SILENT_ERRORS, ['InvalidCurrentPassword']);
+    const response = await firstValueFrom(
+      this.http.post<AccessToken>(
+        '/api/me/password',
+        { currentPassword, newPassword },
+        { context },
+      ),
+    );
+    this.token.set(response.accessToken);
+  }
+
   async signOut(): Promise<void> {
     try {
       await firstValueFrom(this.http.post<void>('/api/auth/logout', null, { context: silent() }));
@@ -70,13 +97,32 @@ export class SessionService {
   }
 
   private async loadUser(): Promise<void> {
-    this.currentUser.set(await firstValueFrom(this.http.get<SessionUser>('/api/me')));
+    const user = await firstValueFrom(this.http.get<SessionUser>('/api/me'));
+    const other = localizedPath(this.location.pathname, this.locale, user.language);
+    if (other) {
+      // The refresh cookie survives the reload, so the other build restores this session.
+      this.location.assign(other);
+    }
+
+    this.currentUser.set(user);
   }
 
   private clear(): void {
     this.token.set(null);
     this.currentUser.set(null);
   }
+}
+
+/**
+ * The same page in the build for `language`, or null when this build already matches. Only builds served under
+ * a locale path (`/en/`, `/es/`) can switch; a dev server serves one locale at the root.
+ */
+export function localizedPath(pathname: string, locale: string, language: string): string | null {
+  const current = locale.slice(0, 2);
+  const prefix = `/${current}/`;
+  return current === language || !pathname.startsWith(prefix)
+    ? null
+    : `/${language}/${pathname.slice(prefix.length)}`;
 }
 
 function silent(): HttpContext {

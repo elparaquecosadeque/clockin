@@ -6,8 +6,34 @@
   margin-left: auto;
 }
 
+nav {
+  background: var(--mat-sys-surface);
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+
+  mat-icon {
+    margin-right: 8px;
+  }
+}
+
 main {
   padding: 16px;
+}
+
+@media (max-width: 599px) {
+  // Icons alone don't say enough; on phones the labels stay and the icons go.
+  nav mat-icon {
+    display: none;
+  }
+}
+
+@media print {
+  header {
+    display: none;
+  }
+
+  main {
+    padding: 0;
+  }
 }
 
 // The menu panel renders in an overlay, outside this component's host.

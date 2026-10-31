@@ -17,13 +17,41 @@
           <span class="email">{{ user.email }}</span>
         </div>
       }
-      <button mat-menu-item (click)="signOut()">
+      <a mat-menu-item routerLink="/settings">
+        <mat-icon aria-hidden="true" fontIcon="settings" />
+        <span i18n="@@navSettings">Settings</span>
+      </a>
+      <button mat-menu-item class="sign-out" (click)="signOut()">
         <mat-icon aria-hidden="true" fontIcon="logout" />
         <span i18n="@@signOut">Sign out</span>
       </button>
     </mat-menu>
   </mat-toolbar>
+  @if (links().length > 1) {
+    <nav mat-tab-nav-bar [tabPanel]="panel" i18n-aria-label="@@mainNav" aria-label="Main">
+      @for (link of links(); track link.path) {
+        <a
+          mat-tab-link
+          [routerLink]="link.path"
+          routerLinkActive
+          #active="routerLinkActive"
+          [active]="active.isActive"
+        >
+          <mat-icon aria-hidden="true" [fontIcon]="link.icon" />
+          <span
+            class="label"
+            [matBadge]="link.badge() || null"
+            matBadgeOverlap="false"
+            matBadgeSize="small"
+            >{{ link.label }}</span
+          >
+        </a>
+      }
+    </nav>
+  }
 </header>
 <main>
-  <router-outlet />
+  <mat-tab-nav-panel #panel>
+    <router-outlet />
+  </mat-tab-nav-panel>
 </main>

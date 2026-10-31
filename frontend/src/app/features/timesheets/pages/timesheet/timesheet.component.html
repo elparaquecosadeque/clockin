@@ -1,0 +1,250 @@
+@if (timesheet(); as sheet) {
+  <header class="head">
+    <div class="who">
+      @if (ownerId()) {
+        <a
+          mat-icon-button
+          class="no-print"
+          routerLink="/review"
+          i18n-aria-label="@@backToReview"
+          aria-label="Back to review"
+        >
+          <mat-icon aria-hidden="true" fontIcon="arrow_back" />
+        </a>
+      }
+      <div>
+        <h1>{{ sheet.ownerName }}</h1>
+        @if (sheet.teamName) {
+          <p class="team">{{ sheet.teamName }}</p>
+        }
+      </div>
+    </div>
+
+    <nav class="week" i18n-aria-label="@@weekNavigation" aria-label="Week">
+      <button
+        mat-icon-button
+        class="no-print"
+        (click)="goToWeek(-1)"
+        i18n-aria-label="@@previousWeek"
+        aria-label="Previous week"
+      >
+        <mat-icon aria-hidden="true" fontIcon="chevron_left" />
+      </button>
+      <h2 i18n="@@weekOf">
+        Week of {{ sheet.weekStart + 'T12:00:00Z' | companyTime: 'UTC' : 'date' }}
+      </h2>
+      <button
+        mat-icon-button
+        class="no-print"
+        (click)="goToWeek(1)"
+        i18n-aria-label="@@nextWeek"
+        aria-label="Next week"
+      >
+        <mat-icon aria-hidden="true" fontIcon="chevron_right" />
+      </button>
+    </nav>
+
+    <div class="summary">
+      <span class="status" [attr.data-status]="sheet.status">{{ sheet.status | statusLabel }}</span>
+      <span class="total">
+        <span class="visually-hidden" i18n="@@weekTotal">Week total</span>
+        {{ sheet.totalSeconds | duration }}
+      </span>
+    </div>
+  </header>
+
+  @if (sheet.status === 'Draft' && sheet.returnComment) {
+    <section class="banner returned" role="status">
+      <mat-icon aria-hidden="true" fontIcon="undo" />
+      <div>
+        <h3 i18n="@@returnedBanner">Returned for changes</h3>
+        <p>{{ sheet.returnComment }}</p>
+      </div>
+    </section>
+  }
+
+  @if (sheet.approval; as approval) {
+    <section class="banner approved" role="status">
+      <mat-icon aria-hidden="true" fontIcon="verified" />
+      <p i18n="@@approvedBanner">
+        Approved by {{ approval.approverName }} on
+        {{ approval.at | companyTime: sheet.timeZone : 'dateTime' }}
+      </p>
+    </section>
+  }
+
+  @if (sheet.latestCorrection; as correction) {
+    @if (correction.status === 'Pending') {
+      <section class="banner pending" role="status">
+        <mat-icon aria-hidden="true" fontIcon="hourglass_top" />
+        <div>
+          <h3 i18n="@@correctionPendingBanner">Correction requested</h3>
+          <p>{{ correction.reason }}</p>
+        </div>
+      </section>
+    } @else if (correction.status === 'Declined') {
+      <section class="banner declined" role="status">
+        <mat-icon aria-hidden="true" fontIcon="block" />
+        <div>
+          <h3 i18n="@@correctionDeclinedBanner">
+            Correction declined by {{ correction.decidedByName }}
+          </h3>
+          <p>{{ correction.decisionComment }}</p>
+        </div>
+      </section>
+    }
+  }
+
+  <div class="actions no-print">
+    @if (sheet.can.changeEntries) {
+      <button mat-stroked-button (click)="addEntry()" [disabled]="busy()">
+        <mat-icon aria-hidden="true" fontIcon="add" />
+        <ng-container i18n="@@addEntry">Add entry</ng-container>
+      </button>
+    }
+    @if (sheet.can.submit) {
+      <button mat-flat-button (click)="submit()" [disabled]="busy()">
+        <mat-icon aria-hidden="true" fontIcon="send" />
+        <ng-container i18n="@@submit">Submit</ng-container>
+      </button>
+    }
+    @if (sheet.can.approve) {
+      <button mat-flat-button (click)="approve()" [disabled]="busy()">
+        <mat-icon aria-hidden="true" fontIcon="check" />
+        <ng-container i18n="@@approve">Approve</ng-container>
+      </button>
+    }
+    @if (sheet.can.return) {
+      <button mat-stroked-button (click)="returnTimesheet()" [disabled]="busy()">
+        <mat-icon aria-hidden="true" fontIcon="undo" />
+        <ng-container i18n="@@return">Return</ng-container>
+      </button>
+    }
+    @if (sheet.can.decideCorrection) {
+      <button mat-flat-button (click)="acceptCorrection()" [disabled]="busy()">
+        <mat-icon aria-hidden="true" fontIcon="check" />
+        <ng-container i18n="@@acceptCorrection">Accept correction</ng-container>
+      </button>
+      <button mat-stroked-button (click)="declineCorrection()" [disabled]="busy()">
+        <mat-icon aria-hidden="true" fontIcon="close" />
+        <ng-container i18n="@@declineCorrection">Decline correction</ng-container>
+      </button>
+    }
+    @if (sheet.can.requestCorrection) {
+      <button mat-stroked-button (click)="requestCorrection()" [disabled]="busy()">
+        <mat-icon aria-hidden="true" fontIcon="edit_note" />
+        <ng-container i18n="@@requestCorrection">Request correction</ng-container>
+      </button>
+    }
+    @if (sheet.can.reopen) {
+      <button mat-stroked-button (click)="reopen()" [disabled]="busy()">
+        <mat-icon aria-hidden="true" fontIcon="lock_open" />
+        <ng-container i18n="@@reopen">Reopen</ng-container>
+      </button>
+    }
+    <button mat-button class="print" (click)="print()">
+      <mat-icon aria-hidden="true" fontIcon="print" />
+      <ng-container i18n="@@print">Print</ng-container>
+    </button>
+  </div>
+
+  <ol class="days">
+    @for (day of days(); track day.date) {
+      <li class="day" [class.empty]="!day.entries.length">
+        <div class="day-head">
+          <h3>{{ day.date + 'T12:00:00Z' | companyTime: 'UTC' : 'date' }}</h3>
+          <span class="day-total" [class.open]="day.hasOpenEntry">{{
+            day.seconds | duration
+          }}</span>
+        </div>
+        @if (day.entries.length) {
+          <ul class="entries">
+            @for (entry of day.entries; track entry.id) {
+              <li class="entry">
+                <div class="times">
+                  <span class="range">
+                    {{ entry.start | companyTime: sheet.timeZone }} –
+                    @if (entry.end) {
+                      {{ entry.end | companyTime: sheet.timeZone }}
+                    } @else {
+                      <span class="open-label" i18n="@@openEntry">Open</span>
+                    }
+                  </span>
+                  <span class="length">{{ entry.seconds | duration }}</span>
+                </div>
+                @if (entry.manualChange !== 'None') {
+                  <p class="flag">
+                    <mat-icon aria-hidden="true" fontIcon="edit" />
+                    @if (entry.manualChange === 'Added') {
+                      <ng-container i18n="@@addedBy"
+                        >Added by hand by {{ entry.changedByName }}</ng-container
+                      >
+                    } @else {
+                      <ng-container i18n="@@editedBy"
+                        >Edited by {{ entry.changedByName }}</ng-container
+                      >
+                    }
+                  </p>
+                }
+                @if (entry.note) {
+                  <p class="note">{{ entry.note }}</p>
+                }
+                @if (entry.punchedStart) {
+                  <p class="punched" i18n="@@punchedValues">
+                    Punched {{ entry.punchedStart | companyTime: sheet.timeZone }} –
+                    {{ entry.punchedEnd ? (entry.punchedEnd | companyTime: sheet.timeZone) : '…' }}
+                  </p>
+                }
+                @if (sheet.can.changeEntries) {
+                  <div class="entry-actions no-print">
+                    <button
+                      mat-icon-button
+                      (click)="editEntry(entry)"
+                      i18n-aria-label="@@editEntry"
+                      aria-label="Edit entry"
+                      i18n-matTooltip="@@editEntry"
+                      matTooltip="Edit entry"
+                    >
+                      <mat-icon aria-hidden="true" fontIcon="edit" />
+                    </button>
+                    <button
+                      mat-icon-button
+                      (click)="deleteEntry(entry)"
+                      i18n-aria-label="@@deleteEntry"
+                      aria-label="Delete entry"
+                      i18n-matTooltip="@@deleteEntry"
+                      matTooltip="Delete entry"
+                    >
+                      <mat-icon aria-hidden="true" fontIcon="delete" />
+                    </button>
+                  </div>
+                }
+              </li>
+            }
+          </ul>
+        }
+      </li>
+    }
+  </ol>
+
+  @if (sheet.history.length) {
+    <mat-expansion-panel class="history no-print">
+      <mat-expansion-panel-header>
+        <mat-panel-title i18n="@@history">History</mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-history [items]="sheet.history" [timeZone]="sheet.timeZone" />
+    </mat-expansion-panel>
+  }
+} @else if (loadFailed()) {
+  <section class="failed" role="alert">
+    <p i18n="@@timesheetLoadFailed">This timesheet couldn't be loaded.</p>
+    <button mat-stroked-button (click)="reload()" i18n="@@tryAgain">Try again</button>
+  </section>
+} @else {
+  <mat-progress-spinner
+    mode="indeterminate"
+    diameter="48"
+    i18n-aria-label="@@loading"
+    aria-label="Loading"
+  />
+}

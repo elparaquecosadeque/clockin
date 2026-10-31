@@ -1,0 +1,64 @@
+<h1 i18n="@@reviewTitle">Review</h1>
+
+@if (queue(); as queue) {
+  <section aria-labelledby="to-review">
+    <h2 id="to-review" i18n="@@timesheetsToReview">Timesheets to review</h2>
+    @if (queue.timesheets.length) {
+      <mat-nav-list>
+        @for (item of queue.timesheets; track item.timesheetId) {
+          <a mat-list-item [routerLink]="['/review', item.ownerId, item.weekStart]">
+            <mat-icon matListItemIcon aria-hidden="true" fontIcon="assignment" />
+            <span matListItemTitle>{{ item.name }}</span>
+            <span matListItemLine>
+              <ng-container i18n="@@weekOfShort"
+                >Week of
+                {{ item.weekStart + 'T12:00:00Z' | companyTime: 'UTC' : 'date' }}</ng-container
+              >
+              @if (item.teamName) {
+                · {{ item.teamName }}
+              }
+            </span>
+            <span matListItemMeta class="hours">{{ item.totalSeconds | duration }}</span>
+          </a>
+        }
+      </mat-nav-list>
+    } @else {
+      <p class="empty" i18n="@@nothingToReview">Nothing to review.</p>
+    }
+  </section>
+
+  <section aria-labelledby="to-decide">
+    <h2 id="to-decide" i18n="@@correctionsToDecide">Correction requests</h2>
+    @if (queue.corrections.length) {
+      <mat-nav-list>
+        @for (item of queue.corrections; track item.requestId) {
+          <a mat-list-item [routerLink]="['/review', item.ownerId, item.weekStart]">
+            <mat-icon matListItemIcon aria-hidden="true" fontIcon="edit_note" />
+            <span matListItemTitle>
+              {{ item.name }} ·
+              <ng-container i18n="@@weekOfShort"
+                >Week of
+                {{ item.weekStart + 'T12:00:00Z' | companyTime: 'UTC' : 'date' }}</ng-container
+              >
+            </span>
+            <span matListItemLine>{{ item.reason }}</span>
+          </a>
+        }
+      </mat-nav-list>
+    } @else {
+      <p class="empty" i18n="@@noCorrections">No correction requests.</p>
+    }
+  </section>
+} @else if (loadFailed()) {
+  <section class="failed" role="alert">
+    <p i18n="@@reviewLoadFailed">The review queue couldn't be loaded.</p>
+    <button mat-stroked-button (click)="reload()" i18n="@@tryAgain">Try again</button>
+  </section>
+} @else {
+  <mat-progress-spinner
+    mode="indeterminate"
+    diameter="48"
+    i18n-aria-label="@@loading"
+    aria-label="Loading"
+  />
+}

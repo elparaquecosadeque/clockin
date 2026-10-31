@@ -1,0 +1,183 @@
+<header class="head">
+  <h1 i18n="@@teamWeekTitle">Team week</h1>
+  <nav class="week" i18n-aria-label="@@weekNavigation" aria-label="Week">
+    <button
+      mat-icon-button
+      class="no-print"
+      (click)="goToWeek(-1)"
+      i18n-aria-label="@@previousWeek"
+      aria-label="Previous week"
+    >
+      <mat-icon aria-hidden="true" fontIcon="chevron_left" />
+    </button>
+    <h2 i18n="@@weekOf">Week of {{ week() + 'T12:00:00Z' | companyTime: 'UTC' : 'date' }}</h2>
+    <button
+      mat-icon-button
+      class="no-print"
+      (click)="goToWeek(1)"
+      i18n-aria-label="@@nextWeek"
+      aria-label="Next week"
+    >
+      <mat-icon aria-hidden="true" fontIcon="chevron_right" />
+    </button>
+  </nav>
+  <div class="tools no-print">
+    @if (filterable()) {
+      <mat-form-field subscriptSizing="dynamic">
+        <mat-label i18n="@@teamFilter">Team</mat-label>
+        <mat-select [value]="teamFilter()" (valueChange)="teamFilter.set($event)">
+          <mat-option value="" i18n="@@allTeams">All teams</mat-option>
+          @for (group of grid()!.groups; track group.teamId) {
+            @if (group.teamId) {
+              <mat-option [value]="group.teamId">{{ group.teamName }}</mat-option>
+            }
+          }
+        </mat-select>
+      </mat-form-field>
+    }
+    <button mat-stroked-button (click)="exportCsv()" [disabled]="exporting()">
+      <mat-icon aria-hidden="true" fontIcon="download" />
+      <ng-container i18n="@@exportCsv">Approved CSV</ng-container>
+    </button>
+    <button mat-button (click)="print()">
+      <mat-icon aria-hidden="true" fontIcon="print" />
+      <ng-container i18n="@@print">Print</ng-container>
+    </button>
+  </div>
+</header>
+
+@if (grid(); as grid) {
+  @for (group of groups(); track group.teamId ?? 'supervisors') {
+    <section class="group" [attr.aria-label]="group.teamName">
+      <div class="group-head">
+        <h3>
+          @if (group.isSupervisors) {
+            <ng-container i18n="@@supervisorsGroup">Supervisors</ng-container>
+          } @else {
+            {{ group.teamName }}
+          }
+        </h3>
+        @if (group.supervisorName) {
+          <span class="lead" i18n="@@ledBy">Led by {{ group.supervisorName }}</span>
+        }
+        <span class="counts">
+          <span i18n="@@countNotStarted">{{ group.summary.notStarted }} not started</span> ·
+          <span i18n="@@countDraft">{{ group.summary.draft }} draft</span> ·
+          <span i18n="@@countSubmitted">{{ group.summary.submitted }} submitted</span> ·
+          <span i18n="@@countApproved">{{ group.summary.approved }} approved</span>
+        </span>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col" i18n="@@person">Person</th>
+              @for (date of dayDates(); track date) {
+                <th scope="col" class="num">
+                  {{ date + 'T12:00:00Z' | companyTime: 'UTC' : 'date' }}
+                </th>
+              }
+              <th scope="col" class="num" i18n="@@total">Total</th>
+              <th scope="col" i18n="@@status">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of group.rows; track row.userId) {
+              <tr>
+                <th scope="row">
+                  <a [routerLink]="['/review', row.userId, grid.weekStart]">{{ row.name }}</a>
+                </th>
+                @for (seconds of row.daySeconds; track $index) {
+                  <td class="num" [class.open]="row.openDay === $index" [class.zero]="!seconds">
+                    {{ seconds | duration }}
+                  </td>
+                }
+                <td class="num total">{{ row.totalSeconds | duration }}</td>
+                <td>
+                  <span class="status" [attr.data-status]="row.status">{{
+                    row.status | statusLabel
+                  }}</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  } @empty {
+    <p class="empty" i18n="@@nobodyToShow">Nobody to show for this week.</p>
+  }
+} @else if (loadFailed()) {
+  <section class="failed" role="alert">
+    <p i18n="@@teamWeekLoadFailed">The team week couldn't be loaded.</p>
+    <button mat-stroked-button (click)="reload()" i18n="@@tryAgain">Try again</button>
+  </section>
+} @else {
+  <mat-progress-spinner
+    mode="indeterminate"
+    diameter="48"
+    i18n-aria-label="@@loading"
+    aria-label="Loading"
+  />
+}
+
+<div class="panels no-print">
+  <section class="panel" aria-labelledby="clocked-in-title">
+    <h2 id="clocked-in-title" i18n="@@clockedInNow">Clocked in now</h2>
+    @if (clockedIn().length) {
+      <ul>
+        @for (person of clockedIn(); track person.userId) {
+          <li [class.alert]="person.overLimit">
+            <span class="name">{{ person.name }}</span>
+            <span class="since" i18n="@@since"
+              >since {{ person.since | companyTime: grid()?.timeZone ?? 'UTC' : 'dateTime' }}</span
+            >
+            <span class="num">{{ person.seconds | duration }}</span>
+            @if (person.overLimit) {
+              <span class="tag" i18n="@@overLimit">Over 16 h</span>
+            }
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="empty" i18n="@@nobodyClockedIn">Nobody is clocked in.</p>
+    }
+  </section>
+
+  <section class="panel" aria-labelledby="exceptions-title">
+    <h2 id="exceptions-title" i18n="@@exceptions">Exceptions</h2>
+    @if (exceptions().length) {
+      <ul>
+        @for (item of exceptions(); track $index) {
+          <li>
+            <a [routerLink]="['/review', item.userId, item.weekStart]" class="name">{{
+              item.name
+            }}</a>
+            <span class="what">
+              @switch (item.kind) {
+                @case ('OverdueDraft') {
+                  <ng-container i18n="@@exceptionOverdue"
+                    >Not submitted: week of
+                    {{ item.weekStart + 'T12:00:00Z' | companyTime: 'UTC' : 'date' }}</ng-container
+                  >
+                }
+                @case ('LongEntry') {
+                  <ng-container i18n="@@exceptionLongEntry"
+                    >Entry over 10 h ({{ item.seconds ?? 0 | duration }})</ng-container
+                  >
+                }
+                @case ('ManyManualChanges') {
+                  <ng-container i18n="@@exceptionManualChanges"
+                    >{{ item.count }} entries changed by hand</ng-container
+                  >
+                }
+              }
+            </span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="empty" i18n="@@noExceptions">No exceptions.</p>
+    }
+  </section>
+</div>

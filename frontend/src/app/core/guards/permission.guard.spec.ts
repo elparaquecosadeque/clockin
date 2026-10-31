@@ -34,9 +34,9 @@ describe('permissionGuard', () => {
     expect(hasPermission).toHaveBeenCalledWith('time-entries.punch');
   });
 
-  it('sends a user without the permission home', () => {
+  it('sends a user without the permission to the start page', () => {
     hasPermission.mockReturnValue(false);
 
-    expect(TestBed.inject(Router).serializeUrl(run() as UrlTree)).toBe('/home');
+    expect(TestBed.inject(Router).serializeUrl(run() as UrlTree)).toBe('/');
   });
 });

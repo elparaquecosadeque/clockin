@@ -4,6 +4,18 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-10-30: Timesheets, review, reports, administration and settings (frontend)
+
+| Decision | Why | By |
+|---|---|---|
+| No home page: the app opens on the clock for anyone who punches, otherwise the review queue, otherwise settings. Main navigation is a tab bar with to-do badges. | Every role's first task is one of those screens; the badges carry what a home page would have listed. | dev |
+| Times follow the user's 12 h/24 h preference through a `TIME_FORMAT` token; changing language or time format reloads the app. | The locale is a separate build (ADR 0001), so a language change needs a reload anyway; one path keeps it simple. | dev |
+| Users are sent to their preferred language's build only when the URL is under `/en/` or `/es/`. | The dev server and tests serve one locale at the root; redirecting there would loop. | dev |
+| In the entry dialog, an end time earlier than the start means the next day. | Night shifts need it; the API already counts hours on the start day. | dev |
+| The team-week grid filters teams on the client. | One request already returns every team the viewer may see; phase 1 teams are small. | dev |
+| Initial bundle warning raised from 500 kB to 600 kB (565 kB raw, 139 kB compressed). | Tabs and badges in the shell; features are lazy-loaded. | dev |
+| Row action menus are labelled with visually hidden text instead of an interpolated `aria-label`. | The interpolated, translated `aria-label` rendered empty on the menu triggers (caught by axe). | dev |
+
 ## 2026-10-30: Reporting and administration (backend)
 
 | Decision | Why | By |

@@ -19,6 +19,7 @@ describe('routes', () => {
             isSignedIn: () => permissions !== null,
             hasPermission: (p: string) => permissions?.includes(p) ?? false,
             user: () => null,
+            accessToken: () => null,
           },
         },
       ],
@@ -42,9 +43,9 @@ describe('routes', () => {
     expect(await open('/')).toBe('/clock');
   });
 
-  it('starts everyone else on the home page', async () => {
-    setUp(['users.manage']);
+  it('starts an admin on the review queue, and sends them there from pages they lack', async () => {
+    setUp(['users.manage', 'timesheets.review-all']);
 
-    expect(await open('/clock')).toBe('/home');
+    expect(await open('/clock')).toBe('/review');
   });
 });

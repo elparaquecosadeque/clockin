@@ -1,0 +1,39 @@
+<h2 mat-dialog-title>
+  @if (renaming) {
+    <ng-container i18n="@@renameTeamTitle">Rename team</ng-container>
+  } @else {
+    <ng-container i18n="@@newTeamTitle">New team</ng-container>
+  }
+</h2>
+<form [formGroup]="form" (submit)="submit($event)">
+  <mat-dialog-content>
+    <mat-form-field>
+      <mat-label i18n="@@name">Name</mat-label>
+      <input matInput formControlName="name" autocomplete="off" required />
+      <mat-error i18n="@@nameRequired">Enter a name of at most 100 characters.</mat-error>
+    </mat-form-field>
+    @if (!renaming) {
+      <mat-form-field>
+        <mat-label i18n="@@supervisor">Supervisor</mat-label>
+        <mat-select formControlName="supervisorId" required>
+          @for (supervisor of data.supervisors; track supervisor.id) {
+            <mat-option [value]="supervisor.id">{{ supervisor.name }}</mat-option>
+          }
+        </mat-select>
+        @if (!data.supervisors?.length) {
+          <mat-hint i18n="@@noFreeSupervisors"
+            >Every supervisor leads a team. Create or promote one first.</mat-hint
+          >
+        }
+        <mat-error i18n="@@supervisorRequired">Choose a supervisor.</mat-error>
+      </mat-form-field>
+    }
+    @for (error of serverErrors(); track $index) {
+      <p class="server-error" role="alert">{{ error }}</p>
+    }
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close i18n="@@cancel">Cancel</button>
+    <button mat-flat-button type="submit" [disabled]="saving()" i18n="@@save">Save</button>
+  </mat-dialog-actions>
+</form>

@@ -1,0 +1,106 @@
+<header class="head">
+  <h1 i18n="@@usersTitle">Users</h1>
+  <button mat-flat-button (click)="create()">
+    <mat-icon aria-hidden="true" fontIcon="person_add" />
+    <ng-container i18n="@@newUser">New user</ng-container>
+  </button>
+</header>
+
+@if (users(); as users) {
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col" i18n="@@name">Name</th>
+          <th scope="col" i18n="@@role">Role</th>
+          <th scope="col" i18n="@@team">Team</th>
+          <th scope="col" i18n="@@status">Status</th>
+          <th scope="col"><span class="visually-hidden" i18n="@@actions">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of users; track user.id) {
+          <tr [class.inactive]="user.status === 'Deactivated'">
+            <th scope="row">
+              <span class="name">{{ user.name }}</span>
+              <span class="email">{{ user.email }}</span>
+            </th>
+            <td>{{ user.role | roleLabel }}</td>
+            <td>{{ user.teamName ?? '—' }}</td>
+            <td>
+              @switch (user.status) {
+                @case ('PendingActivation') {
+                  <span class="tag pending" i18n="@@statusPending">Pending activation</span>
+                }
+                @case ('Active') {
+                  <span class="tag active" i18n="@@statusActive">Active</span>
+                }
+                @case ('Deactivated') {
+                  <span class="tag" i18n="@@statusDeactivated">Deactivated</span>
+                }
+              }
+              @if (user.isLockedOut) {
+                <span class="tag locked" i18n="@@statusLocked">Locked</span>
+              }
+            </td>
+            <td class="menu">
+              <button mat-icon-button [matMenuTriggerFor]="actions">
+                <mat-icon aria-hidden="true" fontIcon="more_vert" />
+                <span class="visually-hidden" i18n="@@actionsFor">Actions for {{ user.name }}</span>
+              </button>
+              <mat-menu #actions="matMenu" xPosition="before">
+                @if (user.status === 'Deactivated') {
+                  <button mat-menu-item (click)="reactivate(user)">
+                    <mat-icon aria-hidden="true" fontIcon="restart_alt" />
+                    <span i18n="@@reactivate">Reactivate</span>
+                  </button>
+                } @else {
+                  <button mat-menu-item (click)="accessLink(user)">
+                    <mat-icon aria-hidden="true" fontIcon="link" />
+                    <span i18n="@@accessLink">Activation or reset link</span>
+                  </button>
+                  @if (user.role !== 'Admin') {
+                    <button mat-menu-item (click)="changeRole(user)">
+                      <mat-icon aria-hidden="true" fontIcon="badge" />
+                      <span i18n="@@changeRole">Change role</span>
+                    </button>
+                  }
+                  @if (user.role === 'Employee') {
+                    <button mat-menu-item (click)="move(user)">
+                      <mat-icon aria-hidden="true" fontIcon="move_group" />
+                      <span i18n="@@moveToTeam">Move to another team</span>
+                    </button>
+                  }
+                  @if (user.isLockedOut) {
+                    <button mat-menu-item (click)="unlock(user)">
+                      <mat-icon aria-hidden="true" fontIcon="lock_open" />
+                      <span i18n="@@unlock">Unlock</span>
+                    </button>
+                  }
+                  @if (user.id !== myId) {
+                    <button mat-menu-item (click)="deactivate(user)">
+                      <mat-icon aria-hidden="true" fontIcon="person_off" />
+                      <span i18n="@@deactivate">Deactivate</span>
+                    </button>
+                  }
+                }
+              </mat-menu>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else if (loadFailed()) {
+  <section class="failed" role="alert">
+    <p i18n="@@usersLoadFailed">The users couldn't be loaded.</p>
+    <button mat-stroked-button (click)="reload()" i18n="@@tryAgain">Try again</button>
+  </section>
+} @else {
+  <mat-progress-spinner
+    mode="indeterminate"
+    diameter="48"
+    i18n-aria-label="@@loading"
+    aria-label="Loading"
+  />
+}
