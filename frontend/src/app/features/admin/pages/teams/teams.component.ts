@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import {
   ChoiceDialogComponent,
@@ -33,6 +34,7 @@ export class TeamsComponent {
   private readonly admin = inject(AdminService);
   private readonly dialogs = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly router = inject(Router);
 
   protected readonly teams = signal<TeamListItem[] | null>(null);
   protected readonly users = signal<UserListItem[]>([]);
@@ -61,6 +63,10 @@ export class TeamsComponent {
   }
 
   protected create(): void {
+    if (!this.anySupervisorFree()) {
+      return;
+    }
+
     this.openTeamDialog(
       {
         supervisors: this.freeSupervisors(),
@@ -78,6 +84,10 @@ export class TeamsComponent {
   }
 
   protected async changeSupervisor(team: TeamListItem): Promise<void> {
+    if (!this.anySupervisorFree()) {
+      return;
+    }
+
     const data: ChoiceDialogData = {
       title: $localize`:@@changeSupervisorTitle:New supervisor for ${team.name}:name:`,
       message: $localize`:@@changeSupervisorMessage:Pending timesheets and correction requests move to the new supervisor.`,
@@ -121,6 +131,23 @@ export class TeamsComponent {
         $localize`:@@teamArchived:Team archived.`,
       );
     }
+  }
+
+  /** A supervisor leads one team at most, so an empty list needs explaining rather than showing. */
+  private anySupervisorFree(): boolean {
+    if (this.freeSupervisors().length > 0) {
+      return true;
+    }
+
+    this.snackBar
+      .open(
+        $localize`:@@noFreeSupervisor:Every supervisor already leads a team. Give someone the Supervisor role first.`,
+        $localize`:@@goToUsers:Users`,
+        { duration: 8000 },
+      )
+      .onAction()
+      .subscribe(() => void this.router.navigate(['/users']));
+    return false;
   }
 
   private openTeamDialog(data: TeamDialogData, done: string): void {

@@ -14,7 +14,7 @@ using LinqToDB.Data;
 namespace ClockIn.Persistence.Seeds;
 
 /// <summary>
-/// Demo and development data (ADR 0005): wipes every table and rebuilds a company of 2 admins, 3 supervisors
+/// Demo and development data (ADR 0005): wipes every table and rebuilds a company of 2 admins, 4 supervisors (one without a team)
 /// and 15 employees, with history and today's punches relative to now in company time.
 /// </summary>
 /// <remarks>
@@ -39,6 +39,8 @@ public sealed class DemoSeed(AppDataConnection db, TimeProvider time) : IDemoDat
         new("Sam", Role.Supervisor, Leads: Warehouse, Today: DemoScenario.ClockedIn, OpenFor: TimeSpan.FromHours(2)),
         new("Sue", Role.Supervisor, Leads: Office, Today: DemoScenario.ClockedOut),
         new("Sid", Role.Supervisor, Leads: NightShift),
+        // Leads no team, so an admin can hand one over (change-team-supervisor.feature) or create one.
+        new("Tom", Role.Supervisor, Today: DemoScenario.ClockedOut),
         new("Eve", Role.Employee, Team: Warehouse, Today: DemoScenario.ClockedIn, OpenFor: TimeSpan.FromHours(2)),
         new("Ed", Role.Employee, Team: Warehouse, Status: UserStatus.Deactivated, Today: DemoScenario.Deactivated),
         new("Fay", Role.Employee, Team: Warehouse, Status: UserStatus.PendingActivation, Today: DemoScenario.PendingActivation),

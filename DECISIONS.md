@@ -9,6 +9,8 @@ Each entry has the decision, the reason, and who decided (**user**, or **dev** w
 | Decision | Why | By |
 |---|---|---|
 | The sign-in page lists every demo account that can sign in (17), not 7 featured ones. Fay (pending), Ed (deactivated) and Lou (locked out) stay off the list; admins see their states. | Asked by the user. | user |
+| The demo gains a 4th supervisor, Tom, who leads no team (changes the earlier "3 supervisors"). | A supervisor leads one team at most, so with every supervisor leading one, "Change supervisor" and "New team" had nobody to offer. | dev |
+| When no supervisor is free, "Change supervisor" and "New team" explain why and link to Users instead of opening an empty list. | An empty dropdown gave no hint about the one-team rule or what to do. | dev |
 | Employees see their team and supervisor in the account menu, from `/api/me` ([see-own-team.feature](docs/specs/teams/see-own-team.feature)). | Asked by the user; the menu is on every page. Supervisors and admins have no team, so no line. | user / dev |
 
 ## 2026-10-30: Timesheets, review, reports, administration and settings (frontend)

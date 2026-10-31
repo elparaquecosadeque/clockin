@@ -1,5 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { AdminService } from '../../services/admin.service';
 import { TeamsComponent } from './teams.component';
@@ -32,6 +34,7 @@ describe('TeamsComponent', () => {
     createTeam: vi.fn(async () => undefined),
   };
   const open = vi.fn(() => ({ afterClosed: () => of(true) }));
+  const snack = vi.fn(() => ({ onAction: () => of() }));
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -40,6 +43,8 @@ describe('TeamsComponent', () => {
       providers: [
         { provide: AdminService, useValue: admin },
         { provide: MatDialog, useValue: { open } },
+        { provide: MatSnackBar, useValue: { open: snack } },
+        provideRouter([]),
       ],
     });
   });
@@ -67,5 +72,28 @@ describe('TeamsComponent', () => {
       data: { supervisors: { id: string }[] };
     };
     expect(data.data.supervisors.map((s) => s.id)).toEqual(['sid']);
+  });
+
+  it('explains, instead of an empty list, when every supervisor already leads a team', async () => {
+    admin.users.mockResolvedValueOnce([
+      { id: 'sam', name: 'Sam', role: 'Supervisor', status: 'Active', ledTeamId: 'w' },
+    ]);
+    const fixture = TestBed.createComponent(TeamsComponent);
+    await fixture.whenStable();
+
+    (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLButtonElement>('.menu button')!
+      .click();
+    await fixture.whenStable();
+    const panels = document.querySelectorAll('.mat-mdc-menu-panel');
+    [...panels[panels.length - 1].querySelectorAll<HTMLButtonElement>('button')]
+      .find((b) => b.textContent!.includes('Change supervisor'))!
+      .click();
+    await fixture.whenStable();
+
+    expect(open).not.toHaveBeenCalled();
+    expect((snack.mock.calls[0] as unknown[])[0]).toContain(
+      'Every supervisor already leads a team',
+    );
   });
 });

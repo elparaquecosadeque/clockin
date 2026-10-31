@@ -270,7 +270,7 @@
       <notes>
         <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:17,18</note>
         <note category="location">src/app/features/admin/pages/teams/teams.component.html:15,16</note>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:84</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:94</note>
       </notes>
       <segment>
         <source>Supervisor</source>
@@ -311,7 +311,7 @@
     <unit id="save">
       <notes>
         <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:37,38</note>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:85</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:95</note>
         <note category="location">src/app/features/admin/pages/users/users.component.ts:164</note>
         <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:51,52</note>
       </notes>
@@ -541,7 +541,7 @@
     <unit id="archive">
       <notes>
         <note category="location">src/app/features/admin/pages/teams/teams.component.html:50,51</note>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:108</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:118</note>
       </notes>
       <segment>
         <source>Archive</source>
@@ -596,7 +596,7 @@
     </unit>
     <unit id="teamCreated">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:69</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:75</note>
       </notes>
       <segment>
         <source>Team created.</source>
@@ -605,7 +605,7 @@
     </unit>
     <unit id="teamRenamed">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:76</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:82</note>
       </notes>
       <segment>
         <source>Team renamed.</source>
@@ -614,7 +614,7 @@
     </unit>
     <unit id="changeSupervisorTitle">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:82</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:92</note>
       </notes>
       <segment>
         <source>New supervisor for <ph id="0" equiv="name" disp="team.name"/></source>
@@ -623,7 +623,7 @@
     </unit>
     <unit id="changeSupervisorMessage">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:83</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:93</note>
       </notes>
       <segment>
         <source>Pending timesheets and correction requests move to the new supervisor.</source>
@@ -632,7 +632,7 @@
     </unit>
     <unit id="supervisorChanged">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:99</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:109</note>
       </notes>
       <segment>
         <source>Supervisor changed.</source>
@@ -641,7 +641,7 @@
     </unit>
     <unit id="archiveTeamTitle">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:106</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:116</note>
       </notes>
       <segment>
         <source>Archive <ph id="0" equiv="name" disp="team.name"/>?</source>
@@ -650,7 +650,7 @@
     </unit>
     <unit id="archiveTeamMessage">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:107</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:117</note>
       </notes>
       <segment>
         <source>The team keeps its name in history and exports, but nobody can join it again.</source>
@@ -659,11 +659,29 @@
     </unit>
     <unit id="teamArchived">
       <notes>
-        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:121</note>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:131</note>
       </notes>
       <segment>
         <source>Team archived.</source>
         <target>Equipo archivado.</target>
+      </segment>
+    </unit>
+    <unit id="noFreeSupervisor">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:144</note>
+      </notes>
+      <segment>
+        <source>Every supervisor already leads a team. Give someone the Supervisor role first.</source>
+        <target>Todos los supervisores ya dirigen un equipo. Primero da a alguien el rol de supervisor.</target>
+      </segment>
+    </unit>
+    <unit id="goToUsers">
+      <notes>
+        <note category="location">src/app/features/admin/pages/teams/teams.component.ts:145</note>
+      </notes>
+      <segment>
+        <source>Users</source>
+        <target>Usuarios</target>
       </segment>
     </unit>
     <unit id="usersTitle">

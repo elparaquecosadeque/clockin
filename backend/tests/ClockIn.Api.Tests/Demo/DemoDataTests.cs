@@ -32,18 +32,18 @@ public sealed class DemoDataTests(DemoApiFactory factory) : IClassFixture<DemoAp
     public void Dispose() => _scopes.Dispose();
 
     [Fact]
-    public async Task Seeds_three_teams_each_led_by_a_supervisor_with_five_employees()
+    public async Task Seeds_three_teams_with_five_employees_each_and_a_supervisor_free_to_lead_one()
     {
         IReadOnlyList<User> employees = await Users().FindByRoleAsync(Role.Employee, Ct);
         IReadOnlyList<User> supervisors = await Users().FindByRoleAsync(Role.Supervisor, Ct);
 
         (await Users().FindByRoleAsync(Role.Admin, Ct)).Should().HaveCount(2);
-        supervisors.Should().HaveCount(3).And.OnlyContain(s => s.TeamId == null);
+        supervisors.Should().HaveCount(4).And.OnlyContain(s => s.TeamId == null);
         employees.Should().HaveCount(15);
         employees.GroupBy(e => e.TeamId).Select(g => g.Count()).Should().Equal(5, 5, 5);
         foreach (User supervisor in supervisors)
         {
-            (await Teams().LeadsActiveTeamAsync(supervisor.Id, Ct)).Should().BeTrue();
+            (await Teams().LeadsActiveTeamAsync(supervisor.Id, Ct)).Should().Be(supervisor.Name != "Tom", supervisor.Name);
         }
 
         (await Teams().NameInUseAsync("Old Store", Ct)).Should().BeTrue();
@@ -128,7 +128,7 @@ public sealed class DemoDataTests(DemoApiFactory factory) : IClassFixture<DemoAp
         DemoAccountsDto? demo = await client.GetFromJsonAsync<DemoAccountsDto>("/api/demo/accounts", Json, Ct);
 
         // Everyone who can sign in: not Fay (pending activation), Ed (deactivated) or Lou (locked out).
-        demo!.Accounts.Should().HaveCount(17);
+        demo!.Accounts.Should().HaveCount(18);
         demo.Accounts.Select(a => a.Name).Should().NotContain(["Fay", "Ed", "Lou"]);
         demo.Accounts.Select(a => a.Scenario).Should().Contain([DemoScenario.Admin, DemoScenario.ClockedIn, DemoScenario.ForgotToClockOut]);
         foreach (DemoAccount account in demo.Accounts)
