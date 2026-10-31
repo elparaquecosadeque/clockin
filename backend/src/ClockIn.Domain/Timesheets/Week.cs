@@ -22,5 +22,12 @@ public sealed record Week
         return new Week(day.AddDays(-daysSinceMonday));
     }
 
+    /// <summary>The next Monday 00:00 in company time.</summary>
+    public DateTimeOffset EndsAt(TimeZoneInfo companyZone)
+    {
+        var local = Start.AddDays(7).ToDateTime(TimeOnly.MinValue);
+        return new DateTimeOffset(local, companyZone.GetUtcOffset(local));
+    }
+
     public bool Contains(DateTimeOffset instant, TimeZoneInfo companyZone) => Containing(instant, companyZone) == this;
 }

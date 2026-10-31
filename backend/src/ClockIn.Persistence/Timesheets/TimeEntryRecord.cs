@@ -35,4 +35,19 @@ public sealed class TimeEntryRecord
 
     [Column("is_manually_changed")]
     public required bool IsManuallyChanged { get; init; }
+
+    [Column("manual_change")]
+    public string ManualChange { get; init; } = "None";
+
+    [Column("changed_by")]
+    public Guid? ChangedBy { get; init; }
+
+    [Column("note")]
+    public string? Note { get; init; }
+
+    [Column("punched_start")]
+    public DateTimeOffset? PunchedStart { get; init; }
+
+    [Column("punched_end")]
+    public DateTimeOffset? PunchedEnd { get; init; }
 }

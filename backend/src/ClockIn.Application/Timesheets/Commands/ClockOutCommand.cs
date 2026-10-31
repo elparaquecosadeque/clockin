@@ -8,7 +8,7 @@ using ClockIn.Domain.Timesheets;
 namespace ClockIn.Application.Timesheets.Commands;
 
 /// <summary>Closes the open entry now, even when it started in an earlier week.</summary>
-public sealed record ClockOutCommand(string IpAddress, string UserAgent);
+public sealed record ClockOutCommand(string IpAddress, string UserAgent) : ITransactional;
 
 public sealed class ClockOutHandler(ICurrentUser currentUser, ITimesheetRepository timesheets, TimeProvider time)
 {

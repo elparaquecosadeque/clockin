@@ -1,3 +1,4 @@
+using ClockIn.Application.Common.Interfaces;
 using ClockIn.Application.Demo.Interfaces;
 using ClockIn.Persistence.Accounts;
 using ClockIn.Persistence.Seeds;
@@ -37,6 +38,8 @@ public static class PersistenceModule
         services.AddSingleton(new DataOptions().UseConnectionString(linqProvider, options.ConnectionString));
         services.AddScoped<AppDataConnection>();
         services.AddScoped<IDemoData, DemoSeed>();
+        services.AddScoped<PendingDomainEvents>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddFluentMigratorCore().ConfigureRunner(rb => (isPostgres ? rb.AddPostgres() : rb.AddSQLite())
             .WithGlobalConnectionString(options.ConnectionString)

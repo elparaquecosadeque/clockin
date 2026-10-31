@@ -29,6 +29,19 @@ public sealed class UserRepository(AppDataConnection db) : IUserRepository
         return records.ConvertAll(ToDomain);
     }
 
+    public async Task<IReadOnlyDictionary<UserId, string>> NamesAsync(IEnumerable<UserId> ids, CancellationToken ct)
+    {
+        Guid[] wanted = [.. ids.Select(id => id.Value).Distinct()];
+        if (wanted.Length == 0)
+        {
+            return new Dictionary<UserId, string>();
+        }
+
+        return await db.GetTable<UserRecord>()
+            .Where(u => wanted.Contains(u.Id))
+            .ToDictionaryAsync(u => new UserId(u.Id), u => u.Name, ct);
+    }
+
     public async Task SaveAsync(User user, CancellationToken ct)
     {
         if (user.Version == 0)

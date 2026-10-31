@@ -4,6 +4,22 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-10-30: Timesheet workflow (backend)
+
+| Decision | Why | By |
+|---|---|---|
+| Commands opt into one transaction per command with an `ITransactional` marker, applied as mediator middleware (`TransactionMiddleware`). | CODE_STYLE asks for transactions as middleware; a blanket transaction would roll back a failed sign-in's lockout counter, which must be saved even though the command then fails. | dev |
+| Domain events are dispatched by the unit of work to `IDomainEventSubscriber`s built in the command's own scope, not through a nested mediator call. | A nested mediator call gets its own scope and connection, so it would run outside the transaction CODE_STYLE requires. Wolverine also forbids the service location a generic lookup would need. | dev |
+| Correction requests are their own aggregate; `CorrectionRequested`, `CorrectionRequestAccepted` and `CorrectionRequestDeclined` update the timesheet's state and history in the same transaction. | Glossary: Accept reopens through an event in one transaction. | dev |
+| Timesheet history is an append-only `timesheet_history` table keyed by (timesheet, position). Entry rows carry before and after snapshots, including punched values. | view-timesheet.feature asks for every transition and entry change, deleted entries included. | dev |
+| "On behalf of" isn't stored: a Submitted row whose actor isn't the owner was submitted on their behalf. | Derivable, so not stored. | dev |
+| Approval keeps the approver, the time and the owner's team at that moment; reopening clears the current approval, and history keeps the old one. | The CSV export shows the team at approval even after a move. | dev |
+| Access is derived in one place (`TimesheetParties`) from permissions: the owner, the owner's current team supervisor (`timesheets.review-team`), or admins (`timesheets.review-all`, `timesheets.manage`). | Code checks permissions, never roles (glossary), and the approver follows the employee's current team. | dev |
+| New permissions: `teams.manage`, `timesheets.review-team` (supervisors), `timesheets.review-all` and `timesheets.manage` (admins). | Each one gates a separate set of screens and actions. | dev |
+| Overlaps are checked against the previous week, the next week and the week holding the open entry, which runs until now. | Entries last at most 16 hours, so nothing further away can overlap. | dev |
+| Edits and deletes send the timesheet version they were based on; a stale one gets 409 `ConcurrencyConflict`. | edit-entry.feature, "two devices". | dev |
+| Manual entries record the request's IP and user agent as their source. | Columns are required, and it helps audits. | dev |
+
 ## 2026-10-30: Demo data
 
 Larger decision: [ADR 0005](docs/adr/0005-demo-data-and-daily-reset.md) (app-seeded demo data, daily reset, Development and Demo environments only).

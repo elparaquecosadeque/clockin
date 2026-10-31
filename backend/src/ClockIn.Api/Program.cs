@@ -6,6 +6,7 @@ using ClockIn.Api.Common;
 using ClockIn.Api.Demo;
 using ClockIn.Application.Common.Exceptions;
 using ClockIn.Application.Common.Interfaces;
+using ClockIn.Application.Common.Middleware;
 using ClockIn.Infrastructure.Common;
 using ClockIn.Persistence.Common;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -66,15 +67,31 @@ public sealed class Program
             .ValidateOnStart();
     }
 
-    private static void AddModules(IServiceCollection services, IConfiguration configuration) =>
+    private static void AddModules(IServiceCollection services, IConfiguration configuration)
+    {
         services.AddPersistence(configuration).AddInfrastructure();
+        AddDomainEventSubscribers(services);
+    }
+
+    /// <summary>Plain registrations, so the mediator builds them in the command's scope and unit of work.</summary>
+    private static void AddDomainEventSubscribers(IServiceCollection services)
+    {
+        foreach (Type type in typeof(IDomainEventSubscriber).Assembly.GetTypes()
+            .Where(t => t is { IsClass: true, IsAbstract: false } && t.IsAssignableTo(typeof(IDomainEventSubscriber))))
+        {
+            services.AddScoped(typeof(IDomainEventSubscriber), type);
+        }
+    }
 
     private static void AddMediator(IServiceCollection services) =>
         services.AddWolverine(opts =>
         {
             opts.Discovery.IncludeAssembly(typeof(NotFoundException).Assembly);
+            // Subscribers run inside the unit of work, not as mediator messages.
+            opts.Discovery.CustomizeHandlerDiscovery(query => query.Excludes.Implements<IDomainEventSubscriber>());
             opts.Durability.Mode = DurabilityMode.MediatorOnly;
             opts.UseFluentValidation();
+            opts.Policies.AddMiddleware(typeof(TransactionMiddleware), chain => chain.MessageType.IsAssignableTo(typeof(ITransactional)));
         })
         .AddHostedService<DemoDataService>() // before the first-admin seed, which then finds the demo admin
         .AddHostedService<FirstAdminSeeder>(); // after Wolverine's own hosted service, so the mediator is running
@@ -109,6 +126,8 @@ public sealed class Program
             {
                 options.AddPolicy(policy, p => p.RequireClaim(Policies.PermissionClaim, policy));
             }
+
+            options.AddPolicy(Policies.Review, p => p.RequireClaim(Policies.PermissionClaim, Policies.ReviewTeam, Policies.ReviewAll));
         });
     }
 

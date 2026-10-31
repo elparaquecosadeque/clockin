@@ -105,6 +105,8 @@ public sealed class DemoSeed(AppDataConnection db, TimeProvider time) : IDemoDat
 
     private async Task WipeAsync(CancellationToken ct)
     {
+        await db.GetTable<CorrectionRequestRecord>().DeleteAsync(ct);
+        await db.GetTable<TimesheetHistoryRecord>().DeleteAsync(ct);
         await db.GetTable<TimeEntryRecord>().DeleteAsync(ct);
         await db.GetTable<TimesheetRecord>().DeleteAsync(ct);
         await db.GetTable<SessionRecord>().DeleteAsync(ct);
@@ -185,6 +187,9 @@ public sealed class DemoSeed(AppDataConnection db, TimeProvider time) : IDemoDat
                 ClockOutIp = e.End is null ? null : ip,
                 ClockOutUserAgent = e.End is null ? null : UserAgent,
                 IsManuallyChanged = e.IsManuallyChanged,
+                ManualChange = e.IsManuallyChanged ? nameof(ManualChange.Added) : nameof(ManualChange.None),
+                ChangedBy = e.IsManuallyChanged ? userId : null,
+                Note = e.IsManuallyChanged ? "Forgot to clock in" : null,
             }));
         }
     }

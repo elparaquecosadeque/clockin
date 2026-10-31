@@ -1,10 +1,12 @@
 using AwesomeAssertions;
 using ClockIn.Api.Tests.Common;
 using ClockIn.Application.Common.Exceptions;
+using ClockIn.Application.Common.Interfaces;
 using ClockIn.Application.Timesheets.Interfaces;
 using ClockIn.Domain.Accounts;
 using ClockIn.Domain.Timesheets;
 using ClockIn.Tests.Common;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ClockIn.Api.Tests.Timesheets;
 
@@ -128,9 +130,15 @@ public sealed class TimesheetRepositoryTests(ApiFactory factory) : IDisposable
         var thisWeek = Timesheet.Start(_eve, ThisWeek);
         thisWeek.ClockIn(CompanyClock.At("2026-10-30 08:00"), Phone, CompanyClock.Zone);
 
-        var act = () => SaveAsync(thisWeek);
+        // As a command runs it: one scope, inside the unit of work.
+        await using AsyncServiceScope scope = factory.Services.CreateAsyncScope();
+        IUnitOfWork unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+        await unitOfWork.BeginAsync(Ct);
+
+        var act = () => scope.ServiceProvider.GetRequiredService<ITimesheetRepository>().SaveAsync(thisWeek, Ct);
 
         (await act.Should().ThrowAsync<ConflictException>()).Which.Code.Should().Be("EntryAlreadyOpen");
+        await unitOfWork.DisposeAsync();
         (await Repository().FindAsync(_eve, ThisWeek, Ct)).Should().BeNull("the failed save is rolled back");
     }
 

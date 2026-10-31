@@ -13,7 +13,8 @@ public sealed class GetMeHandlerTests
 {
     [Theory]
     [InlineData(Role.Employee, new[] { Permissions.PunchTime })]
-    [InlineData(Role.Admin, new[] { Permissions.ManageUsers })]
+    [InlineData(Role.Supervisor, new[] { Permissions.PunchTime, Permissions.ReviewTeam })]
+    [InlineData(Role.Admin, new[] { Permissions.ManageUsers, Permissions.ManageTeams, Permissions.ReviewAll, Permissions.ManageTimesheets })]
     public async Task Returns_the_user_with_the_permissions_of_their_role(Role role, string[] permissions)
     {
         var user = User.Create(new Email("eve@clockin.test"), "Eve", role);

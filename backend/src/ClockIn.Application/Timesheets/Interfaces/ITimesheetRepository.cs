@@ -5,11 +5,16 @@ namespace ClockIn.Application.Timesheets.Interfaces;
 
 public interface ITimesheetRepository
 {
+    Task<Timesheet?> FindAsync(TimesheetId id, CancellationToken ct);
+
     Task<Timesheet?> FindAsync(UserId ownerId, Week week, CancellationToken ct);
+
+    /// <summary>The timesheet holding the entry.</summary>
+    Task<Timesheet?> FindByEntryAsync(TimeEntryId entryId, CancellationToken ct);
 
     /// <summary>The owner's timesheet holding their open entry, whatever its week.</summary>
     Task<Timesheet?> FindWithOpenEntryAsync(UserId ownerId, CancellationToken ct);
 
-    /// <summary>Inserts or updates the whole aggregate.</summary>
+    /// <summary>Inserts or updates the whole aggregate and appends its new history.</summary>
     Task SaveAsync(Timesheet timesheet, CancellationToken ct);
 }

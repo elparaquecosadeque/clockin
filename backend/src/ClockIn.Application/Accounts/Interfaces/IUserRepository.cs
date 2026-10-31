@@ -10,6 +10,9 @@ public interface IUserRepository
 
     Task<IReadOnlyList<User>> FindByRoleAsync(Role role, CancellationToken ct);
 
+    /// <summary>Display names by id, for history and lists. Unknown ids are left out.</summary>
+    Task<IReadOnlyDictionary<UserId, string>> NamesAsync(IEnumerable<UserId> ids, CancellationToken ct);
+
     /// <summary>Inserts or updates the whole aggregate.</summary>
     Task SaveAsync(User user, CancellationToken ct);
 }
