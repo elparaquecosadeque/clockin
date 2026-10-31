@@ -1,18 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { SessionService } from '../../../../core/services/session.service';
+import { DemoAccounts } from '../../models/demo-accounts.model';
+import { AuthService } from '../../services/auth.service';
 import { SignInComponent } from './sign-in.component';
 
 describe('SignInComponent', () => {
   const signIn = vi.fn<(email: string, password: string) => Promise<void>>();
+  const demoAccounts = vi.fn<() => Promise<DemoAccounts | null>>();
   let fixture: ComponentFixture<SignInComponent>;
   let element: HTMLElement;
 
   beforeEach(async () => {
     signIn.mockReset();
+    demoAccounts.mockResolvedValue(null);
     TestBed.configureTestingModule({
       imports: [SignInComponent],
-      providers: [provideRouter([]), { provide: SessionService, useValue: { signIn } }],
+      providers: [
+        provideRouter([]),
+        { provide: SessionService, useValue: { signIn } },
+        { provide: AuthService, useValue: { demoAccounts } },
+      ],
     });
     fixture = TestBed.createComponent(SignInComponent);
     element = fixture.nativeElement;
@@ -59,5 +67,37 @@ describe('SignInComponent', () => {
 
     expect(signIn).not.toHaveBeenCalled();
     expect(element.textContent).toContain('Enter your email.');
+  });
+
+  it('fills the form with a demo account in a demo', async () => {
+    demoAccounts.mockResolvedValue({
+      password: 'clockin-demo',
+      accounts: [
+        {
+          email: 'eve@clockin.demo',
+          name: 'Eve',
+          role: 'Employee',
+          team: 'Warehouse',
+          scenario: 'ClockedIn',
+        },
+      ],
+    });
+    fixture = TestBed.createComponent(SignInComponent);
+    element = fixture.nativeElement;
+    await fixture.whenStable();
+
+    element.querySelector<HTMLButtonElement>('app-demo-accounts button')!.click();
+    await fixture.whenStable();
+
+    expect(element.querySelector<HTMLInputElement>('input[type=email]')!.value).toBe(
+      'eve@clockin.demo',
+    );
+    expect(element.querySelector<HTMLInputElement>('input[type=password]')!.value).toBe(
+      'clockin-demo',
+    );
+  });
+
+  it('shows no demo accounts outside a demo', () => {
+    expect(element.querySelector('app-demo-accounts')).toBeNull();
   });
 });

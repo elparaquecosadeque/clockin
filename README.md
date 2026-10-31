@@ -22,6 +22,8 @@ Health: `/health/live` and `/health/ready`. OpenAPI document (Development only):
 
 **Database.** Development uses SQLite (`appsettings.Development.json`). Other environments use PostgreSQL: set `Database:ConnectionString` through user secrets or the environment, never in `appsettings.json`. Migrations run on startup only where `Database:MigrateOnStartup` is true (local and tests); remote environments run them as a deployment step.
 
+**Demo data** ([ADR 0005](docs/adr/0005-demo-data-and-daily-reset.md)). In Development, and in a deployment with `ASPNETCORE_ENVIRONMENT=Demo`, the API wipes the database and seeds a sample company: admins Ada and Abe, supervisors Sam, Sue and Sid leading Warehouse, Office and Night Shift, and 15 employees with three weeks of timesheets. Every account is `<name>@clockin.demo` with password `clockin-demo`, and the sign-in page lists the most useful ones. The data is rebuilt once it is 24 hours old; set `Demo:DailyReset` to `false` to seed once and keep it, or `Demo:Enabled` to `false` to turn it off. Startup refuses `Demo:Enabled` in any other environment.
+
 ## Frontend
 
 ```sh

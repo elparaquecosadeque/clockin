@@ -8,7 +8,7 @@ using Testcontainers.PostgreSql;
 namespace ClockIn.Api.Tests.Common;
 
 /// <summary>The real API over a disposable PostgreSQL container, one per test run.</summary>
-public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
+public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     public const string FirstAdminEmail = "admin@clockin.test";
 
@@ -36,5 +36,11 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         builder.UseSetting("Auth:SignInPermitsPerMinute", "10000");
         builder.ConfigureTestServices(services =>
             services.AddControllers().AddApplicationPart(typeof(ApiFactory).Assembly));
+        ConfigureHost(builder);
+    }
+
+    /// <summary>For factories that need a different host, each over its own database.</summary>
+    protected virtual void ConfigureHost(IWebHostBuilder builder)
+    {
     }
 }

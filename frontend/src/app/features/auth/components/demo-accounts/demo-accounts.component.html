@@ -1,0 +1,56 @@
+<section class="demo" aria-labelledby="demo-title">
+  <h2 id="demo-title" i18n="@@demoTitle">Try the demo</h2>
+  <p class="note" i18n="@@demoNote">
+    Sample data, rebuilt every day. Don't enter real information. Every account uses the password
+    <strong>{{ demo().password }}</strong
+    >.
+  </p>
+
+  <ul>
+    @for (account of demo().accounts; track account.email) {
+      <li>
+        <button type="button" (click)="picked.emit(account)">
+          <span class="who">
+            <span class="name">{{ account.name }}</span>
+            <span class="role">
+              @switch (account.role) {
+                @case ('Admin') {
+                  <ng-container i18n="@@roleAdmin">Admin</ng-container>
+                }
+                @case ('Supervisor') {
+                  <ng-container i18n="@@roleSupervisor">Supervisor</ng-container>
+                }
+                @default {
+                  <ng-container i18n="@@roleEmployee">Employee</ng-container>
+                }
+              }
+              @if (account.team) {
+                · {{ account.team }}
+              }
+            </span>
+          </span>
+          <span class="scenario">
+            @switch (account.scenario) {
+              @case ('ClockedIn') {
+                <ng-container i18n="@@demoClockedIn">Clocked in</ng-container>
+              }
+              @case ('ClockedOut') {
+                <ng-container i18n="@@demoClockedOut">Clocked out today</ng-container>
+              }
+              @case ('ForgotToClockOut') {
+                <ng-container i18n="@@demoForgotToClockOut">Forgot to clock out</ng-container>
+              }
+              @case ('NotStarted') {
+                <ng-container i18n="@@demoNotStarted">Not started today</ng-container>
+              }
+              @case ('Admin') {
+                <ng-container i18n="@@demoAdmin">Manages everyone</ng-container>
+              }
+            }
+          </span>
+          <mat-icon aria-hidden="true" fontIcon="chevron_right" />
+        </button>
+      </li>
+    }
+  </ul>
+</section>

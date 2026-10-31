@@ -1,4 +1,6 @@
+using ClockIn.Application.Demo.Interfaces;
 using ClockIn.Persistence.Accounts;
+using ClockIn.Persistence.Seeds;
 using ClockIn.Persistence.Teams;
 using ClockIn.Persistence.Timesheets;
 using FluentMigrator.Runner;
@@ -34,6 +36,7 @@ public static class PersistenceModule
         // Plain constructor registrations: Wolverine generates handler code and cannot call factory lambdas.
         services.AddSingleton(new DataOptions().UseConnectionString(linqProvider, options.ConnectionString));
         services.AddScoped<AppDataConnection>();
+        services.AddScoped<IDemoData, DemoSeed>();
 
         services.AddFluentMigratorCore().ConfigureRunner(rb => (isPostgres ? rb.AddPostgres() : rb.AddSQLite())
             .WithGlobalConnectionString(options.ConnectionString)

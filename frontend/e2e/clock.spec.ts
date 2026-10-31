@@ -51,6 +51,21 @@ async function mockApi(page: Page): Promise<void> {
     switch (url) {
       case '/api/auth/refresh':
         return route.fulfill({ status: 401, json: { title: 'Unauthorized' } });
+      case '/api/demo/accounts':
+        return route.fulfill({
+          json: {
+            password: 'clockin-demo',
+            accounts: [
+              {
+                email: 'eve@clockin.demo',
+                name: 'Eve',
+                role: 'Employee',
+                team: 'Warehouse',
+                scenario: 'NotStarted',
+              },
+            ],
+          },
+        });
       case '/api/auth/login':
         return route.fulfill({ json: { accessToken: 'token', expiresAt: now.toISOString() } });
       case '/api/me':
@@ -74,7 +89,7 @@ async function mockApi(page: Page): Promise<void> {
   });
 }
 
-test('signs in, clocks in, and shows the running time without accessibility violations', async ({
+test('signs in with a demo account, clocks in, and shows the running time without accessibility violations', async ({
   page,
 }, testInfo) => {
   const t = text[testInfo.project.name as keyof typeof text];
@@ -86,9 +101,10 @@ test('signs in, clocks in, and shows the running time without accessibility viol
   await expect(page).toHaveURL(/\/sign-in$/);
   await expect(page.locator('html')).toHaveAttribute('lang', testInfo.project.name);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
 
-  await page.getByLabel(t.email).fill('eve@clockin.test');
-  await page.getByLabel(t.password).fill('correct horse battery');
+  await page.getByRole('button', { name: /Eve/ }).click();
+  await expect(page.getByLabel(t.email)).toHaveValue('eve@clockin.demo');
   await page.getByRole('button', { name: t.signIn }).click();
 
   await expect(page).toHaveURL(/\/clock$/);

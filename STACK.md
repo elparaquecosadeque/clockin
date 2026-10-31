@@ -107,7 +107,7 @@ Used **only as an in-process mediator**.
 
 - Migrations: `[Migration(yyyyMMddHHmm)]` classes in `Persistence/Migrations/`, matching the file name `M<yyyyMMddHHmm>_<Description>.cs`.
 - Reference data: `Insert.IntoTable(...)` inside regular migrations.
-- Development/test data: classes in `Persistence/Seeds/` marked `[Profile("Development")]`. Profiles run every time the migrator runs with that profile, so they must be idempotent.
+- Development and demo data: `Persistence/Seeds/DemoSeed.cs`, run by the API in the Development and Demo environments, which wipes and rebuilds the data relative to now, daily unless `Demo:DailyReset` is off ([ADR 0005](docs/adr/0005-demo-data-and-daily-reset.md)).
 - Use `IfDatabase(...)` only inside Persistence when an engine needs special handling.
 
 ### Serilog

@@ -323,7 +323,7 @@ No mapping libraries. Mapping is plain C# that you can step through in the debug
 - One migration per file, named `M<yyyyMMddHHmm>_<Description>`, with the same number as its version. Never edit a migration that has been applied in a shared environment; write a new one.
 - **Reference data** every environment needs (statuses, countries, roles) is inserted by regular migrations.
 - **Development/test data** lives in `Seeds/` and runs only in the environments it targets. Seeds run every time, so they must be idempotent.
-- Locally, migrations run on startup. In remote environments they run as a separate deployment step, never on app startup.
+- Locally, migrations run on startup. In remote environments they run as a separate deployment step, never on app startup. Exception: a throwaway demo deployment migrates and seeds on startup ([ADR 0005](docs/adr/0005-demo-data-and-daily-reset.md)).
 
 ## API conventions
 

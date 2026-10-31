@@ -21,13 +21,16 @@ public sealed class M202610302000_CreateTeams : Migration
         // A supervisor leads at most one active team, even under concurrency.
         Execute.Sql("CREATE UNIQUE INDEX ux_teams_one_active_per_supervisor ON teams (supervisor_id) WHERE is_archived = FALSE");
 
-        Alter.Table("users")
-            .AddColumn("team_id").AsGuid().Nullable().ForeignKey("fk_users_teams", "teams", "id");
+        Alter.Table("users").AddColumn("team_id").AsGuid().Nullable();
+
+        // SQLite can't add a foreign key to an existing table; there the domain alone keeps team_id valid.
+        IfDatabase(ProcessorIdConstants.Postgres)
+            .Create.ForeignKey("fk_users_teams").FromTable("users").ForeignColumn("team_id").ToTable("teams").PrimaryColumn("id");
     }
 
     public override void Down()
     {
-        Delete.ForeignKey("fk_users_teams").OnTable("users");
+        IfDatabase(ProcessorIdConstants.Postgres).Delete.ForeignKey("fk_users_teams").OnTable("users");
         Delete.Column("team_id").FromTable("users");
         Delete.Table("teams");
     }

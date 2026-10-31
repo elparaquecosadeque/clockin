@@ -4,6 +4,18 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-10-30: Demo data
+
+Larger decision: [ADR 0005](docs/adr/0005-demo-data-and-daily-reset.md) (app-seeded demo data, daily reset, Development and Demo environments only).
+
+| Decision | Why | By |
+|---|---|---|
+| 2 admins, 3 supervisors (one per team), 15 employees (5 per team), plus an archived "Old Store". Names follow the specs (Eve, Sam, Oli, …). | The user asked for 3 supervisors and 15 employees in teams; spec names make scenarios easy to recognise. | user / dev |
+| Scenarios: clocked in now, clocked out today, forgot to clock out (open 20 h), not started; last week Submitted, Approved or Draft; two weeks ago Approved; a >10 h entry; 3 manual changes; one pending, one deactivated, one locked-out user. | "Cover most if not all scenarios" with what the schema holds today; returns and corrections join the seed with their features. | dev |
+| All demo accounts share the password `clockin-demo`; the sign-in page lists 7 featured accounts that fill the form when picked. | Agreed with the user. | user |
+| The dev database is a demo database too: the first start after this change wipes it. | Development runs with `Demo:Enabled` true; turn it off for a database you keep. | dev |
+| The `users.team_id` foreign key exists on PostgreSQL only. | SQLite can't add a foreign key to an existing table; the domain keeps it valid there. | dev |
+
 ## 2026-10-30: Teams (domain and persistence)
 
 | Decision | Why | By |

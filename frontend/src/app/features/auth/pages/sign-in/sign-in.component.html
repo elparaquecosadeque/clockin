@@ -32,4 +32,8 @@
 
     <button mat-flat-button type="submit" [disabled]="busy()" i18n="@@signIn">Sign in</button>
   </form>
+
+  @if (demo(); as demo) {
+    <app-demo-accounts [demo]="demo" (picked)="fill($event, demo.password)" />
+  }
 </main>

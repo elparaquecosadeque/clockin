@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using ClockIn.Api.Auth;
 using ClockIn.Api.Common;
+using ClockIn.Api.Demo;
 using ClockIn.Application.Common.Exceptions;
 using ClockIn.Application.Common.Interfaces;
 using ClockIn.Infrastructure.Common;
@@ -57,6 +58,12 @@ public sealed class Program
         builder.Services.AddOptions<CompanyOptions>().BindConfiguration(CompanyOptions.Section).ValidateDataAnnotations()
             .Validate(o => TimeZoneInfo.TryFindSystemTimeZoneById(o.TimeZone, out _), "Company:TimeZone is not a known timezone id.")
             .ValidateOnStart();
+
+        // Demo data wipes the database (ADR 0005), so a real deployment refuses to start with it on.
+        bool demoAllowed = builder.Environment.IsDevelopment() || builder.Environment.IsEnvironment(DemoOptions.Environment);
+        builder.Services.AddOptions<DemoOptions>().BindConfiguration(DemoOptions.Section)
+            .Validate(o => !o.Enabled || demoAllowed, "Demo:Enabled is only allowed in the Development and Demo environments.")
+            .ValidateOnStart();
     }
 
     private static void AddModules(IServiceCollection services, IConfiguration configuration) =>
@@ -68,7 +75,9 @@ public sealed class Program
             opts.Discovery.IncludeAssembly(typeof(NotFoundException).Assembly);
             opts.Durability.Mode = DurabilityMode.MediatorOnly;
             opts.UseFluentValidation();
-        }).AddHostedService<FirstAdminSeeder>(); // after Wolverine's own hosted service, so the mediator is running
+        })
+        .AddHostedService<DemoDataService>() // before the first-admin seed, which then finds the demo admin
+        .AddHostedService<FirstAdminSeeder>(); // after Wolverine's own hosted service, so the mediator is running
 
     private static void AddAuth(IServiceCollection services)
     {
