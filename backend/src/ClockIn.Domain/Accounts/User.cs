@@ -1,5 +1,6 @@
 using Ardalis.GuardClauses;
 using ClockIn.Domain.Common;
+using ClockIn.Domain.Teams;
 
 namespace ClockIn.Domain.Accounts;
 
@@ -43,6 +44,9 @@ public sealed class User
 
     public DateTimeOffset? AccessLinkExpiresAt { get; private set; }
 
+    /// <summary>The team an employee belongs to. Null for supervisors and admins, who belong to no team.</summary>
+    public TeamId? TeamId { get; private set; }
+
     /// <summary>0 until first saved; the repository checks and bumps it on every save.</summary>
     public int Version { get; private init; }
 
@@ -57,9 +61,10 @@ public sealed class User
     public static User Restore(
         UserId id, Email email, string name, Role role, UserStatus status, string? passwordHash,
         Guid securityStamp, int failedSignIns, DateTimeOffset? lockedUntil,
-        string? accessLinkHash, DateTimeOffset? accessLinkExpiresAt, int version) =>
+        string? accessLinkHash, DateTimeOffset? accessLinkExpiresAt, TeamId? teamId, int version) =>
         new(id, email, name, role)
         {
+            TeamId = teamId,
             Status = status,
             PasswordHash = passwordHash,
             SecurityStamp = securityStamp,
@@ -108,6 +113,28 @@ public sealed class User
     {
         Status = UserStatus.Deactivated;
         SecurityStamp = Guid.CreateVersion7();
+    }
+
+    /// <summary>Puts an employee in a team. Pending work follows, since the approver is derived from the team.</summary>
+    public void MoveTo(Team team)
+    {
+        if (Role != Role.Employee)
+        {
+            throw new DomainException("UserIsNotEmployee", "Only employees belong to a team.");
+        }
+
+        EnsureNotDeactivated();
+        if (team.IsArchived)
+        {
+            throw new DomainException("TeamIsArchived", "The team is archived.");
+        }
+
+        if (TeamId == team.Id)
+        {
+            throw new DomainException("AlreadyInTeam", "The employee is already in this team.");
+        }
+
+        TeamId = team.Id;
     }
 
     private void EnsureNotDeactivated()

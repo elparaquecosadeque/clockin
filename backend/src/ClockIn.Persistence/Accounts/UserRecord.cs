@@ -38,6 +38,9 @@ public sealed class UserRecord
     [Column("access_link_expires_at")]
     public required DateTimeOffset? AccessLinkExpiresAt { get; init; }
 
+    [Column("team_id")]
+    public required Guid? TeamId { get; init; }
+
     [Column("version")]
     public required int Version { get; init; }
 }

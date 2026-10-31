@@ -1,6 +1,7 @@
 using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Common.Exceptions;
 using ClockIn.Domain.Accounts;
+using ClockIn.Domain.Teams;
 using ClockIn.Persistence.Common;
 using LinqToDB;
 using LinqToDB.Async;
@@ -54,6 +55,7 @@ public sealed class UserRepository(AppDataConnection db) : IUserRepository
             .Set(u => u.LockedUntil, user.LockedUntil)
             .Set(u => u.AccessLinkHash, user.AccessLinkHash)
             .Set(u => u.AccessLinkExpiresAt, user.AccessLinkExpiresAt)
+            .Set(u => u.TeamId, user.TeamId == null ? null : user.TeamId.Value.Value)
             .Set(u => u.Version, user.Version + 1)
             .UpdateAsync(ct);
         if (updated == 0)
@@ -75,6 +77,7 @@ public sealed class UserRepository(AppDataConnection db) : IUserRepository
             record.LockedUntil,
             record.AccessLinkHash,
             record.AccessLinkExpiresAt,
+            record.TeamId is { } teamId ? new TeamId(teamId) : null,
             record.Version);
 
     private static UserRecord ToRecord(User user, int version) => new()
@@ -90,6 +93,7 @@ public sealed class UserRepository(AppDataConnection db) : IUserRepository
         LockedUntil = user.LockedUntil,
         AccessLinkHash = user.AccessLinkHash,
         AccessLinkExpiresAt = user.AccessLinkExpiresAt,
+        TeamId = user.TeamId?.Value,
         Version = version,
     };
 }

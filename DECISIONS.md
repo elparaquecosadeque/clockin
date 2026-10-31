@@ -4,6 +4,15 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-10-30: Teams (domain and persistence)
+
+| Decision | Why | By |
+|---|---|---|
+| Teams are built down to persistence (create team, move employee) before any API or screen, so the demo seed can place users in teams. | Agreed with the user; endpoints and admin screens come with the admin slice. | user |
+| An employee's team is `users.team_id`; supervisors and admins have none. | Glossary: membership is a `TeamId` on the user, and the approver is derived from the team. | dev |
+| Names are compared through a stored `normalized_name` (trimmed, upper-cased) with a unique index, archived teams included. | create-team.feature; the index also wins races the handler's check can't. | dev |
+| A partial unique index keeps a supervisor to one active team. A lost race surfaces as 409 `ConcurrencyConflict`. | Same pattern as one open entry per user. | dev |
+
 ## 2026-10-30: Frontend sign-in, set-password and clock screens
 
 | Decision | Why | By |
