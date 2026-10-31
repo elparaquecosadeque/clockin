@@ -20,7 +20,6 @@ namespace ClockIn.Persistence.Seeds;
 /// <remarks>
 /// Writes records directly, below the domain, so it must follow the aggregates' rules by hand:
 /// entries never overlap, at most one is open per person, and a week with an open entry is Draft.
-/// The seed grows with the features: returned timesheets and correction requests come with them.
 /// </remarks>
 public sealed class DemoSeed(AppDataConnection db, TimeProvider time) : IDemoData
 {
@@ -99,6 +98,16 @@ public sealed class DemoSeed(AppDataConnection db, TimeProvider time) : IDemoDat
             await db.InsertAsync(entry, token: ct);
         }
 
+        foreach (TimesheetHistoryRecord item in company.History)
+        {
+            await db.InsertAsync(item, token: ct);
+        }
+
+        foreach (CorrectionRequestRecord request in company.Corrections)
+        {
+            await db.InsertAsync(request, token: ct);
+        }
+
         await db.InsertAsync(new DemoSeedRecord { SeededAt = now }, token: ct);
         await transaction.CommitAsync(ct);
     }
@@ -138,14 +147,17 @@ public sealed class DemoSeed(AppDataConnection db, TimeProvider time) : IDemoDat
             }
             if (person.Role != Role.Admin && person.Status != UserStatus.PendingActivation)
             {
-                AddTime(company, person, userId, ipSuffix: 10 + i, timeline);
+                // Admins approve supervisors' weeks; supervisors approve their team's.
+                string approver = person.Team is null ? "Ada" : People.First(p => p.Leads == person.Team).Name;
+                Guid? teamId = person.Team is null ? null : teamIds[person.Team];
+                AddTime(company, person, userId, new Reviewer(userIds[approver], teamId), ipSuffix: 10 + i, timeline);
             }
         }
 
         return company;
     }
 
-    private static void AddTime(Company company, Person person, Guid userId, int ipSuffix, Timeline timeline)
+    private static void AddTime(Company company, Person person, Guid userId, Reviewer reviewer, int ipSuffix, Timeline timeline)
     {
         // Small personal offsets, so not everyone punches on the same minute.
         int offset = (ipSuffix * 7 % 21) - 10;
@@ -167,14 +179,66 @@ public sealed class DemoSeed(AppDataConnection db, TimeProvider time) : IDemoDat
         {
             var timesheetId = Guid.CreateVersion7();
             bool hasOpenEntry = week.Any(e => e.End is null);
+            TimesheetStatus status = hasOpenEntry ? TimesheetStatus.Draft : StatusOf(person, week.Key, timeline);
+            bool returned = person.Name == ReturnedTo && week.Key == timeline.Weeks[1];
+            DateTimeOffset submittedAt = timeline.NotAfterNow(timeline.At(week.Key.AddDays(7), 9, 0));
+            DateTimeOffset decidedAt = timeline.NotAfterNow(timeline.At(week.Key.AddDays(7), 11, 0));
             company.Timesheets.Add(new TimesheetRecord
             {
                 Id = timesheetId,
                 OwnerId = userId,
                 WeekStart = week.Key,
-                Status = (hasOpenEntry ? TimesheetStatus.Draft : StatusOf(person, week.Key, timeline)).ToString(),
+                Status = status.ToString(),
                 Version = 1,
+                ApprovedBy = status == TimesheetStatus.Approved ? reviewer.ApproverId : null,
+                ApprovedAt = status == TimesheetStatus.Approved ? decidedAt : null,
+                ApprovedTeamId = status == TimesheetStatus.Approved ? reviewer.TeamId : null,
+                ReturnComment = returned ? ReturnComment : null,
             });
+
+            int position = 0;
+            void Event(TimesheetEventKind kind, Guid actor, DateTimeOffset at, string? comment = null) =>
+                company.History.Add(new TimesheetHistoryRecord
+                {
+                    TimesheetId = timesheetId,
+                    Position = position++,
+                    Kind = kind.ToString(),
+                    ActorId = actor,
+                    At = at,
+                    Comment = comment,
+                });
+
+            if (status != TimesheetStatus.Draft || returned)
+            {
+                Event(TimesheetEventKind.Submitted, userId, submittedAt);
+            }
+
+            if (status == TimesheetStatus.Approved)
+            {
+                Event(TimesheetEventKind.Approved, reviewer.ApproverId, decidedAt);
+            }
+
+            if (returned)
+            {
+                Event(TimesheetEventKind.Returned, reviewer.ApproverId, decidedAt, ReturnComment);
+            }
+
+            // A pending request blocks the week until the supervisor decides (request-correction.feature).
+            if (person.Name == CorrectionFrom && week.Key == timeline.Weeks[0])
+            {
+                DateTimeOffset requestedAt = timeline.Now.AddHours(-20);
+                Event(TimesheetEventKind.CorrectionRequested, userId, requestedAt, CorrectionReason);
+                company.Corrections.Add(new CorrectionRequestRecord
+                {
+                    Id = Guid.CreateVersion7(),
+                    TimesheetId = timesheetId,
+                    OwnerId = userId,
+                    Reason = CorrectionReason,
+                    RequestedAt = requestedAt,
+                    Status = nameof(CorrectionStatus.Pending),
+                    Version = 1,
+                });
+            }
             company.Entries.AddRange(week.Select(e => new TimeEntryRecord
             {
                 Id = Guid.CreateVersion7(),
@@ -195,6 +259,11 @@ public sealed class DemoSeed(AppDataConnection db, TimeProvider time) : IDemoDat
     }
 
     private const string UserAgent = "Mozilla/5.0 (ClockIn demo data)";
+
+    private const string ReturnedTo = "Hal";
+    private const string ReturnComment = "Wednesday afternoon looks short. Did you forget to clock back in?";
+    private const string CorrectionFrom = "Jon";
+    private const string CorrectionReason = "I stayed late on Thursday for the audit and only logged until five.";
 
     private static IEnumerable<Entry> Today(Person person, Timeline timeline)
     {
@@ -246,6 +315,7 @@ public sealed class DemoSeed(AppDataConnection db, TimeProvider time) : IDemoDat
         return person.Name switch
         {
             "Mia" or "Sid" => TimesheetStatus.Draft, // forgot to submit
+            ReturnedTo => TimesheetStatus.Draft, // submitted, then returned
             _ when person.Team == Office || person.Name == "Sue" => TimesheetStatus.Approved,
             _ => TimesheetStatus.Submitted,
         };
@@ -293,6 +363,9 @@ public sealed class DemoSeed(AppDataConnection db, TimeProvider time) : IDemoDat
         public string Email => $"{Name.ToLowerInvariant()}@{EmailDomain}";
     }
 
+    /// <summary>Who approves a person's weeks, and the team an approval is recorded under.</summary>
+    private sealed record Reviewer(Guid ApproverId, Guid? TeamId);
+
     private sealed record Entry(DateTimeOffset Start, DateTimeOffset? End, bool IsManuallyChanged = false);
 
     private sealed class Company
@@ -307,6 +380,10 @@ public sealed class DemoSeed(AppDataConnection db, TimeProvider time) : IDemoDat
         public List<TimesheetRecord> Timesheets { get; } = [];
 
         public List<TimeEntryRecord> Entries { get; } = [];
+
+        public List<TimesheetHistoryRecord> History { get; } = [];
+
+        public List<CorrectionRequestRecord> Corrections { get; } = [];
     }
 
     /// <summary>Days and weeks in company time, counted back from now.</summary>
@@ -319,6 +396,9 @@ public sealed class DemoSeed(AppDataConnection db, TimeProvider time) : IDemoDat
         /// <summary>Two weeks ago, last week, this week (Mondays).</summary>
         public IReadOnlyList<DateOnly> Weeks { get; } =
             [.. new[] { -14, -7, 0 }.Select(d => Week.Containing(now, zone).Start.AddDays(d))];
+
+        /// <summary>Keeps past events in the past when the daily reset runs early on a Monday.</summary>
+        public DateTimeOffset NotAfterNow(DateTimeOffset instant) => instant < Now ? instant : Now;
 
         public DateOnly DayOf(DateTimeOffset instant) => DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(instant, zone).DateTime);
 

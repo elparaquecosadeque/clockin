@@ -99,6 +99,28 @@ public sealed class DemoDataTests(DemoApiFactory factory) : IClassFixture<DemoAp
     }
 
     [Fact]
+    public async Task Records_approvals_and_has_a_returned_week_and_a_pending_correction()
+    {
+        User eve = await UserAsync("eve");
+        Timesheet eves = (await Timesheets().FindAsync(eve.Id, TwoWeeksAgo, Ct))!;
+        Timesheet sams = (await Timesheets().FindAsync((await UserAsync("sam")).Id, TwoWeeksAgo, Ct))!;
+        Timesheet hals = (await Timesheets().FindAsync((await UserAsync("hal")).Id, LastWeek, Ct))!;
+        Timesheet jons = (await Timesheets().FindAsync((await UserAsync("jon")).Id, TwoWeeksAgo, Ct))!;
+
+        eves.Approval!.ApproverId.Should().Be((await UserAsync("sam")).Id);
+        eves.Approval.TeamId.Should().Be(eve.TeamId);
+        eves.History.Select(h => h.Kind).Should().Equal(TimesheetEventKind.Submitted, TimesheetEventKind.Approved);
+        sams.Approval!.ApproverId.Should().Be((await UserAsync("ada")).Id);
+
+        hals.Status.Should().Be(TimesheetStatus.Draft);
+        hals.ReturnComment.Should().NotBeNullOrWhiteSpace();
+        hals.History.Select(h => h.Kind).Should().Equal(TimesheetEventKind.Submitted, TimesheetEventKind.Returned);
+
+        (await Corrections().FindPendingAsync(jons.Id, Ct)).Should().NotBeNull();
+        jons.History[^1].Kind.Should().Be(TimesheetEventKind.CorrectionRequested);
+    }
+
+    [Fact]
     public async Task Lists_featured_accounts_that_sign_in_with_the_shared_password()
     {
         HttpClient client = TestUsers.HttpsClient(factory);
@@ -132,4 +154,6 @@ public sealed class DemoDataTests(DemoApiFactory factory) : IClassFixture<DemoAp
     private ITeamRepository Teams() => _scopes.Get<ITeamRepository>();
 
     private ITimesheetRepository Timesheets() => _scopes.Get<ITimesheetRepository>();
+
+    private ICorrectionRequestRepository Corrections() => _scopes.Get<ICorrectionRequestRepository>();
 }
