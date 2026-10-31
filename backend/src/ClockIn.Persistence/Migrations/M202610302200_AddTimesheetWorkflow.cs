@@ -23,9 +23,11 @@ public sealed class M202610302200_AddTimesheetWorkflow : Migration
             .AddColumn("punched_end").AsCustom(Timestamp).Nullable();
 
         // Append-only; position orders rows within a timesheet and makes concurrent appends collide.
+        // The composite key is declared inline: SQLite can't add a primary key to an existing table.
         Create.Table("timesheet_history")
-            .WithColumn("timesheet_id").AsGuid().NotNullable().ForeignKey("fk_timesheet_history_timesheets", "timesheets", "id")
-            .WithColumn("position").AsInt32().NotNullable()
+            .WithColumn("timesheet_id").AsGuid().NotNullable().PrimaryKey("pk_timesheet_history")
+                .ForeignKey("fk_timesheet_history_timesheets", "timesheets", "id")
+            .WithColumn("position").AsInt32().NotNullable().PrimaryKey("pk_timesheet_history")
             .WithColumn("kind").AsString(32).NotNullable()
             .WithColumn("actor_id").AsGuid().NotNullable()
             .WithColumn("at").AsCustom(Timestamp).NotNullable()
@@ -39,7 +41,6 @@ public sealed class M202610302200_AddTimesheetWorkflow : Migration
             .WithColumn("after_end").AsCustom(Timestamp).Nullable()
             .WithColumn("after_punched_start").AsCustom(Timestamp).Nullable()
             .WithColumn("after_punched_end").AsCustom(Timestamp).Nullable();
-        Create.PrimaryKey("pk_timesheet_history").OnTable("timesheet_history").Columns("timesheet_id", "position");
 
         Create.Table("correction_requests")
             .WithColumn("id").AsGuid().PrimaryKey("pk_correction_requests")
