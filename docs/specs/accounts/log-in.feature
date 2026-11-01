@@ -27,6 +27,17 @@ Feature: Log in
         | Ed is deactivated        | ed@clockin.test     |
         | Eve is locked out        | eve@clockin.test    |
 
+    Scenario: Gives the same answer when another sign-in for the same user saves first
+      Given Eve is signing in with a wrong password
+      And another sign-in for Eve saves first
+      When Eve's attempt is saved
+      Then it breaks the rule "InvalidCredentials", not a concurrency conflict
+      # A 409 only a registered email could produce would reveal which emails exist.
+
+    Scenario: Logs the email as one line whatever it contains
+      When someone signs in as "nobody@clockin.test" followed by a line break and a fake log entry
+      Then the Audit log records one failed sign-in line, with the control characters replaced by "?"
+
   Rule: 5 consecutive failures lock the account for 15 minutes
 
     Scenario: Locks on the fifth consecutive failure

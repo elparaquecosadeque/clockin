@@ -1,6 +1,7 @@
 using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Accounts.Mappings;
 using ClockIn.Application.Accounts.Results;
+using ClockIn.Application.Common.Exceptions;
 using ClockIn.Application.Common.Interfaces;
 using ClockIn.Domain.Accounts;
 using ClockIn.Domain.Common;
@@ -39,7 +40,16 @@ public sealed class LogInHandler(
         DateTimeOffset now = time.GetUtcNow();
         SignInOutcome outcome = user.SignIn(passwordMatches, now);
         // ponytail: the failure count is saved before throwing; a transaction-per-command middleware must not roll it back.
-        await usersRepository.SaveOrUpdateAsync(user, ct);
+        try
+        {
+            await usersRepository.SaveOrUpdateAsync(user, ct);
+        }
+        catch (ConflictException)
+        {
+            // Another sign-in for this user saved first. A 409 only registered emails could get would reveal them.
+            throw Rejected(command.Email);
+        }
+
         if (outcome == SignInOutcome.LockedOut)
         {
             audit.LockedOut(user.Id);
@@ -58,7 +68,10 @@ public sealed class LogInHandler(
 
     private DomainException Rejected(string email)
     {
-        audit.SignInFailed(email);
+        audit.SignInFailed(OneLine(email));
         return new DomainException("InvalidCredentials", "The email or password is incorrect.");
     }
+
+    /// <summary>The email comes from an anonymous caller: line breaks in it would forge entries in a text log.</summary>
+    private static string OneLine(string text) => string.Concat(text.Select(c => char.IsControl(c) ? '?' : c));
 }

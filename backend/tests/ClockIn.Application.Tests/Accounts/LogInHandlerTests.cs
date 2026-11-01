@@ -2,6 +2,7 @@ using AwesomeAssertions;
 using ClockIn.Application.Accounts.Commands;
 using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Accounts.Results;
+using ClockIn.Application.Common.Exceptions;
 using ClockIn.Application.Common.Interfaces;
 using ClockIn.Domain.Accounts;
 using ClockIn.Domain.Common;
@@ -76,6 +77,28 @@ public sealed class LogInHandlerTests
         (await act.Should().ThrowAsync<DomainException>()).Which.Code.Should().Be("InvalidCredentials");
         _hasher.Received(1).Verify(null, Password);
         _audit.Received(1).SignInFailed(email);
+    }
+
+    [Fact]
+    public async Task Rejects_the_same_way_when_another_sign_in_for_the_user_saves_first()
+    {
+        _usersRepository.SaveOrUpdateAsync(_eve, Arg.Any<CancellationToken>())
+            .Returns(Task.FromException(new ConflictException("ConcurrencyConflict", "Changed by someone else.")));
+
+        var act = () => _handler.HandleAsync(new LogInCommand("eve@clockin.test", "wrong password!"), CancellationToken.None);
+
+        (await act.Should().ThrowAsync<DomainException>()).Which.Code.Should().Be("InvalidCredentials");
+    }
+
+    [Fact]
+    public async Task Logs_the_email_as_one_line_whatever_it_contains()
+    {
+        const string forged = "nobody@clockin.test\r\n2026-01-01 00:00:00.000 +00:00 [INF] Sign-in succeeded";
+
+        var act = () => _handler.HandleAsync(new LogInCommand(forged, Password), CancellationToken.None);
+
+        await act.Should().ThrowAsync<DomainException>();
+        _audit.Received(1).SignInFailed("nobody@clockin.test??2026-01-01 00:00:00.000 +00:00 [INF] Sign-in succeeded");
     }
 
     [Fact]

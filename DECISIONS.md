@@ -4,6 +4,13 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-10-31: Security audit leads (run 1)
+
+| Decision | Why | By |
+|---|---|---|
+| A sign-in whose save loses a concurrency race is rejected with `InvalidCredentials`, not 409. A user signing in from two tabs at once may have to retry. | Only registered emails reached the versioned save, so the 409 revealed which emails exist. Confirmed by a failing handler test. | user |
+| The email in the failed sign-in audit entry has its control characters replaced by `?`. | It comes from an anonymous caller, and Serilog's default text template writes it unquoted, so a line break forged audit lines. Confirmed by a failing handler test. | user |
+
 ## 2026-10-31: Code review naming
 
 | Decision | Why | By |
