@@ -1,0 +1,6 @@
+<Project>
+  <Import Project="../Directory.Build.props" />
+  <ItemGroup Condition="'$(MSBuildProjectName)' != 'ClockIn.Tests.Common'">
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

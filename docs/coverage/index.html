@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>ClockIn · Code coverage</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font:
+          16px/1.6 system-ui,
+          sans-serif;
+        background: light-dark(#f8f9fc, #161920);
+        color: light-dark(#202635, #e7eaf2);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: clamp(24px, 7vw, 80px) 20px;
+      }
+      main {
+        max-width: 760px;
+        margin-inline: auto;
+      }
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(2rem, 6vw, 3rem);
+        line-height: 1.2;
+        letter-spacing: -0.025em;
+      }
+      p {
+        margin: 0 0 24px;
+      }
+      a {
+        color: light-dark(#075da8, #8bc5ff);
+        text-underline-offset: 0.2em;
+      }
+      a:focus-visible {
+        outline: 3px solid currentColor;
+        outline-offset: 4px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-block: 36px;
+      }
+      th,
+      td {
+        padding: 18px 10px;
+        border-bottom: 1px solid light-dark(#cbd2df, #424b5c);
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      th:first-child {
+        text-align: left;
+        padding-left: 0;
+      }
+      thead th {
+        font-weight: 500;
+        font-size: 0.875rem;
+      }
+      tbody th {
+        font-size: 1.125rem;
+      }
+      tbody td {
+        font-size: 1.25rem;
+      }
+      footer {
+        color: light-dark(#4c5669, #b3bfd2);
+        font-size: 0.875rem;
+      }
+      footer p {
+        margin-bottom: 12px;
+      }
+      @media (max-width: 400px) {
+        th,
+        td {
+          padding-inline: 6px;
+        }
+        tbody td {
+          font-size: 1.125rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>ClockIn code coverage</h1>
+      <p>
+        Latest reports from a successful build of <strong>main</strong>. Choose
+        a report to inspect coverage down to individual source lines.
+      </p>
+      <table aria-label="Code coverage by application">
+        <thead>
+          <tr>
+            <th scope="col">Report</th>
+            <th scope="col">Lines</th>
+            <th scope="col">Branches</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row"><a href="backend/index.html">Backend</a></th>
+            <td>{{BACKEND_LINES}}</td>
+            <td>{{BACKEND_BRANCHES}}</td>
+          </tr>
+          <tr>
+            <th scope="row"><a href="frontend/index.html">Frontend</a></th>
+            <td>{{FRONTEND_LINES}}</td>
+            <td>{{FRONTEND_BRANCHES}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <footer>
+        <p>
+          Measured independently. Domain and Application each require at least
+          80% line coverage; other layers and frontend are report-only.
+        </p>
+        <p>
+          Source commit
+          <a
+            href="https://github.com/elparaquecosadeque/clockin/commit/{{COMMIT}}"
+            >{{SHORT_COMMIT}}</a
+          >
+          · Generated <time datetime="{{GENERATED}}">{{GENERATED}}</time>
+        </p>
+        <p>
+          <a href="backend/SummaryGithub.md">Backend Markdown</a> ·
+          <a href="frontend/SummaryGithub.md">Frontend Markdown</a> ·
+          <a
+            href="https://github.com/elparaquecosadeque/clockin/actions/workflows/ci.yml"
+            >Build history</a
+          >
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>

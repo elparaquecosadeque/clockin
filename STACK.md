@@ -33,6 +33,8 @@ Keep this list short. A new package needs a reason the framework can't cover, an
 | Integration host | **Microsoft.AspNetCore.Mvc.Testing** (`WebApplicationFactory`) |
 | Disposable databases | **Testcontainers** |
 | Architecture rules | **NetArchTest.Rules** |
+| Backend coverage | **Microsoft.Testing.Extensions.CodeCoverage**, the extension for the existing Microsoft Testing Platform runner |
+| Coverage reports | **ReportGenerator**, pinned in the local `.config/dotnet-tools.json` manifest; HTML, Markdown and JSON from backend Cobertura and frontend LCOV |
 | Executable Gherkin specs | None: `@api` scenarios are plain xUnit HTTP tests. See [ADR 0004](docs/adr/0004-http-tests-instead-of-reqnroll.md) |
 
 ### Frontend
@@ -42,6 +44,7 @@ Keep this list short. A new package needs a reason the framework can't cover, an
 | Framework | **Angular** (latest stable major) |
 | UI components | **Angular Material** + **CDK** |
 | Unit tests | The Angular CLI's default runner |
+| Coverage | **@vitest/coverage-v8**, matching the installed Vitest version |
 | End-to-end and accessibility tests | **Playwright** + **@axe-core/playwright** |
 
 ## Forbidden libraries

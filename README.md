@@ -39,6 +39,38 @@ npm run extract-i18n                       # refresh src/locale/messages.xlf aft
 
 New texts get an `i18n` id in the template, then a `<target>` in `src/locale/messages.es.xlf`. The build fails on a missing translation.
 
+## Code coverage
+
+Install the pinned collectors and report tool once after pulling dependency changes:
+
+```sh
+dotnet tool restore
+dotnet restore backend/ClockIn.slnx
+cd frontend
+npm ci
+cd ..
+```
+
+From the repository root, run `node scripts/coverage.mjs` to collect backend and frontend coverage and generate reports. Docker must be running for the backend integration tests. To run one side, use `node scripts/coverage.mjs backend` or `node scripts/coverage.mjs frontend` (also `npm run test:coverage` from `frontend`). Regular `dotnet test` and `npm run test:ci` remain available without coverage.
+
+Each run replaces that target's generated coverage, so stale hits cannot inflate later results:
+
+| Report | Backend | Frontend |
+|---|---|---|
+| HTML with highlighted source | `coverage/backend/index.html` | `coverage/frontend/index.html` |
+| Markdown summary | `coverage/backend/SummaryGithub.md` | `coverage/frontend/SummaryGithub.md` |
+| Machine-readable summary | `coverage/backend/Summary.json` | `coverage/frontend/Summary.json` |
+
+Backend coverage merges unit, architecture and HTTP/integration test results for all five production assemblies. Tests, third-party assemblies and generated `obj` source are excluded. Unexecuted code in the measured assemblies remains uncovered. Frontend coverage includes `src/**/*.ts`, including files with no tests; test files are excluded and type-only files have no executable lines.
+
+Line and branch coverage are reported separately. Domain and Application must **each reach 80% line coverage**, using exact covered/coverable line counts. Other layers and the frontend are report-only for now. The gate fails if any production backend layer is missing from the report. Run its regression checks with `node --test scripts/coverage-check.test.mjs`.
+
+CI uses the same commands, adds Markdown summaries to the Actions run summary and uploads separate `backend-coverage` and `frontend-coverage` artifacts, including reports available after a failing test run. Generated reports are ignored by Git. Playwright remains a separate behavior/accessibility check and does not contribute to these code coverage figures.
+
+**Latest published reports:** [Coverage dashboard](https://elparaquecosadeque.github.io/clockin/), [backend](https://elparaquecosadeque.github.io/clockin/backend/) and [frontend](https://elparaquecosadeque.github.io/clockin/frontend/). A successful push build on `main` deploys both reports from that same run to GitHub Pages. Pull requests never deploy, and a failed build leaves the last successful report online. Main runs are serialized so an older build cannot overwrite a newer report. The dashboard identifies the source commit and generation time.
+
+To preview the same static site locally after collecting coverage, run `node scripts/coverage-site.mjs` and open `coverage/site/index.html`. The site copies report assets and summaries; raw backend collector files remain downloadable CI artifacts but are not published to Pages.
+
 ## Architecture diagrams
 
 See [`docs/architecture/`](docs/architecture/README.md).

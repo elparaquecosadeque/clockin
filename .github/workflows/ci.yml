@@ -6,6 +6,14 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
+# Keep main runs in order so an older report cannot replace a newer deployment.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   backend:
     runs-on: ubuntu-latest
@@ -19,12 +27,33 @@ jobs:
           global-json-file: backend/global.json
       - name: Restore
         run: dotnet restore
+      - name: Restore coverage report tool
+        run: dotnet tool restore
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Check coverage gate tests
+        run: node --test ../scripts/*.test.mjs
       - name: Build (warnings as errors, banned packages and APIs)
         run: dotnet build --no-restore -p:ContinuousIntegrationBuild=true
       - name: Format
         run: dotnet format --verify-no-changes --no-restore
-      - name: Architecture and integration tests (PostgreSQL in Testcontainers)
-        run: dotnet test --no-build
+      - name: Tests and coverage (PostgreSQL in Testcontainers)
+        run: node ../scripts/coverage.mjs backend
+      - name: Coverage summary
+        if: always()
+        run: |
+          if [ -f ../coverage/backend/SummaryGithub.md ]; then
+            printf '## Backend coverage\n' >> "$GITHUB_STEP_SUMMARY"
+            cat ../coverage/backend/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Upload backend coverage
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: backend-coverage
+          path: coverage/backend/
+          if-no-files-found: error
 
   frontend:
     runs-on: ubuntu-latest
@@ -39,13 +68,66 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: backend/global.json
+      - name: Restore coverage report tool
+        run: dotnet tool restore
       - name: Format
         run: npm run format:check
-      - name: Unit tests
-        run: npm run test:ci
+      - name: Unit tests and coverage
+        run: npm run test:coverage
+      - name: Coverage summary
+        if: always()
+        run: |
+          if [ -f ../coverage/frontend/SummaryGithub.md ]; then
+            printf '## Frontend coverage\n' >> "$GITHUB_STEP_SUMMARY"
+            cat ../coverage/frontend/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Upload frontend coverage
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: frontend-coverage
+          path: coverage/frontend/
+          if-no-files-found: error
       - name: Production build (en and es)
         run: npm run build
       - name: End-to-end and accessibility tests
         run: |
           npx playwright install --with-deps chromium
           npm run e2e
+
+  coverage-pages:
+    needs: [backend, frontend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@v8
+        with:
+          name: backend-coverage
+          path: coverage/backend
+      - uses: actions/download-artifact@v8
+        with:
+          name: frontend-coverage
+          path: coverage/frontend
+      - name: Assemble coverage site
+        run: node scripts/coverage-site.mjs
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: coverage/site
+      - name: Publish latest coverage
+        id: deployment
+        uses: actions/deploy-pages@v4
