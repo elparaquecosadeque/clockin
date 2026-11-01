@@ -1,0 +1,7 @@
+diff --git a/Dockerfile b/Dockerfile
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -24,2 +24,2 @@
+-COPY casc/ /usr/share/jenkins/casc/
++COPY --chown=jenkins:jenkins casc/ /usr/share/jenkins/casc/
+ COPY --chmod=755 bin/ensure-db /usr/local/bin/ensure-db

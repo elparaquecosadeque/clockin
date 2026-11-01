@@ -14,7 +14,7 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     private static readonly string SigningKey = ECDsa.Create(ECCurve.NamedCurves.nistP256).ExportECPrivateKeyPem();
 
-    private readonly PostgreSqlContainer _database = new PostgreSqlBuilder("postgres:17-alpine").Build();
+    private readonly PostgreSqlContainer _database = new PostgreSqlBuilder("postgres:16-alpine").Build();
 
     public async ValueTask InitializeAsync() => await _database.StartAsync();
 

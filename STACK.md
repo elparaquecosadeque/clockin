@@ -70,8 +70,8 @@ Fill these in for each project.
 | Database, local development | SQLite | SQLite |
 | Database, remote (dev, QA, staging, production) | PostgreSQL | PostgreSQL |
 | Token issuer | Own `Auth` feature in `<Project>.Api` | Own `Auth` feature in `ClockIn.Api` |
-| Production log sink | — (file only) | File only, until hosting is chosen |
-| Hosting (backend / frontend) | — | To be decided; deployed from a local Jenkins server |
+| Production log sink | — (file only) | Console output with bounded Docker log rotation; local Development keeps its file sink |
+| Hosting (backend / frontend) | — | Separate .NET API and nginx/Angular Docker images, deployed by local Jenkins; PostgreSQL 16 on the external `shared-db` network |
 | CI platform | — | GitHub Actions |
 | Solution name | — | `ClockIn` |
 | PublicApi | — | Not built in v1 (no external consumers) |

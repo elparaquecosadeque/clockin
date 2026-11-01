@@ -1,0 +1,16 @@
+.git
+.secrets
+.deploy-state
+**/bin
+**/obj
+**/node_modules
+**/dist
+**/coverage
+**/TestResults
+**/test-results
+**/logs
+**/*.db*
+**/.env*
+**/*.pem
+**/*.key
+**/*.local.json

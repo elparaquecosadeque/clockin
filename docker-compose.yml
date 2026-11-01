@@ -1,0 +1,59 @@
+name: clockin
+
+x-api: &api
+  image: clockin-api:${CLOCKIN_TAG:-local}
+  build:
+    context: .
+    dockerfile: backend/Dockerfile
+  environment: &api-environment
+    ASPNETCORE_ENVIRONMENT: Demo
+    Database__Provider: PostgreSQL
+    Database__ConnectionString: ${CLOCKIN_CONNECTION_STRING:?set CLOCKIN_CONNECTION_STRING}
+    Database__MigrateOnStartup: "false"
+    Demo__Enabled: "true"
+    Demo__DailyReset: "true"
+  networks: [default, shared-db]
+  logging:
+    driver: json-file
+    options: { max-size: 10m, max-file: "3" }
+
+services:
+  migrate:
+    <<: *api
+    command: [migrate]
+    profiles: [tools]
+    healthcheck: { disable: true }
+  api:
+    <<: *api
+    restart: unless-stopped
+    networks:
+      default:
+        ipv4_address: 172.30.82.3
+      shared-db: {}
+    environment:
+      <<: *api-environment
+      Auth__SigningKey: ${CLOCKIN_SIGNING_KEY:?set CLOCKIN_SIGNING_KEY}
+      FirstAdmin__Email: ${CLOCKIN_FIRST_ADMIN_EMAIL:?set CLOCKIN_FIRST_ADMIN_EMAIL}
+      Company__TimeZone: ${CLOCKIN_TIME_ZONE:-America/Bogota}
+      ReverseProxy__KnownProxies__0: 172.30.82.2
+  web:
+    image: clockin-web:${CLOCKIN_TAG:-local}
+    build: ./frontend
+    restart: unless-stopped
+    ports: ["127.0.0.1:${CLOCKIN_PORT:-8082}:80"]
+    networks:
+      default:
+        ipv4_address: 172.30.82.2
+    depends_on:
+      api: { condition: service_healthy }
+    logging:
+      driver: json-file
+      options: { max-size: 10m, max-file: "3" }
+
+networks:
+  default:
+    ipam:
+      config: [{ subnet: 172.30.82.0/24 }]
+  shared-db:
+    external: true
+    name: shared-db

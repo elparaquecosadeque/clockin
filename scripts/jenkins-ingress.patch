@@ -1,0 +1,7 @@
+diff --git a/cloudflared/config.yml b/cloudflared/config.yml
+--- a/cloudflared/config.yml
++++ b/cloudflared/config.yml
+@@ -17,1 +17,3 @@
++  - hostname: clockin.gerardoleon.dev
++    service: http://localhost:8082
+   - service: http_status:404

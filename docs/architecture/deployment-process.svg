@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1640" height="1240" viewBox="0 0 1640 1240" role="img" aria-labelledby="diagram-title"><title id="diagram-title">ClockIn deployment process</title><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#52677d"/></marker></defs><rect width="1640" height="1240" fill="#fbfcfe"/><g font-family="Arial, Helvetica, sans-serif"><text x="55" y="55" font-size="30" fill="#203047" text-anchor="start"><tspan x="55" dy="0">ClockIn deployment process</tspan></text>
+<text x="55" y="93" font-size="18" fill="#52677d" text-anchor="start"><tspan x="55" dy="0">Jenkinsfile path after the job is enabled • initial live deployment used deploy-local.sh</tspan></text>
+<rect x="80" y="150" width="270" height="110" rx="14" fill="#e7f5ff" stroke="#1864ab" stroke-width="2"/>
+<text x="215" y="200.5" font-size="18" fill="#1864ab" text-anchor="middle"><tspan x="215" dy="0">GitHub main</tspan><tspan x="215" dy="22.5">Exact checkout + SHA</tspan></text>
+<rect x="440" y="150" width="350" height="110" rx="14" fill="#f3f0ff" stroke="#6741d9" stroke-width="2"/>
+<text x="615" y="189.25" font-size="18" fill="#6741d9" text-anchor="middle"><tspan x="615" dy="0">Jenkins apps/clockin</tspan><tspan x="615" dy="22.5">SCM polling • no concurrent builds</tspan><tspan x="615" dy="22.5">Credentials injected at runtime</tspan></text>
+<rect x="880" y="150" width="620" height="110" rx="14" fill="#e7f5ff" stroke="#1864ab" stroke-width="2"/>
+<text x="1190" y="189.25" font-size="18" fill="#1864ab" text-anchor="middle"><tspan x="1190" dy="0">Quality gates</tspan><tspan x="1190" dy="22.5">Backend: strict build, format, tests, coverage (PG 16)</tspan><tspan x="1190" dy="22.5">Frontend: format, unit tests, locale build, Playwright</tspan></text>
+<polyline points="350,205 440,205" fill="none" stroke="#52677d" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="790,205 880,205" fill="none" stroke="#52677d" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="880" y="350" width="620" height="110" rx="14" fill="#e7f5ff" stroke="#1864ab" stroke-width="2"/>
+<text x="1190" y="389.25" font-size="18" fill="#1864ab" text-anchor="middle"><tspan x="1190" dy="0">Build versioned images</tspan><tspan x="1190" dy="22.5">clockin-api / clockin-web • &lt;build&gt;-&lt;sha&gt;</tspan><tspan x="1190" dy="22.5">Save non-secret Compose + deployment script snapshot</tspan></text>
+<rect x="440" y="350" width="350" height="110" rx="14" fill="#e6fcf5" stroke="#087f5b" stroke-width="2"/>
+<text x="615" y="389.25" font-size="18" fill="#087f5b" text-anchor="middle"><tspan x="615" dy="0">Prepare clockin_demo</tspan><tspan x="615" dy="22.5">Wait for shared-postgres</tspan><tspan x="615" dy="22.5">ensure-db: dedicated role + DB</tspan></text>
+<rect x="80" y="350" width="270" height="110" rx="14" fill="#fff4e6" stroke="#d9480f" stroke-width="2"/>
+<text x="215" y="389.25" font-size="18" fill="#d9480f" text-anchor="middle"><tspan x="215" dy="0">Back up clockin_demo</tspan><tspan x="215" dy="22.5">pg_dump custom format</tspan><tspan x="215" dy="22.5">Before schema changes</tspan></text>
+<polyline points="1190,260 1190,350" fill="none" stroke="#52677d" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="880,405 790,405" fill="none" stroke="#52677d" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="440,405 350,405" fill="none" stroke="#52677d" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="80" y="560" width="270" height="110" rx="14" fill="#fff4e6" stroke="#d9480f" stroke-width="2"/>
+<text x="215" y="599.25" font-size="18" fill="#d9480f" text-anchor="middle"><tspan x="215" dy="0">One-shot migrations</tspan><tspan x="215" dy="22.5">Reuse new API image</tspan><tspan x="215" dy="22.5">Exit nonzero on failure</tspan></text>
+<rect x="440" y="560" width="350" height="110" rx="14" fill="#e7f5ff" stroke="#1864ab" stroke-width="2"/>
+<text x="615" y="599.25" font-size="18" fill="#1864ab" text-anchor="middle"><tspan x="615" dy="0">Update API + nginx</tspan><tspan x="615" dy="22.5">Compose up --no-build --wait</tspan><tspan x="615" dy="22.5">API starts existing demo seed</tspan></text>
+<rect x="880" y="560" width="620" height="110" rx="14" fill="#e7f5ff" stroke="#1864ab" stroke-width="2"/>
+<text x="1190" y="599.25" font-size="18" fill="#1864ab" text-anchor="middle"><tspan x="1190" dy="0">Deployment smoke checks</tspan><tspan x="1190" dy="22.5">Database readiness, English/Spanish pages, demo accounts</tspan><tspan x="1190" dy="22.5">Public HTTPS/account refresh check: scripts/check-demo.mjs</tspan></text>
+<polyline points="215,460 215,560" fill="none" stroke="#52677d" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="350,615 440,615" fill="none" stroke="#52677d" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="360" y="595" font-size="15" fill="#475569" text-anchor="start"><tspan x="360" dy="0">success</tspan></text>
+<polyline points="790,615 880,615" fill="none" stroke="#52677d" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="440" y="810" width="350" height="120" rx="14" fill="#fff0f0" stroke="#c92a2a" stroke-width="2"/>
+<text x="615" y="843" font-size="18" fill="#c92a2a" text-anchor="middle"><tspan x="615" dy="0">Failure: stop and investigate</tspan><tspan x="615" dy="22.5">Keep snapshots and backup</tspan><tspan x="615" dy="22.5">App containers may need recovery</tspan><tspan x="615" dy="22.5">No automatic schema/image rollback</tspan></text>
+<rect x="880" y="810" width="620" height="120" rx="14" fill="#e6fcf5" stroke="#087f5b" stroke-width="2"/>
+<text x="1190" y="854.25" font-size="18" fill="#087f5b" text-anchor="middle"><tspan x="1190" dy="0">Success: update last-good release pointer</tspan><tspan x="1190" dy="22.5">Keep tagged images, release files and database backups</tspan><tspan x="1190" dy="22.5">Retention and off-host copies are operator-managed</tspan></text>
+<polyline points="215,670 215,870 440,870" fill="none" stroke="#52677d" stroke-width="2.5" marker-end="url(#arrow)" stroke-dasharray="8 5"/>
+<text x="85" y="760" font-size="15" fill="#475569" text-anchor="start"><tspan x="85" dy="0">migration fails</tspan></text>
+<polyline points="880,615 835,615 835,870 790,870" fill="none" stroke="#52677d" stroke-width="2.5" marker-end="url(#arrow)" stroke-dasharray="8 5"/>
+<text x="795" y="760" font-size="15" fill="#475569" text-anchor="start"><tspan x="795" dy="0">fails</tspan></text>
+<polyline points="1190,670 1190,810" fill="none" stroke="#52677d" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="1210" y="745" font-size="15" fill="#475569" text-anchor="start"><tspan x="1210" dy="0">passes</tspan></text>
+<rect x="80" y="1040" width="1420" height="145" rx="14" fill="#f3f0ff" stroke="#6741d9" stroke-width="2"/>
+<text x="790" y="1085.5" font-size="18" fill="#6741d9" text-anchor="middle"><tspan x="790" dy="0">Manual rollback: DEPLOY_TAG + ACK_SCHEMA_COMPATIBLE=true</tspan><tspan x="790" dy="22.5">Use the target release's saved deployment script, Compose configuration and image tags.</tspan><tspan x="790" dy="22.5">The target images must support the current schema. Never reverse migrations automatically.</tspan><tspan x="790" dy="22.5">Restoring data is a separate reviewed recovery operation; test backups in an isolated PostgreSQL 16 database.</tspan></text>
+<polyline points="1190,930 1190,1040" fill="none" stroke="#52677d" stroke-width="2.5" marker-end="url(#arrow)" stroke-dasharray="8 5"/>
+<text x="1210" y="990" font-size="15" fill="#475569" text-anchor="start"><tspan x="1210" dy="0">retained releases</tspan></text></g></svg>

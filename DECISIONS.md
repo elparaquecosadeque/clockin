@@ -4,6 +4,27 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-11-01: Public production demo
+
+| Decision | Why | By |
+|---|---|---|
+| Run the public Docker deployment in the existing `Demo` environment, reusing DemoDataService/DemoSeed and their 24-hour reset (ADR 0005). Keep separate deployment migrations disabled on API startup through the Compose override. | The user wants the hosted production site to be a demo with existing sample accounts, teams and timesheets; no new seeder or Production safety bypass is needed. | user / dev |
+| Use a separate `clockin_demo` PostgreSQL database and role; preserve the earlier `clockin` database and personal admin. | Demo resets wipe all data and sessions in their database. Keeping real/bootstrap data separate makes the switch reversible. | dev |
+| Local rollback runs the target release's saved script, just like Jenkins rollback. | A release must recover its original database selection as well as images and configuration. | dev |
+
+## 2026-11-01: Docker deployment
+
+| Decision | Why | By |
+|---|---|---|
+| Separate API and nginx/frontend images, Compose project `clockin`, and the existing shared PostgreSQL 16 server with a dedicated `clockin` role/database. | Reuses the local Jenkins infrastructure without changing other apps or SQLite development. | user / dev |
+| Use a persistent P-256 PEM key stored as a base64-encoded Jenkins credential; generated local copies and the admin setting are ignored. | ES256 needs an elliptic-curve private key; base64 preserves PEM newlines through server environment configuration. | dev |
+| Run the API executable with `migrate` as a separate deployment step before application startup. | Reuses FluentMigrator without starting the web host, demo reset or first-admin seeder. | dev |
+| Test PostgreSQL 16, matching the shared production server. | Avoids validating only a newer database major version. | dev |
+| Back up before migrations and require explicit schema-compatibility acknowledgment for image rollback. Never automatically reverse database migrations. | An image rollback cannot restore migrated data or guarantee old-code compatibility. | user / dev |
+| Production logs go to stdout with bounded Docker rotation; development retains its file sink. | Avoids lost/unbounded container files and preserves the existing local workflow. | dev |
+| Keep the ClockIn Jenkins job disabled until the new Jenkinsfile is published and validated. | The remote main branch does not yet contain these uncommitted deployment assets. | dev |
+| Trust only the dedicated nginx IP in ASP.NET Core; nginx accepts Cloudflare's client-IP header only from the app network's host gateway. | Keeps rate limiting and punch-source IPs useful without trusting arbitrary forwarded headers. | dev |
+
 ## 2026-11-01: Project-wide code coverage
 
 | Decision | Why | By |

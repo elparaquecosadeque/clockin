@@ -13,6 +13,7 @@ using ClockIn.Persistence.Common;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -25,7 +26,24 @@ public sealed class Program
 {
     public static void Main(string[] args)
     {
+        if (args.FirstOrDefault() == "migrate")
+        {
+            var migrationBuilder = Host.CreateApplicationBuilder(args[1..]);
+            migrationBuilder.Services.AddPersistence(migrationBuilder.Configuration);
+            using var migrationHost = migrationBuilder.Build();
+            migrationHost.Services.MigrateDatabase();
+            return;
+        }
+
         var builder = WebApplication.CreateBuilder(args);
+        builder.Services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            foreach (string proxy in builder.Configuration.GetSection("ReverseProxy:KnownProxies").Get<string[]>() ?? [])
+            {
+                options.KnownProxies.Add(System.Net.IPAddress.Parse(proxy));
+            }
+        });
         AddLogging(builder);
         AddOptions(builder);
         AddModules(builder.Services, builder.Configuration);
@@ -169,6 +187,7 @@ public sealed class Program
 
     private static void UsePipeline(WebApplication app)
     {
+        app.UseForwardedHeaders();
         app.UseMiddleware<CorrelationIdMiddleware>();
         app.UseMiddleware<SecurityHeadersMiddleware>();
         app.UseSerilogRequestLogging();

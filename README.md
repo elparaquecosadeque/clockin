@@ -71,6 +71,12 @@ CI uses the same commands, adds Markdown summaries to the Actions run summary an
 
 To preview the same static site locally after collecting coverage, run `node scripts/coverage-site.mjs` and open `coverage/site/index.html`. The site copies report assets and summaries; raw backend collector files remain downloadable CI artifacts but are not published to Pages.
 
+## Docker production deployment
+
+The API and localized frontend have separate images. The public production demo reuses `shared-postgres:5432` from `jenkins-local` through external network `shared-db`, with database/user `clockin_demo`. It runs in `Demo` mode using the existing sample company and resets every 24 hours; the earlier `clockin` database is preserved separately. Sign in as `ada@clockin.demo` (admin), `sam@clockin.demo` (supervisor), or `eve@clockin.demo` (employee), with password `clockin-demo`. Local `dotnet run` still uses SQLite. See [deployment research](docs/docker-deployment-plan.md) for the topology and [operations guide](docs/deployment.md) for setup, backups and rollback.
+
+Build from the repository root: `docker compose build` after supplying the deployment environment variables described in the operations guide. Migrate separately with `docker compose run --rm --no-deps migrate`; never point the demo deployment at real production data.
+
 ## Architecture diagrams
 
 See [`docs/architecture/`](docs/architecture/README.md).
