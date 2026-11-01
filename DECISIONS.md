@@ -9,6 +9,7 @@ Each entry has the decision, the reason, and who decided (**user**, or **dev** w
 | Decision | Why | By |
 |---|---|---|
 | Sign-in rejects email input longer than `Email.MaxLength` (254 characters) in command validation, before the handler or audit logger runs. | An anonymous caller could otherwise write arbitrarily large email strings to the audit log. Password rules and request-body limits are separate from this fix. | user / dev |
+| The sign-in form also caps email input at 254 characters, explains the limit in both locales and displays server validation errors beside their fields. | Angular already rejects oversized emails as invalid; the explicit limit makes the feedback specific and keeps backend validation failures visible. | user / dev |
 
 ## 2026-11-01: Admin and session hardening (audit run 1)
 

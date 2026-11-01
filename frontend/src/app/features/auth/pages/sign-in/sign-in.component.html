@@ -10,11 +10,21 @@
 
     <mat-form-field>
       <mat-label i18n="@@email">Email</mat-label>
-      <input matInput type="email" formControlName="email" autocomplete="username" />
+      <input
+        matInput
+        type="email"
+        formControlName="email"
+        autocomplete="username"
+        maxlength="254"
+      />
       @if (form.controls.email.hasError('required')) {
         <mat-error i18n="@@emailRequired">Enter your email.</mat-error>
+      } @else if (form.controls.email.hasError('maxlength')) {
+        <mat-error i18n="@@emailLength">Use 254 characters or fewer for your email.</mat-error>
       } @else if (form.controls.email.hasError('email')) {
         <mat-error i18n="@@emailInvalid">Enter a valid email.</mat-error>
+      } @else if (form.controls.email.hasError('server')) {
+        <mat-error>{{ form.controls.email.getError('server') }}</mat-error>
       }
     </mat-form-field>
 
@@ -23,6 +33,8 @@
       <input matInput type="password" formControlName="password" autocomplete="current-password" />
       @if (form.controls.password.hasError('required')) {
         <mat-error i18n="@@passwordRequired">Enter your password.</mat-error>
+      } @else if (form.controls.password.hasError('server')) {
+        <mat-error>{{ form.controls.password.getError('server') }}</mat-error>
       }
     </mat-form-field>
 

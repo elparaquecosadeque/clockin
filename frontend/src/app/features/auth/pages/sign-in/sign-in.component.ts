@@ -35,7 +35,7 @@ export class SignInComponent {
   protected readonly busy = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly form = inject(NonNullableFormBuilder).group({
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required, Validators.maxLength(254), Validators.email]],
     password: ['', Validators.required],
   });
 
@@ -64,6 +64,11 @@ export class SignInComponent {
       await this.router.navigateByUrl('/');
     } catch (error) {
       const apiError = error as ApiError;
+      for (const field of ['email', 'password'] as const) {
+        if (apiError.fieldErrors[field]) {
+          this.form.controls[field].setErrors({ server: apiError.fieldErrors[field][0] });
+        }
+      }
       this.error.set(
         apiError.code === 'InvalidCredentials'
           ? $localize`:@@invalidCredentials:The email or password is incorrect.`

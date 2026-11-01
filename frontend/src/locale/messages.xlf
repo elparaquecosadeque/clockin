@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xliff version="2.0" xmlns="urn:oasis:names:tc:xliff:document:2.0" srcLang="en">
   <file id="ngi18n" original="ng.template">
+    <unit id="emailLength">
+      <segment>
+        <source>Use 254 characters or fewer for your email.</source>
+      </segment>
+    </unit>
     <unit id="signInTitle">
       <notes>
         <note category="location">src/app/app.routes.ts:14</note>

@@ -69,6 +69,53 @@ describe('SignInComponent', () => {
     expect(element.textContent).toContain('Enter your email.');
   });
 
+  it('explains an oversized email before calling the API', async () => {
+    type(
+      'input[type=email]',
+      'a'.repeat(64) + '@' + 'b'.repeat(63) + '.' + 'c'.repeat(63) + '.' + 'd'.repeat(62),
+    );
+    type('input[type=password]', 'correct horse battery');
+
+    await submit();
+
+    expect(signIn).not.toHaveBeenCalled();
+    expect(element.textContent).toContain('Use 254 characters or fewer for your email.');
+  });
+
+  it('accepts an email at the 254-character boundary', async () => {
+    vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    signIn.mockResolvedValue();
+    const email =
+      'a'.repeat(64) + '@' + 'b'.repeat(63) + '.' + 'c'.repeat(63) + '.' + 'd'.repeat(61);
+    type('input[type=email]', email);
+    type('input[type=password]', 'correct horse battery');
+
+    await submit();
+
+    expect(signIn).toHaveBeenCalledWith(email, 'correct horse battery');
+  });
+
+  it.each(['email', 'password'])(
+    'shows a server validation error beside the %s field and allows correction',
+    async (field) => {
+      signIn.mockRejectedValue({ status: 400, fieldErrors: { [field]: ['Check this value.'] } });
+      type('input[type=email]', 'eve@clockin.test');
+      type('input[type=password]', 'correct horse battery');
+
+      await submit();
+
+      const input = element.querySelector<HTMLInputElement>(`input[type=${field}]`)!;
+      expect(input.closest('mat-form-field')!.textContent).toContain('Check this value.');
+
+      type(`input[type=${field}]`, field === 'email' ? 'other@clockin.test' : 'another passphrase');
+      signIn.mockRejectedValue({ status: 422, code: 'InvalidCredentials', fieldErrors: {} });
+      await submit();
+
+      expect(signIn).toHaveBeenCalledTimes(2);
+      expect(input.closest('mat-form-field')!.textContent).not.toContain('Check this value.');
+    },
+  );
+
   it('fills the form with a demo account in a demo', async () => {
     demoAccounts.mockResolvedValue({
       password: 'clockin-demo',
