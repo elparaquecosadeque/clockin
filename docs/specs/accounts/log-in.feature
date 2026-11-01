@@ -1,6 +1,12 @@
 Feature: Log in
   Anonymous. Email and password give a 15-minute access token and a 12-hour refresh cookie.
 
+  @api
+  Scenario: Rejects an oversized email before it reaches the audit log
+    When someone signs in with an email longer than 254 characters
+    Then the response is 400 Bad Request with an email validation error
+    And the sign-in handler does not run
+
   Scenario: Signs in an active user
     When Eve signs in with the correct email and password
     Then Eve receives an access token valid for 15 minutes carrying sub, sid (the session) and security_stamp only

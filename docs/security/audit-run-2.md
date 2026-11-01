@@ -29,7 +29,7 @@ The review left four leads. Each is reachable from the source but needs a test o
 | Two admins deactivating each other can still leave no active admin. Run 1's fix (`f4d5896`) only covers the case where both requests reach the database at once. The handler never re-checks that the acting admin is still active. | Open: re-check the actor inside the transaction |
 | Requests waiting on the per-user lock from `9b0d25d` each hold a database connection. One user sending many entry changes at once could use up the shared pool. | Open: give up on the lock quickly (`pg_try_advisory_xact_lock` or `lock_timeout`), and set a command timeout |
 | An employee can add entries to any past week and any number of very short entries. Every supervisor's to-dos and reports load all of them, on every page change. | Open: bound backfill and entry length; filter report reads by status in SQL |
-| A sign-in email of any length is logged in full. A few large requests could fill the day's log file, and later audit events would then be dropped. | Open: limit the sign-in email and password length |
+| A sign-in email of any length is logged in full. A few large requests could fill the day's log file, and later audit events would then be dropped. | Fixed in source: command validation rejects emails over 254 characters before logging. Boundary and HTTP regression tests cover oversized input. Password and request-body limits remain separate hardening work. |
 
 ### Supply chain
 

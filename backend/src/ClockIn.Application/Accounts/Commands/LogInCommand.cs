@@ -15,7 +15,7 @@ public sealed class LogInValidator : AbstractValidator<LogInCommand>
 {
     public LogInValidator()
     {
-        RuleFor(c => c.Email).NotEmpty();
+        RuleFor(c => c.Email).NotEmpty().MaximumLength(Email.MaxLength);
         RuleFor(c => c.Password).NotEmpty();
     }
 }

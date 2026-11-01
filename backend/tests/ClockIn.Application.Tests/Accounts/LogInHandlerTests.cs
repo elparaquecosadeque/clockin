@@ -7,6 +7,7 @@ using ClockIn.Application.Common.Interfaces;
 using ClockIn.Domain.Accounts;
 using ClockIn.Domain.Common;
 using ClockIn.Tests.Common;
+using FluentValidation.TestHelper;
 using NSubstitute;
 
 namespace ClockIn.Application.Tests.Accounts;
@@ -45,6 +46,22 @@ public sealed class LogInHandlerTests
             Arg.Is<Session>(s => s.UserId == _eve.Id && s.SecurityStamp == _eve.SecurityStamp),
             Arg.Any<CancellationToken>());
         _audit.Received(1).SignedIn(_eve.Id);
+    }
+
+    [Theory]
+    [InlineData(254, true)]
+    [InlineData(255, false)]
+    [InlineData(600_000, false)]
+    public void Bounds_the_email_before_it_can_reach_the_audit_log(int length, bool valid)
+    {
+        TestValidationResult<LogInCommand> result =
+            new LogInValidator().TestValidate(new LogInCommand(new string('a', length - 2) + "@b", Password));
+
+        result.IsValid.Should().Be(valid);
+        if (!valid)
+        {
+            result.ShouldHaveValidationErrorFor(c => c.Email);
+        }
     }
 
     [Fact]

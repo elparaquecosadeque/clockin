@@ -4,6 +4,12 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-11-01: Login email limit (audit run 2)
+
+| Decision | Why | By |
+|---|---|---|
+| Sign-in rejects email input longer than `Email.MaxLength` (254 characters) in command validation, before the handler or audit logger runs. | An anonymous caller could otherwise write arbitrarily large email strings to the audit log. Password rules and request-body limits are separate from this fix. | user / dev |
+
 ## 2026-11-01: Admin and session hardening (audit run 1)
 
 | Decision | Why | By |

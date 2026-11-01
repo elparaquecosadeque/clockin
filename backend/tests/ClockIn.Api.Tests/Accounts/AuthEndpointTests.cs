@@ -58,6 +58,17 @@ public sealed class AuthEndpointTests(ApiFactory factory)
         me.GetProperty("permissions").EnumerateArray().Select(p => p.GetString()).Should().Contain(Permissions.PunchTime);
     }
 
+    [Theory]
+    [InlineData(255)]
+    [InlineData(600_000)]
+    public async Task Rejects_an_oversized_email_before_handling_the_sign_in(int length)
+    {
+        HttpResponseMessage response = await LogInAsync(TestUsers.HttpsClient(factory), new string('a', length), TestUsers.Password);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        (await JsonAsync(response)).GetProperty("errors").TryGetProperty("email", out _).Should().BeTrue();
+    }
+
     [Fact]
     public async Task Rejects_a_request_with_no_access_token()
     {
