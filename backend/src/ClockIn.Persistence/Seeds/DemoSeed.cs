@@ -338,8 +338,8 @@ public sealed class DemoSeed(AppDataConnection db, TimeProvider time) : IDemoDat
         AccessLinkHash = null,
         AccessLinkExpiresAt = null,
         TeamId = null,
-        Language = Preferences.English,
-        TimeFormat = Preferences.TwentyFourHour,
+        Language = PreferencesConstants.English,
+        TimeFormat = PreferencesConstants.TwentyFourHour,
         Version = 1,
     };
 

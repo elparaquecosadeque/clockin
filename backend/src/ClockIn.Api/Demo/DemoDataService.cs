@@ -10,7 +10,10 @@ namespace ClockIn.Api.Demo;
 /// finds the demo admin and does nothing.
 /// </summary>
 public sealed partial class DemoDataService(
-    IServiceScopeFactory scopes, IOptions<DemoOptions> options, TimeProvider time, ILogger<DemoDataService> logger)
+    IServiceScopeFactory scopes,
+    IOptions<DemoOptions> options,
+    TimeProvider time,
+    ILogger<DemoDataService> logger)
     : IHostedService, IDisposable
 {
     private static readonly TimeSpan CheckInterval = TimeSpan.FromHours(1);

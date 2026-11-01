@@ -17,7 +17,11 @@ public sealed class EditEntryValidator : AbstractValidator<EditEntryCommand>
 }
 
 public sealed class EditEntryHandler(
-    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ITimesheetRepository timesheetsRepository, TimeProvider time)
+    ICurrentUser currentUser,
+    IUserRepository usersRepository,
+    ITeamRepository teamsRepository,
+    ITimesheetRepository timesheetsRepository,
+    TimeProvider time)
 {
     public async Task HandleAsync(EditEntryCommand command, CancellationToken ct)
     {

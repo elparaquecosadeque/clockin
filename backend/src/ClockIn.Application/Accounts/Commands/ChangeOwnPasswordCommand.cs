@@ -22,7 +22,11 @@ public sealed class ChangeOwnPasswordValidator : AbstractValidator<ChangeOwnPass
 }
 
 public sealed class ChangeOwnPasswordHandler(
-    ICurrentUser currentUser, IUserRepository usersRepository, ISessionRepository sessionsRepository, IPasswordHasher hasher, TimeProvider time)
+    ICurrentUser currentUser,
+    IUserRepository usersRepository,
+    ISessionRepository sessionsRepository,
+    IPasswordHasher hasher,
+    TimeProvider time)
 {
     public async Task<SessionResult> HandleAsync(ChangeOwnPasswordCommand command, CancellationToken ct)
     {

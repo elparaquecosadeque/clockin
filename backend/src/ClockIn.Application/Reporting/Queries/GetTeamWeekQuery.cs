@@ -73,7 +73,7 @@ public sealed class GetTeamWeekHandler(
     private TeamWeekRowDto Row(PersonRow person, TimesheetRow? timesheet, DateOnly weekStart, DateTimeOffset now)
     {
         IReadOnlyList<EntryRow> entries = timesheet?.Entries ?? [];
-        long[] days = WorkedTime.PerDay(entries, weekStart, now, time.LocalTimeZone);
+        long[] days = WorkedTimeHelper.PerDay(entries, weekStart, now, time.LocalTimeZone);
         EntryRow? open = entries.FirstOrDefault(e => e.End is null);
         return new TeamWeekRowDto(
             person.Id,
@@ -81,7 +81,7 @@ public sealed class GetTeamWeekHandler(
             timesheet is null ? WeekStatus.NotStarted : Enum.Parse<WeekStatus>(timesheet.Status.ToString()),
             timesheet?.Id,
             days,
-            open is null ? null : WorkedTime.Day(open.Start, time.LocalTimeZone).DayNumber - weekStart.DayNumber,
+            open is null ? null : WorkedTimeHelper.Day(open.Start, time.LocalTimeZone).DayNumber - weekStart.DayNumber,
             days.Sum());
     }
 }

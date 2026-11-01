@@ -9,7 +9,7 @@ using ClockIn.Domain.Timesheets;
 namespace ClockIn.Application.Timesheets;
 
 /// <summary>Loading shared by the timesheet commands.</summary>
-public static class TimesheetLoading
+public static class TimesheetRepositoryExtensions
 {
     /// <summary>The owner's timesheets an entry of <paramref name="week"/> could overlap: entries last at most 16 hours.</summary>
     public static async Task<IReadOnlyList<Timesheet>> NeighboursAsync(

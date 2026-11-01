@@ -18,8 +18,12 @@ public sealed class RequestCorrectionValidator : AbstractValidator<RequestCorrec
 }
 
 public sealed class RequestCorrectionHandler(
-    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ITimesheetRepository timesheetsRepository,
-    ICorrectionRequestRepository correctionsRepository, TimeProvider time)
+    ICurrentUser currentUser,
+    IUserRepository usersRepository,
+    ITeamRepository teamsRepository,
+    ITimesheetRepository timesheetsRepository,
+    ICorrectionRequestRepository correctionsRepository,
+    TimeProvider time)
 {
     public async Task<Guid> HandleAsync(RequestCorrectionCommand command, CancellationToken ct)
     {

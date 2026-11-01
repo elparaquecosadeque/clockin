@@ -1,7 +1,7 @@
 namespace ClockIn.Domain.Accounts;
 
 /// <summary>Language and time format follow the user across devices (ADR 0001).</summary>
-public static class Preferences
+public static class PreferencesConstants
 {
     public const string English = "en";
     public const string Spanish = "es";

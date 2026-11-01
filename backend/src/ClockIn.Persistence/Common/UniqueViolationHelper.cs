@@ -4,7 +4,7 @@ using Npgsql;
 namespace ClockIn.Persistence.Common;
 
 /// <summary>Recognizes a unique-index violation on any supported engine.</summary>
-public static class UniqueViolation
+public static class UniqueViolationHelper
 {
     private const int SqliteConstraintUnique = 2067;
 

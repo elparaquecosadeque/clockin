@@ -50,7 +50,7 @@ public sealed class UserRepository(AppDataConnection db) : IUserRepository
             {
                 await db.InsertAsync(ToRecord(user, version: 1), token: ct);
             }
-            catch (Exception ex) when (UniqueViolation.Is(ex))
+            catch (Exception ex) when (UniqueViolationHelper.Is(ex))
             {
                 // The only unique index besides the key.
                 throw new ConflictException("EmailAlreadyInUse", "Another user already has this email.");

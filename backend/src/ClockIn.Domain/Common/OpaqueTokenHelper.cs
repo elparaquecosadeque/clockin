@@ -9,7 +9,7 @@ namespace ClockIn.Domain.Common;
 /// Tokens handed to clients as <c>{ownerId}.{secret}</c>. Only a SHA-256 of the secret is stored; the owner id
 /// lets the server find what the token belongs to without searching by hash.
 /// </summary>
-public static class OpaqueToken
+public static class OpaqueTokenHelper
 {
     public static string NewSecret() => Base64Url.EncodeToString(RandomNumberGenerator.GetBytes(32));
 

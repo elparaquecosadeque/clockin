@@ -18,7 +18,11 @@ public sealed class AcceptCorrectionValidator : AbstractValidator<AcceptCorrecti
 }
 
 public sealed class AcceptCorrectionHandler(
-    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ICorrectionRequestRepository correctionsRepository, TimeProvider time)
+    ICurrentUser currentUser,
+    IUserRepository usersRepository,
+    ITeamRepository teamsRepository,
+    ICorrectionRequestRepository correctionsRepository,
+    TimeProvider time)
 {
     public async Task HandleAsync(AcceptCorrectionCommand command, CancellationToken ct)
     {

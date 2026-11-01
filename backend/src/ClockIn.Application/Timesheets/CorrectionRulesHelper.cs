@@ -8,7 +8,7 @@ using ClockIn.Domain.Timesheets;
 
 namespace ClockIn.Application.Timesheets;
 
-public static class CorrectionRules
+public static class CorrectionRulesHelper
 {
     /// <summary>A pending correction request blocks approving, returning and reopening until it is decided.</summary>
     public static async Task EnsureNonePendingAsync(

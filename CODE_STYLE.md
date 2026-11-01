@@ -72,6 +72,7 @@ Api, PublicApi ──► Application ──► Domain
 - Classes are `sealed` by default; unseal only for a reason.
 - Primary constructors for dependency injection. With more than 2 dependencies, each goes on its own line, so the count shows at a glance; the same goes for methods that take dependencies (repositories, services) as parameters.
 - Variables of a repository type end in `Repository`: `ITimesheetRepository timesheetsRepository` ([ADR 0006](docs/adr/0006-repository-suffix-on-variables.md)).
+- Static classes end in `Extensions` (methods extend one type), `Helper` (stateless functions) or `Constants` (constants only); `*Module`, `*Mappings` and `*Middleware` keep their suffixes ([ADR 0007](docs/adr/0007-suffixes-for-static-classes.md)).
 - Async methods end in `Async`, take a `CancellationToken` as the last parameter and always pass it on.
 - `var` only when the type is obvious from the right-hand side.
 - Implicit usings only for BCL namespaces.
@@ -372,9 +373,9 @@ Breaking changes in `PublicApi` require a new version; old versions stay until c
 
 ### Authorization rules
 
-- **Permission-based policies**; never check roles in code. Policy names are constants in one place (`Policies.Orders.Create`) and are registered once in `Program.AddAuth`.
+- **Permission-based policies**; never check roles in code. Policy names are constants in one place (`PoliciesConstants.Orders.Create`) and are registered once in `Program.AddAuth`.
 - Every endpoint requires authentication through a **fallback policy**. Anonymous endpoints opt out explicitly with `[AllowAnonymous]`.
-- Controllers declare the policy: `[Authorize(Policy = Policies.Orders.Create)]`.
+- Controllers declare the policy: `[Authorize(Policy = PoliciesConstants.Orders.Create)]`.
 - **Resource-level checks** ("can this user change *this* order?") happen in the Application layer through an `ICurrentUser` port, and throw `ForbiddenException` → 403.
 
 ## Security hardening

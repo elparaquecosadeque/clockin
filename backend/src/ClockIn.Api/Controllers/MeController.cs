@@ -30,11 +30,11 @@ public sealed class MeController(IMessageBus bus, AccessTokenIssuer tokens) : Co
 
     /// <summary>Every other session ends; this one gets new tokens.</summary>
     [HttpPost("password")]
-    [EnableRateLimiting(RateLimits.SignIn)]
+    [EnableRateLimiting(RateLimitsConstants.SignIn)]
     public async Task<AccessTokenResponse> ChangePasswordAsync(ChangeOwnPasswordCommand command, CancellationToken ct)
     {
         SessionResult session = await bus.InvokeAsync<SessionResult>(command, ct);
-        RefreshCookie.Append(Response, session);
+        RefreshCookieHelper.Append(Response, session);
         return tokens.Issue(session);
     }
 }

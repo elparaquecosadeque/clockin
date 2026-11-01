@@ -33,7 +33,7 @@ public sealed class TeamRepository(AppDataConnection db) : ITeamRepository
             {
                 await db.InsertAsync(ToRecord(team, version: 1), token: ct);
             }
-            catch (Exception ex) when (UniqueViolation.Is(ex))
+            catch (Exception ex) when (UniqueViolationHelper.Is(ex))
             {
                 // Lost a race with the handler's checks: same name, or the supervisor got another team.
                 throw new ConflictException("ConcurrencyConflict", "Another team was saved at the same time. Reload and try again.");

@@ -76,7 +76,7 @@ public sealed class TimesheetRepository(AppDataConnection db) : ITimesheetReposi
                 throw ConcurrencyConflict();
             }
         }
-        catch (Exception ex) when (UniqueViolation.Is(ex))
+        catch (Exception ex) when (UniqueViolationHelper.Is(ex))
         {
             // Someone created this person's timesheet for the week first.
             throw ConcurrencyConflict();
@@ -94,7 +94,7 @@ public sealed class TimesheetRepository(AppDataConnection db) : ITimesheetReposi
                 await db.InsertAsync(ToRecord(entry, timesheet), token: ct);
             }
         }
-        catch (Exception ex) when (UniqueViolation.Is(ex))
+        catch (Exception ex) when (UniqueViolationHelper.Is(ex))
         {
             // The only unique index on entries besides the key: an open entry already exists, possibly in another week.
             throw new ConflictException("EntryAlreadyOpen", "An entry is already open. Clock out first.");

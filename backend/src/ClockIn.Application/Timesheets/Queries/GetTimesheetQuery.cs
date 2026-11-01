@@ -19,8 +19,12 @@ public sealed class GetTimesheetValidator : AbstractValidator<GetTimesheetQuery>
 }
 
 public sealed class GetTimesheetHandler(
-    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ITimesheetRepository timesheetsRepository,
-    ICorrectionRequestRepository correctionsRepository, TimeProvider time)
+    ICurrentUser currentUser,
+    IUserRepository usersRepository,
+    ITeamRepository teamsRepository,
+    ITimesheetRepository timesheetsRepository,
+    ICorrectionRequestRepository correctionsRepository,
+    TimeProvider time)
 {
     // ponytail: reads through the aggregate, which already holds everything this page shows.
     public async Task<TimesheetDto> HandleAsync(GetTimesheetQuery query, CancellationToken ct)

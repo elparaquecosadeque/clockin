@@ -10,7 +10,7 @@ namespace ClockIn.Api.Auth;
 /// Runs after the token signature checks out: rejects users who are no longer active or whose security stamp
 /// changed, and adds their current permissions as claims (CODE_STYLE.md, Permissions are checked on every request).
 /// </summary>
-public static class CurrentUserCheck
+public static class CurrentUserCheckHelper
 {
     // ponytail: one user lookup per request; add a short cache invalidated on permission changes if it shows up in profiles.
     public static async Task OnTokenValidatedAsync(TokenValidatedContext context)
@@ -31,6 +31,6 @@ public static class CurrentUserCheck
             return;
         }
 
-        principal.AddIdentity(new ClaimsIdentity(Permissions.For(user.Role).Select(p => new Claim(Policies.PermissionClaim, p))));
+        principal.AddIdentity(new ClaimsIdentity(Permissions.For(user.Role).Select(p => new Claim(PoliciesConstants.PermissionClaim, p))));
     }
 }

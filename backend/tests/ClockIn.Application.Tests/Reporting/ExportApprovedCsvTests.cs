@@ -25,7 +25,7 @@ public sealed class ExportApprovedCsvTests
 
         file.Content.Take(3).Should().Equal(0xEF, 0xBB, 0xBF);
         string[] lines = Text(file).Split("\r\n");
-        lines[0].Should().Be(ApprovedHoursCsv.Header);
+        lines[0].Should().Be(ApprovedHoursCsvHelper.Header);
         lines[1].Should().Be("Eve,eve@clockin.test,Warehouse,2026-10-19,2026-10-20,08:00,16:45,8:45,8.75,false,");
         lines.Should().HaveCount(4, "two rows and the final line break");
         file.FileName.Should().Be("clockin-approved-2026-10-19.csv");
@@ -40,7 +40,7 @@ public sealed class ExportApprovedCsvTests
     {
         DateTimeOffset start = CompanyClock.At("2026-10-20 08:00");
 
-        string row = Text(ApprovedHoursCsv.Write(
+        string row = Text(ApprovedHoursCsvHelper.Write(
             [new ApprovedHoursLine("Eve", "eve@x", null, ReportingWorld.LastWeek, start, start.AddSeconds(seconds), false, null)],
             CompanyClock.Zone)).Split("\r\n")[1];
 
@@ -55,12 +55,12 @@ public sealed class ExportApprovedCsvTests
     [InlineData("+1 hour", "'+1 hour")]
     [InlineData("-1 hour", "'-1 hour")]
     [InlineData("@sum", "'@sum")]
-    public void Escapes_text_safely(string note, string cell) => ApprovedHoursCsv.Cell(note).Should().Be(cell);
+    public void Escapes_text_safely(string note, string cell) => ApprovedHoursCsvHelper.Cell(note).Should().Be(cell);
 
     [Fact]
     public async Task Produces_only_a_header_when_nothing_is_approved()
     {
-        Text(await Export(new DateOnly(2026, 10, 12))).Should().Be(ApprovedHoursCsv.Header + "\r\n");
+        Text(await Export(new DateOnly(2026, 10, 12))).Should().Be(ApprovedHoursCsvHelper.Header + "\r\n");
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public sealed class ExportApprovedCsvTests
         string office = Text(await Export(ReportingWorld.LastWeek, _world.Office.Id));
 
         all.Should().Contain("Sam,sam@clockin.test,,2026-10-19").And.Contain("Eve,");
-        office.Should().Be(ApprovedHoursCsv.Header + "\r\n");
+        office.Should().Be(ApprovedHoursCsvHelper.Header + "\r\n");
     }
 
     [Fact]

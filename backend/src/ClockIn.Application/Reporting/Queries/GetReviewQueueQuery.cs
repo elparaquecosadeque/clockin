@@ -34,7 +34,7 @@ public sealed class GetReviewQueueHandler(
                 .OrderBy(t => t.WeekStart).ThenBy(t => t.SubmittedAt)
                 .Select(t => new QueuedTimesheetDto(
                     t.Id, t.OwnerId, owners[t.OwnerId].Name, scope.Team(owners[t.OwnerId].TeamId)?.Name, t.WeekStart,
-                    t.Entries.Sum(e => WorkedTime.Seconds(e, now)), t.SubmittedAt))],
+                    t.Entries.Sum(e => WorkedTimeHelper.Seconds(e, now)), t.SubmittedAt))],
             [.. corrections
                 .Where(c => c.Status == CorrectionStatus.Pending)
                 .OrderBy(c => c.RequestedAt)

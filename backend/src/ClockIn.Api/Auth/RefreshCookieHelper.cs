@@ -3,7 +3,7 @@ using ClockIn.Application.Accounts.Results;
 namespace ClockIn.Api.Auth;
 
 /// <summary>The refresh token travels only in this cookie; JavaScript never reads it (CODE_STYLE.md, HTTP, session and errors).</summary>
-public static class RefreshCookie
+public static class RefreshCookieHelper
 {
     public const string Name = "refresh_token";
 

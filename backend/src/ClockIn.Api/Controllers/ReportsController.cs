@@ -10,7 +10,7 @@ namespace ClockIn.Api.Controllers;
 /// <summary>Supervisors and admins. The handlers scope each report to the team led, or everyone for admins.</summary>
 [ApiController]
 [Route("api/reports")]
-[Authorize(Policy = Policies.Review)]
+[Authorize(Policy = PoliciesConstants.Review)]
 public sealed class ReportsController(IMessageBus bus) : ControllerBase
 {
     [HttpGet("team-week/{weekStart}")]

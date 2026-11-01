@@ -115,19 +115,19 @@ public sealed class Program
                     ValidAlgorithms = [SecurityAlgorithms.EcdsaSha256],
                     ClockSkew = TimeSpan.FromSeconds(30),
                 };
-                options.Events = new JwtBearerEvents { OnTokenValidated = CurrentUserCheck.OnTokenValidatedAsync };
+                options.Events = new JwtBearerEvents { OnTokenValidated = CurrentUserCheckHelper.OnTokenValidatedAsync };
             });
 
         services.AddAuthorizationBuilder()
             .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
         services.Configure<AuthorizationOptions>(options =>
         {
-            foreach (string policy in Policies.All)
+            foreach (string policy in PoliciesConstants.All)
             {
-                options.AddPolicy(policy, p => p.RequireClaim(Policies.PermissionClaim, policy));
+                options.AddPolicy(policy, p => p.RequireClaim(PoliciesConstants.PermissionClaim, policy));
             }
 
-            options.AddPolicy(Policies.Review, p => p.RequireClaim(Policies.PermissionClaim, Policies.ReviewTeam, Policies.ReviewAll));
+            options.AddPolicy(PoliciesConstants.Review, p => p.RequireClaim(PoliciesConstants.PermissionClaim, PoliciesConstants.ReviewTeam, PoliciesConstants.ReviewAll));
         });
     }
 
@@ -135,7 +135,7 @@ public sealed class Program
         services.AddRateLimiter(options =>
         {
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-            options.AddPolicy(RateLimits.SignIn, context => RateLimitPartition.GetFixedWindowLimiter(
+            options.AddPolicy(RateLimitsConstants.SignIn, context => RateLimitPartition.GetFixedWindowLimiter(
                 context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
                 _ => new FixedWindowRateLimiterOptions
                 {

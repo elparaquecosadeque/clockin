@@ -12,7 +12,11 @@ namespace ClockIn.Application.Accounts.Commands;
 public sealed record ReactivateUserCommand(Guid UserId, Guid? TeamId);
 
 public sealed class ReactivateUserHandler(
-    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, IAuditLog audit, TimeProvider time)
+    ICurrentUser currentUser,
+    IUserRepository usersRepository,
+    ITeamRepository teamsRepository,
+    IAuditLog audit,
+    TimeProvider time)
 {
     public async Task<AccessLinkDto> HandleAsync(ReactivateUserCommand command, CancellationToken ct)
     {

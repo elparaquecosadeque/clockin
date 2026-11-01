@@ -17,7 +17,11 @@ public sealed class DeclineCorrectionValidator : AbstractValidator<DeclineCorrec
 }
 
 public sealed class DeclineCorrectionHandler(
-    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ICorrectionRequestRepository correctionsRepository, TimeProvider time)
+    ICurrentUser currentUser,
+    IUserRepository usersRepository,
+    ITeamRepository teamsRepository,
+    ICorrectionRequestRepository correctionsRepository,
+    TimeProvider time)
 {
     public async Task HandleAsync(DeclineCorrectionCommand command, CancellationToken ct)
     {

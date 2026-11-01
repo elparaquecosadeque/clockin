@@ -10,7 +10,7 @@ namespace ClockIn.Api.Controllers;
 
 [ApiController]
 [Route("api/users")]
-[Authorize(Policy = Policies.ManageUsers)]
+[Authorize(Policy = PoliciesConstants.ManageUsers)]
 public sealed class UsersController(IMessageBus bus) : ControllerBase
 {
     public sealed record RoleRequest(string Role, Guid? TeamId);

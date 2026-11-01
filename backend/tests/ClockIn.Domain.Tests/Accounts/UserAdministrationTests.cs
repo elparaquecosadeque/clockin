@@ -26,7 +26,7 @@ public sealed class UserAdministrationTests
     [Fact]
     public void Creates_users_with_english_and_24h_unless_told_otherwise()
     {
-        var fay = User.Create(new Email("fay@clockin.test"), "Fay", Role.Employee, Preferences.Spanish, Preferences.TwelveHour);
+        var fay = User.Create(new Email("fay@clockin.test"), "Fay", Role.Employee, PreferencesConstants.Spanish, PreferencesConstants.TwelveHour);
 
         (_eve.Language, _eve.TimeFormat).Should().Be(("en", "24h"));
         (fay.Language, fay.TimeFormat).Should().Be(("es", "12h"));

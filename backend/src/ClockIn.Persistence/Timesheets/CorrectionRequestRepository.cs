@@ -33,7 +33,7 @@ public sealed class CorrectionRequestRepository(AppDataConnection db, PendingDom
             {
                 await db.InsertAsync(ToRecord(request), token: ct);
             }
-            catch (Exception ex) when (UniqueViolation.Is(ex))
+            catch (Exception ex) when (UniqueViolationHelper.Is(ex))
             {
                 throw new ConflictException("CorrectionRequestAlreadyPending", "A correction request on this week is already waiting.");
             }

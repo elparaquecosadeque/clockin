@@ -4,7 +4,7 @@ using ClockIn.Domain.Timesheets;
 namespace ClockIn.Application.Reporting;
 
 /// <summary>Hours count on the company day an entry started; an open entry runs until now (glossary).</summary>
-public static class WorkedTime
+public static class WorkedTimeHelper
 {
     /// <summary>Entries longer than this are worth a look (exceptions.feature).</summary>
     public static readonly TimeSpan LongEntry = TimeSpan.FromHours(10);

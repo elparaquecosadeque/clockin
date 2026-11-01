@@ -17,8 +17,12 @@ public sealed class ReopenTimesheetValidator : AbstractValidator<ReopenTimesheet
 }
 
 public sealed class ReopenTimesheetHandler(
-    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ITimesheetRepository timesheetsRepository,
-    ICorrectionRequestRepository correctionsRepository, TimeProvider time)
+    ICurrentUser currentUser,
+    IUserRepository usersRepository,
+    ITeamRepository teamsRepository,
+    ITimesheetRepository timesheetsRepository,
+    ICorrectionRequestRepository correctionsRepository,
+    TimeProvider time)
 {
     public async Task HandleAsync(ReopenTimesheetCommand command, CancellationToken ct)
     {

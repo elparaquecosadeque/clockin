@@ -9,11 +9,11 @@ namespace ClockIn.Domain.Accounts;
 /// </summary>
 public sealed record RefreshToken(SessionId SessionId, string Secret, DateTimeOffset ExpiresAt)
 {
-    public string Value => OpaqueToken.Format(SessionId.Value, Secret);
+    public string Value => OpaqueTokenHelper.Format(SessionId.Value, Secret);
 
     public static bool TryParse(string? value, out SessionId sessionId, [NotNullWhen(true)] out string? secret)
     {
-        bool parsed = OpaqueToken.TryParse(value, out Guid id, out secret);
+        bool parsed = OpaqueTokenHelper.TryParse(value, out Guid id, out secret);
         sessionId = new SessionId(id);
         return parsed;
     }

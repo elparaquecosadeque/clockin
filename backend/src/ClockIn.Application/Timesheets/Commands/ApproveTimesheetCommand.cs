@@ -10,8 +10,12 @@ namespace ClockIn.Application.Timesheets.Commands;
 public sealed record ApproveTimesheetCommand(Guid TimesheetId) : ITransactional;
 
 public sealed class ApproveTimesheetHandler(
-    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ITimesheetRepository timesheetsRepository,
-    ICorrectionRequestRepository correctionsRepository, TimeProvider time)
+    ICurrentUser currentUser,
+    IUserRepository usersRepository,
+    ITeamRepository teamsRepository,
+    ITimesheetRepository timesheetsRepository,
+    ICorrectionRequestRepository correctionsRepository,
+    TimeProvider time)
 {
     public async Task HandleAsync(ApproveTimesheetCommand command, CancellationToken ct)
     {

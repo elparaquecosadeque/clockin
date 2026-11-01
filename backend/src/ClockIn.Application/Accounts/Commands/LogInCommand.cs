@@ -20,7 +20,11 @@ public sealed class LogInValidator : AbstractValidator<LogInCommand>
 }
 
 public sealed class LogInHandler(
-    IUserRepository usersRepository, ISessionRepository sessionsRepository, IPasswordHasher hasher, IAuditLog audit, TimeProvider time)
+    IUserRepository usersRepository,
+    ISessionRepository sessionsRepository,
+    IPasswordHasher hasher,
+    IAuditLog audit,
+    TimeProvider time)
 {
     public async Task<SessionResult> HandleAsync(LogInCommand command, CancellationToken ct)
     {

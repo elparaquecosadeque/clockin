@@ -1,6 +1,6 @@
 namespace ClockIn.Api.Auth;
 
-public static class RateLimits
+public static class RateLimitsConstants
 {
     /// <summary>Sign-in and refresh, per client IP.</summary>
     public const string SignIn = "sign-in";

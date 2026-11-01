@@ -7,7 +7,7 @@ namespace ClockIn.Application.Reporting;
 /// The payroll file (export-approved-csv.feature): UTF-8 with a byte order mark, commas, CRLF, English headers and
 /// invariant numbers whatever the user's language.
 /// </summary>
-public static class ApprovedHoursCsv
+public static class ApprovedHoursCsvHelper
 {
     public const string Header = "Employee,Email,Team,WeekStart,Date,ClockIn,ClockOut,Hours,HoursDecimal,ManuallyChanged,Note";
 

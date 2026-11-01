@@ -28,7 +28,7 @@ public sealed class GetClockedInHandler(
                 people[open.OwnerId].Name,
                 scope.Team(people[open.OwnerId].TeamId)?.Name,
                 open.Entry.Start,
-                WorkedTime.Seconds(open.Entry, now),
+                WorkedTimeHelper.Seconds(open.Entry, now),
                 now - open.Entry.Start > TimeEntry.MaxLength))
             .OrderBy(c => c.Since)];
     }

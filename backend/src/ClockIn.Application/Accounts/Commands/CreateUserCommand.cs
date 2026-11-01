@@ -13,7 +13,7 @@ namespace ClockIn.Application.Accounts.Commands;
 
 /// <summary>Admins only (permission policy). Returns the activation link for the admin to hand over.</summary>
 public sealed record CreateUserCommand(
-    string Email, string Name, string Role, Guid? TeamId, string Language = Preferences.English, string TimeFormat = Preferences.TwentyFourHour);
+    string Email, string Name, string Role, Guid? TeamId, string Language = PreferencesConstants.English, string TimeFormat = PreferencesConstants.TwentyFourHour);
 
 public sealed class CreateUserValidator : AbstractValidator<CreateUserCommand>
 {
@@ -31,7 +31,11 @@ public sealed class CreateUserValidator : AbstractValidator<CreateUserCommand>
 }
 
 public sealed class CreateUserHandler(
-    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, IAuditLog audit, TimeProvider time)
+    ICurrentUser currentUser,
+    IUserRepository usersRepository,
+    ITeamRepository teamsRepository,
+    IAuditLog audit,
+    TimeProvider time)
 {
     public async Task<AccessLinkDto> HandleAsync(CreateUserCommand command, CancellationToken ct)
     {

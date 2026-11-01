@@ -17,8 +17,12 @@ public sealed class ReturnTimesheetValidator : AbstractValidator<ReturnTimesheet
 }
 
 public sealed class ReturnTimesheetHandler(
-    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ITimesheetRepository timesheetsRepository,
-    ICorrectionRequestRepository correctionsRepository, TimeProvider time)
+    ICurrentUser currentUser,
+    IUserRepository usersRepository,
+    ITeamRepository teamsRepository,
+    ITimesheetRepository timesheetsRepository,
+    ICorrectionRequestRepository correctionsRepository,
+    TimeProvider time)
 {
     public async Task HandleAsync(ReturnTimesheetCommand command, CancellationToken ct)
     {

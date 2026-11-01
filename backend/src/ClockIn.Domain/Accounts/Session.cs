@@ -34,8 +34,8 @@ public sealed class Session
 
     public static (Session Session, RefreshToken Token) Start(UserId userId, Guid securityStamp, DateTimeOffset now)
     {
-        string secret = OpaqueToken.NewSecret();
-        var session = new Session(SessionId.New(), userId, securityStamp, OpaqueToken.Hash(secret), now + Lifetime);
+        string secret = OpaqueTokenHelper.NewSecret();
+        var session = new Session(SessionId.New(), userId, securityStamp, OpaqueTokenHelper.Hash(secret), now + Lifetime);
         return (session, new RefreshToken(session.Id, secret, session.ExpiresAt));
     }
 
@@ -44,7 +44,7 @@ public sealed class Session
         SessionId id, UserId userId, Guid securityStamp, string tokenHash, DateTimeOffset expiresAt, DateTimeOffset? revokedAt, int version) =>
         new(id, userId, securityStamp, tokenHash, expiresAt) { RevokedAt = revokedAt, Version = version };
 
-    public bool Matches(string secret) => OpaqueToken.Matches(TokenHash, secret);
+    public bool Matches(string secret) => OpaqueTokenHelper.Matches(TokenHash, secret);
 
     public (RefreshOutcome Outcome, RefreshToken? Token) Refresh(string secret, DateTimeOffset now)
     {
@@ -63,8 +63,8 @@ public sealed class Session
             return (RefreshOutcome.Rejected, null);
         }
 
-        string next = OpaqueToken.NewSecret();
-        TokenHash = OpaqueToken.Hash(next);
+        string next = OpaqueTokenHelper.NewSecret();
+        TokenHash = OpaqueTokenHelper.Hash(next);
         ExpiresAt = now + Lifetime;
         return (RefreshOutcome.Refreshed, new RefreshToken(Id, next, ExpiresAt));
     }

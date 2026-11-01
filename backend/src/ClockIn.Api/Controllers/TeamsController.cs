@@ -10,7 +10,7 @@ namespace ClockIn.Api.Controllers;
 
 [ApiController]
 [Route("api/teams")]
-[Authorize(Policy = Policies.ManageTeams)]
+[Authorize(Policy = PoliciesConstants.ManageTeams)]
 public sealed class TeamsController(IMessageBus bus) : ControllerBase
 {
     public sealed record NameRequest(string Name);

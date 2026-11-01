@@ -31,7 +31,7 @@ public sealed class GetToDosHandler(
         return new ToDosDto(
             mine.SelectMany(t => t.Entries).FirstOrDefault(e => e.End is null)?.Start,
             [.. drafts.Where(t => t.ReturnComment is not null).Select(t => t.WeekStart)],
-            [.. drafts.Where(t => t.ReturnComment is null && WorkedTime.HasEnded(t.WeekStart, now, time.LocalTimeZone)).Select(t => t.WeekStart)],
+            [.. drafts.Where(t => t.ReturnComment is null && WorkedTimeHelper.HasEnded(t.WeekStart, now, time.LocalTimeZone)).Select(t => t.WeekStart)],
             myRequests.Count(r => r.Status == CorrectionStatus.Declined && r.DecidedAt >= now - DeclinedWindow),
             queue.Timesheets.Count,
             queue.Corrections.Count);

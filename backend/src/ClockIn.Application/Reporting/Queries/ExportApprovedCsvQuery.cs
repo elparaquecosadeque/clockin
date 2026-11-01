@@ -47,5 +47,5 @@ public sealed class ExportApprovedCsvHandler(
     }
 
     private CsvFileDto File(ExportApprovedCsvQuery query, IEnumerable<ApprovedHoursLine> lines) =>
-        new($"clockin-approved-{query.WeekStart:yyyy-MM-dd}.csv", ApprovedHoursCsv.Write(lines, time.LocalTimeZone));
+        new($"clockin-approved-{query.WeekStart:yyyy-MM-dd}.csv", ApprovedHoursCsvHelper.Write(lines, time.LocalTimeZone));
 }

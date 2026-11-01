@@ -18,7 +18,11 @@ public sealed class SubmitTimesheetValidator : AbstractValidator<SubmitTimesheet
 }
 
 public sealed class SubmitTimesheetHandler(
-    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ITimesheetRepository timesheetsRepository, TimeProvider time)
+    ICurrentUser currentUser,
+    IUserRepository usersRepository,
+    ITeamRepository teamsRepository,
+    ITimesheetRepository timesheetsRepository,
+    TimeProvider time)
 {
     public async Task HandleAsync(SubmitTimesheetCommand command, CancellationToken ct)
     {

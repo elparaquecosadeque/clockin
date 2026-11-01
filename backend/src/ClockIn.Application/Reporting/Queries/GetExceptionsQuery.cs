@@ -35,16 +35,16 @@ public sealed class GetExceptionsHandler(
             ExceptionDto Exception(ExceptionKind kind, Guid? entryId = null, long? seconds = null, int? count = null) =>
                 new(kind, owner.Id, owner.Name, scope.Team(owner.TeamId)?.Name, timesheet.WeekStart, timesheet.Id, entryId, seconds, count);
 
-            if (timesheet.Status == TimesheetStatus.Draft && WorkedTime.HasEnded(timesheet.WeekStart, now, time.LocalTimeZone))
+            if (timesheet.Status == TimesheetStatus.Draft && WorkedTimeHelper.HasEnded(timesheet.WeekStart, now, time.LocalTimeZone))
             {
                 found.Add(Exception(ExceptionKind.OverdueDraft));
             }
 
             found.AddRange(timesheet.Entries
-                .Where(e => e.End is not null && e.End - e.Start > WorkedTime.LongEntry)
-                .Select(e => Exception(ExceptionKind.LongEntry, e.Id, WorkedTime.Seconds(e, now))));
+                .Where(e => e.End is not null && e.End - e.Start > WorkedTimeHelper.LongEntry)
+                .Select(e => Exception(ExceptionKind.LongEntry, e.Id, WorkedTimeHelper.Seconds(e, now))));
 
-            if (timesheet.ManuallyChangedEntries >= WorkedTime.ManyManualChanges)
+            if (timesheet.ManuallyChangedEntries >= WorkedTimeHelper.ManyManualChanges)
             {
                 found.Add(Exception(ExceptionKind.ManyManualChanges, count: timesheet.ManuallyChangedEntries));
             }

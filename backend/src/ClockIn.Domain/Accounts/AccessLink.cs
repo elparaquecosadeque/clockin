@@ -9,11 +9,11 @@ public sealed record AccessLink(UserId UserId, string Secret, DateTimeOffset Exp
     public static readonly TimeSpan Validity = TimeSpan.FromHours(72);
 
     /// <summary>The token the person receives, as <c>{userId}.{secret}</c>.</summary>
-    public string Token => OpaqueToken.Format(UserId.Value, Secret);
+    public string Token => OpaqueTokenHelper.Format(UserId.Value, Secret);
 
     public static bool TryParse(string? token, out UserId userId, [NotNullWhen(true)] out string? secret)
     {
-        bool parsed = OpaqueToken.TryParse(token, out Guid id, out secret);
+        bool parsed = OpaqueTokenHelper.TryParse(token, out Guid id, out secret);
         userId = new UserId(id);
         return parsed;
     }

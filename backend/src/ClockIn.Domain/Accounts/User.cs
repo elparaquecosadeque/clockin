@@ -47,11 +47,11 @@ public sealed class User
     /// <summary>The team an employee belongs to. Null for supervisors and admins, who belong to no team.</summary>
     public TeamId? TeamId { get; private set; }
 
-    /// <summary>One of <see cref="Preferences.Languages"/>.</summary>
-    public string Language { get; private set; } = Preferences.English;
+    /// <summary>One of <see cref="PreferencesConstants.Languages"/>.</summary>
+    public string Language { get; private set; } = PreferencesConstants.English;
 
-    /// <summary>One of <see cref="Preferences.TimeFormats"/>.</summary>
-    public string TimeFormat { get; private set; } = Preferences.TwentyFourHour;
+    /// <summary>One of <see cref="PreferencesConstants.TimeFormats"/>.</summary>
+    public string TimeFormat { get; private set; } = PreferencesConstants.TwentyFourHour;
 
     /// <summary>0 until first saved; the repository checks and bumps it on every save.</summary>
     public int Version { get; private init; }
@@ -59,7 +59,7 @@ public sealed class User
     public bool IsLockedOut(DateTimeOffset now) => LockedUntil > now;
 
     public static User Create(
-        Email email, string name, Role role, string language = Preferences.English, string timeFormat = Preferences.TwentyFourHour)
+        Email email, string name, Role role, string language = PreferencesConstants.English, string timeFormat = PreferencesConstants.TwentyFourHour)
     {
         Guard.Against.NullOrWhiteSpace(name);
         Guard.Against.StringTooLong(name.Trim(), MaxNameLength);
@@ -105,8 +105,8 @@ public sealed class User
     public AccessLink IssueAccessLink(DateTimeOffset now)
     {
         EnsureNotDeactivated();
-        string secret = OpaqueToken.NewSecret();
-        AccessLinkHash = OpaqueToken.Hash(secret);
+        string secret = OpaqueTokenHelper.NewSecret();
+        AccessLinkHash = OpaqueTokenHelper.Hash(secret);
         AccessLinkExpiresAt = now + AccessLink.Validity;
         return new AccessLink(Id, secret, AccessLinkExpiresAt.Value);
     }
@@ -114,7 +114,7 @@ public sealed class User
     /// <remarks>Every failure gives the same answer, so a link reveals nothing about the account.</remarks>
     public void SetPasswordWithLink(string secret, string passwordHash, DateTimeOffset now)
     {
-        if (Status == UserStatus.Deactivated || now > AccessLinkExpiresAt || !OpaqueToken.Matches(AccessLinkHash, secret))
+        if (Status == UserStatus.Deactivated || now > AccessLinkExpiresAt || !OpaqueTokenHelper.Matches(AccessLinkHash, secret))
         {
             throw new DomainException("InvalidOrExpiredLink", "The link is invalid or has expired. Ask an admin for a new one.");
         }
@@ -199,8 +199,8 @@ public sealed class User
     /// <summary>Keeps every session valid.</summary>
     public void UpdatePreferences(string language, string timeFormat)
     {
-        Guard.Against.InvalidInput(language, nameof(language), Preferences.Languages.Contains);
-        Guard.Against.InvalidInput(timeFormat, nameof(timeFormat), Preferences.TimeFormats.Contains);
+        Guard.Against.InvalidInput(language, nameof(language), PreferencesConstants.Languages.Contains);
+        Guard.Against.InvalidInput(timeFormat, nameof(timeFormat), PreferencesConstants.TimeFormats.Contains);
         Language = language;
         TimeFormat = timeFormat;
     }

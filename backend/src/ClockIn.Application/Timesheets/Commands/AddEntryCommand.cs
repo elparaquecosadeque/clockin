@@ -19,7 +19,11 @@ public sealed class AddEntryValidator : AbstractValidator<AddEntryCommand>
 }
 
 public sealed class AddEntryHandler(
-    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ITimesheetRepository timesheetsRepository, TimeProvider time)
+    ICurrentUser currentUser,
+    IUserRepository usersRepository,
+    ITeamRepository teamsRepository,
+    ITimesheetRepository timesheetsRepository,
+    TimeProvider time)
 {
     public async Task<Guid> HandleAsync(AddEntryCommand command, CancellationToken ct)
     {

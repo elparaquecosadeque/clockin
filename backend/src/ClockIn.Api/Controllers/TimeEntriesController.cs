@@ -24,17 +24,17 @@ public sealed class TimeEntriesController(IMessageBus bus) : ControllerBase
     public sealed record CreatedEntry(Guid Id);
 
     [HttpGet("clock")]
-    [Authorize(Policy = Policies.PunchTime)]
+    [Authorize(Policy = PoliciesConstants.PunchTime)]
     public Task<ClockStatusDto> GetClockStatus(CancellationToken ct) =>
         bus.InvokeAsync<ClockStatusDto>(new GetClockStatusQuery(), ct);
 
     [HttpPost("clock-in")]
-    [Authorize(Policy = Policies.PunchTime)]
+    [Authorize(Policy = PoliciesConstants.PunchTime)]
     public Task<TimeEntryDto> ClockIn(CancellationToken ct) =>
         bus.InvokeAsync<TimeEntryDto>(new ClockInCommand(ClientIp, UserAgent), ct);
 
     [HttpPost("clock-out")]
-    [Authorize(Policy = Policies.PunchTime)]
+    [Authorize(Policy = PoliciesConstants.PunchTime)]
     public Task<TimeEntryDto> ClockOut(CancellationToken ct) =>
         bus.InvokeAsync<TimeEntryDto>(new ClockOutCommand(ClientIp, UserAgent), ct);
 
