@@ -1,5 +1,7 @@
 using ClockIn.Application.Common.Interfaces;
+using ClockIn.Application.Reporting;
 using ClockIn.Application.Reporting.Interfaces;
+using ClockIn.Application.Reporting.Results;
 using ClockIn.Domain.Accounts;
 using ClockIn.Domain.Timesheets;
 using ClockIn.Tests.Common;
@@ -33,12 +35,52 @@ public sealed class ReportingWorld
 
         Reads.PeopleAsync(Arg.Any<CancellationToken>()).Returns(_ => _people);
         Reads.TeamsAsync(Arg.Any<CancellationToken>()).Returns(_ => (IReadOnlyList<TeamRow>)[Warehouse, Office]);
-        Reads.TimesheetsAsync(Arg.Any<IReadOnlyCollection<Guid>>(), Arg.Any<DateOnly?>(), Arg.Any<CancellationToken>())
+        Reads.TimesheetsAsync(Arg.Any<IReadOnlyCollection<Guid>>(), Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
             .Returns(c => (IReadOnlyList<TimesheetRow>)[.. _timesheets.Where(t =>
-                c.Arg<IReadOnlyCollection<Guid>>().Contains(t.OwnerId) && (c.Arg<DateOnly?>() is not { } week || t.WeekStart == week))]);
-        Reads.CorrectionsAsync(Arg.Any<IReadOnlyCollection<Guid>>(), Arg.Any<CancellationToken>())
-            .Returns(c => (IReadOnlyList<CorrectionRow>)[.. _corrections.Where(r => c.Arg<IReadOnlyCollection<Guid>>().Contains(r.OwnerId))]);
+                c.Arg<IReadOnlyCollection<Guid>>().Contains(t.OwnerId) && t.WeekStart == c.Arg<DateOnly>())]);
+        Reads.ReviewCountsAsync(Arg.Any<IReadOnlyCollection<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(c => (_timesheets.Count(t => c.Arg<IReadOnlyCollection<Guid>>().Contains(t.OwnerId) && t.Status == TimesheetStatus.Submitted),
+                _corrections.Count(r => c.Arg<IReadOnlyCollection<Guid>>().Contains(r.OwnerId) && r.Status == CorrectionStatus.Pending)));
+        Reads.PersonalToDosAsync(Arg.Any<Guid>(), Arg.Any<DateOnly>(), Arg.Any<DateTimeOffset>(), Arg.Any<CancellationToken>())
+            .Returns(c =>
+            {
+                Guid owner = c.Arg<Guid>();
+                List<TimesheetRow> mine = [.. _timesheets.Where(t => t.OwnerId == owner).OrderBy(t => t.WeekStart)];
+                return new ToDosDto(mine.SelectMany(t => t.Entries).FirstOrDefault(e => e.End is null)?.Start,
+                    [.. mine.Where(t => t.Status == TimesheetStatus.Draft && t.ReturnComment is not null).Select(t => t.WeekStart)],
+                    [.. mine.Where(t => t.Status == TimesheetStatus.Draft && t.ReturnComment is null && t.WeekStart < c.Arg<DateOnly>()).Select(t => t.WeekStart)],
+                    _corrections.Count(r => r.OwnerId == owner && r.Status == CorrectionStatus.Declined && r.DecidedAt >= c.Arg<DateTimeOffset>()), 0, 0);
+            });
+        Reads.ClockedInAsync(Arg.Any<IReadOnlyCollection<Guid>>(), Arg.Any<DateTimeOffset>(), Arg.Any<CancellationToken>())
+            .Returns(c => (IReadOnlyList<ClockedInDto>)[.. _timesheets.Where(t => c.Arg<IReadOnlyCollection<Guid>>().Contains(t.OwnerId))
+                .SelectMany(t => t.Entries.Where(e => e.End is null).Select(e => new { t.OwnerId, Entry = e }))
+                .OrderBy(r => r.Entry.Start).Select(r => new ClockedInDto(r.OwnerId, _people.Single(p => p.Id == r.OwnerId).Name,
+                    new[] { Warehouse, Office }.FirstOrDefault(t => t.Id == _people.Single(p => p.Id == r.OwnerId).TeamId)?.Name,
+                    r.Entry.Start, WorkedTimeHelper.Seconds(r.Entry, c.Arg<DateTimeOffset>()), c.Arg<DateTimeOffset>() - r.Entry.Start > TimeEntry.MaxLength))]);
+        Reads.ExceptionsAsync(Arg.Any<IReadOnlyCollection<Guid>>(), Arg.Any<DateOnly>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+            .Returns(c => new ReportPageDto<ExceptionDto>(Exceptions(c.Arg<IReadOnlyCollection<Guid>>(), c.Arg<DateOnly>()), false));
         SignIn(Sam);
+    }
+
+    private IReadOnlyList<ExceptionDto> Exceptions(IReadOnlyCollection<Guid> owners, DateOnly currentWeek)
+    {
+        List<ExceptionDto> found = [];
+        foreach (TimesheetRow sheet in _timesheets.Where(t => owners.Contains(t.OwnerId) && t.Status != TimesheetStatus.Approved))
+        {
+            PersonRow owner = _people.Single(p => p.Id == sheet.OwnerId);
+            string? team = new[] { Warehouse, Office }.FirstOrDefault(t => t.Id == owner.TeamId)?.Name;
+            if (sheet.Status == TimesheetStatus.Draft && sheet.WeekStart < currentWeek)
+            {
+                found.Add(new(ExceptionKind.OverdueDraft, owner.Id, owner.Name, team, sheet.WeekStart, sheet.Id, null, null, null));
+            }
+            found.AddRange(sheet.Entries.Where(e => e.End - e.Start > WorkedTimeHelper.LongEntry)
+                .Select(e => new ExceptionDto(ExceptionKind.LongEntry, owner.Id, owner.Name, team, sheet.WeekStart, sheet.Id, e.Id, WorkedTimeHelper.Seconds(e, Clock.GetUtcNow()), null)));
+            if (sheet.ManuallyChangedEntries >= WorkedTimeHelper.ManyManualChanges)
+            {
+                found.Add(new(ExceptionKind.ManyManualChanges, owner.Id, owner.Name, team, sheet.WeekStart, sheet.Id, null, null, sheet.ManuallyChangedEntries));
+            }
+        }
+        return [.. found.OrderByDescending(e => e.WeekStart).ThenBy(e => e.Name, StringComparer.OrdinalIgnoreCase).ThenBy(e => e.Kind)];
     }
 
     public PersonRow Ada { get; }

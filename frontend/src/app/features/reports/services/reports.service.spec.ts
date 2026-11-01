@@ -17,6 +17,12 @@ describe('ReportsService', () => {
 
   afterEach(() => http.verify());
 
+  it('requests one page of exceptions', async () => {
+    const page = service.exceptions(2);
+    http.expectOne('/api/reports/exceptions?page=2').flush({ items: [], hasMore: false });
+    expect(await page).toEqual({ items: [], hasMore: false });
+  });
+
   it('downloads the CSV of one team with the server file name', async () => {
     const file = service.approvedCsv('2026-10-19', 't1');
     http.expectOne('/api/reports/approved-csv/2026-10-19?teamId=t1').flush(new Blob(['a,b']), {

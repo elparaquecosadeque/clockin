@@ -4,6 +4,14 @@ Feature: To-do badges
   Background:
     Given it is Friday 2026-10-30 10:00
 
+  @api
+  Scenario: Counts all pending work independently of the displayed queue page
+    Given Sam has 52 Submitted timesheets and 52 pending correction requests in scope
+    And another team's employee has pending work
+    When Sam loads the to-dos
+    Then Sam sees 52 timesheets to review and 52 requests to decide
+    And changing the queue page does not change these counts
+
   Scenario: Employee to-dos
     Given Eve clocked in at 08:00 and has not clocked out
     And Sam returned Eve's timesheet for week 2026-10-12

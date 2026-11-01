@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xliff version="2.0" xmlns="urn:oasis:names:tc:xliff:document:2.0" srcLang="en" trgLang="es">
   <file id="ngi18n" original="ng.template">
+    <unit id="timesheetPages">
+      <segment>
+        <source>Timesheet pages</source>
+        <target>Páginas de hojas de horas</target>
+      </segment>
+    </unit>
+    <unit id="correctionPages">
+      <segment>
+        <source>Correction pages</source>
+        <target>Páginas de solicitudes de corrección</target>
+      </segment>
+    </unit>
+    <unit id="exceptionPages">
+      <segment>
+        <source>Exception pages</source>
+        <target>Páginas de excepciones</target>
+      </segment>
+    </unit>
+    <unit id="previousPage">
+      <segment>
+        <source>Previous</source>
+        <target>Anterior</target>
+      </segment>
+    </unit>
+    <unit id="nextPage">
+      <segment>
+        <source>Next</source>
+        <target>Siguiente</target>
+      </segment>
+    </unit>
+    <unit id="exceptionsLoadFailed">
+      <segment>
+        <source>Exceptions couldn't be loaded.</source>
+        <target>No se pudieron cargar las excepciones.</target>
+      </segment>
+    </unit>
+    <unit id="reportPageNumber">
+      <segment>
+        <source>Page <ph id="0" equiv="INTERPOLATION" disp="{{ page }}" /></source>
+        <target>Página <ph id="0" equiv="INTERPOLATION" disp="{{ page }}" /></target>
+      </segment>
+    </unit>
     <unit id="emailLength">
       <segment>
         <source>Use 254 characters or fewer for your email.</source>

@@ -19,6 +19,18 @@ describe('TimesheetService', () => {
 
   const owner = '0192f0a4-7c1e-7b3a-9d2e-5f6a7b8c9d0e';
 
+  it('requests independent pages for submitted weeks and corrections', async () => {
+    const queue = service.reviewQueue(2, 3);
+    const response = {
+      timesheets: [],
+      corrections: [],
+      hasMoreTimesheets: false,
+      hasMoreCorrections: true,
+    };
+    http.expectOne('/api/reports/review-queue?timesheetPage=2&correctionPage=3').flush(response);
+    expect(await queue).toEqual(response);
+  });
+
   it('reads and submits the own week or another user’s', async () => {
     void service.get(null, '2026-10-19');
     http.expectOne({ method: 'GET', url: '/api/timesheets/mine/2026-10-19' }).flush({});

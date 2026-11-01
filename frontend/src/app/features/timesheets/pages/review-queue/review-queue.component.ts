@@ -29,17 +29,29 @@ export class ReviewQueueComponent {
 
   protected readonly queue = signal<ReviewQueue | null>(null);
   protected readonly loadFailed = signal(false);
+  protected readonly busy = signal(false);
+  protected readonly timesheetPage = signal(1);
+  protected readonly correctionPage = signal(1);
 
   constructor() {
     void this.reload();
   }
 
-  protected async reload(): Promise<void> {
+  protected async reload(
+    timesheetPage = this.timesheetPage(),
+    correctionPage = this.correctionPage(),
+  ): Promise<void> {
+    if (this.busy()) return;
+    this.busy.set(true);
     this.loadFailed.set(false);
     try {
-      this.queue.set(await this.timesheets.reviewQueue());
+      this.queue.set(await this.timesheets.reviewQueue(timesheetPage, correctionPage));
+      this.timesheetPage.set(timesheetPage);
+      this.correctionPage.set(correctionPage);
     } catch {
       this.loadFailed.set(true);
+    } finally {
+      this.busy.set(false);
     }
   }
 }

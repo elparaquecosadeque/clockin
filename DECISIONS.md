@@ -4,6 +4,15 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-11-01: Bounded reporting (audit run 2)
+
+| Decision | Why | By |
+|---|---|---|
+| Reports filter and aggregate in SQL: to-dos count pending work, clocked-in reads only open entries, and archiving checks whether pending work exists. Personal draft links don't load entries or history. | Every navigation previously loaded all-time entries and history for the review scope, even when only a count was needed. | user / dev |
+| Review queues page submitted timesheets and pending corrections independently; exceptions page matching records. Each page holds 50 items, with a `hasMore` flag and stable id tie-breakers. Page numbers are validated before multiplying offsets. | Bounds materialized results and response sizes while keeping old unresolved work reachable. This changes the exceptions response from an array to `{ items, hasMore }`; both frontend callers and tests change together. | user / dev |
+| Backfill dates and entry counts remain unchanged. The weekly grid and CSV still read the requested week. | Reporting is fixed at its read boundary without changing the product's backfill rules. Storage quotas and production load testing remain separate work. | user / dev |
+| Add indexes for owner/status/week, pending and declined corrections, and history aggregates. Weekly reads also aggregate submission time and manual-change counts in SQL. | Keeps the new filtered reads indexed and avoids materializing audit histories for the weekly grid and CSV. | dev |
+
 ## 2026-11-01: Login email limit (audit run 2)
 
 | Decision | Why | By |

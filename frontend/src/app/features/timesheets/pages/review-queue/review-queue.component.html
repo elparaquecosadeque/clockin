@@ -1,7 +1,16 @@
 <h1 i18n="@@reviewTitle">Review</h1>
 
+@if (loadFailed()) {
+  <section class="failed" role="alert">
+    <p i18n="@@reviewLoadFailed">The review queue couldn't be loaded.</p>
+    <button mat-stroked-button (click)="reload()" [disabled]="busy()" i18n="@@tryAgain">
+      Try again
+    </button>
+  </section>
+}
+
 @if (queue(); as queue) {
-  <section aria-labelledby="to-review">
+  <section aria-labelledby="to-review" [attr.aria-busy]="busy()">
     <h2 id="to-review" i18n="@@timesheetsToReview">Timesheets to review</h2>
     @if (queue.timesheets.length) {
       <mat-nav-list>
@@ -25,9 +34,30 @@
     } @else {
       <p class="empty" i18n="@@nothingToReview">Nothing to review.</p>
     }
+    @if (timesheetPage() > 1 || queue.hasMoreTimesheets) {
+      <nav class="pages" aria-label="Timesheet pages" i18n-aria-label="@@timesheetPages">
+        <button
+          mat-button
+          [disabled]="busy() || timesheetPage() === 1"
+          (click)="reload(timesheetPage() - 1, correctionPage())"
+          i18n="@@previousPage"
+        >
+          Previous
+        </button>
+        <span aria-live="polite" i18n="@@reportPageNumber">Page {{ timesheetPage() }}</span>
+        <button
+          mat-button
+          [disabled]="busy() || !queue.hasMoreTimesheets"
+          (click)="reload(timesheetPage() + 1, correctionPage())"
+          i18n="@@nextPage"
+        >
+          Next
+        </button>
+      </nav>
+    }
   </section>
 
-  <section aria-labelledby="to-decide">
+  <section aria-labelledby="to-decide" [attr.aria-busy]="busy()">
     <h2 id="to-decide" i18n="@@correctionsToDecide">Correction requests</h2>
     @if (queue.corrections.length) {
       <mat-nav-list>
@@ -48,13 +78,29 @@
     } @else {
       <p class="empty" i18n="@@noCorrections">No correction requests.</p>
     }
+    @if (correctionPage() > 1 || queue.hasMoreCorrections) {
+      <nav class="pages" aria-label="Correction pages" i18n-aria-label="@@correctionPages">
+        <button
+          mat-button
+          [disabled]="busy() || correctionPage() === 1"
+          (click)="reload(timesheetPage(), correctionPage() - 1)"
+          i18n="@@previousPage"
+        >
+          Previous
+        </button>
+        <span aria-live="polite" i18n="@@reportPageNumber">Page {{ correctionPage() }}</span>
+        <button
+          mat-button
+          [disabled]="busy() || !queue.hasMoreCorrections"
+          (click)="reload(timesheetPage(), correctionPage() + 1)"
+          i18n="@@nextPage"
+        >
+          Next
+        </button>
+      </nav>
+    }
   </section>
-} @else if (loadFailed()) {
-  <section class="failed" role="alert">
-    <p i18n="@@reviewLoadFailed">The review queue couldn't be loaded.</p>
-    <button mat-stroked-button (click)="reload()" i18n="@@tryAgain">Try again</button>
-  </section>
-} @else {
+} @else if (!loadFailed()) {
   <mat-progress-spinner
     mode="indeterminate"
     diameter="48"

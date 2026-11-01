@@ -2,6 +2,8 @@ import { WeekStatus } from '../../../shared/models/week-status.model';
 
 /** Mirrors the backend's ReviewQueueDto. */
 export interface ReviewQueue {
+  hasMoreTimesheets: boolean;
+  hasMoreCorrections: boolean;
   timesheets: {
     timesheetId: string;
     ownerId: string;

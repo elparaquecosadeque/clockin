@@ -22,12 +22,12 @@ public sealed class ReportsController(IMessageBus bus) : ControllerBase
         bus.InvokeAsync<IReadOnlyList<ClockedInDto>>(new GetClockedInQuery(), ct);
 
     [HttpGet("exceptions")]
-    public Task<IReadOnlyList<ExceptionDto>> GetExceptionsAsync(CancellationToken ct) =>
-        bus.InvokeAsync<IReadOnlyList<ExceptionDto>>(new GetExceptionsQuery(), ct);
+    public Task<ReportPageDto<ExceptionDto>> GetExceptionsAsync([FromQuery] int page = 1, CancellationToken ct = default) =>
+        bus.InvokeAsync<ReportPageDto<ExceptionDto>>(new GetExceptionsQuery(page), ct);
 
     [HttpGet("review-queue")]
-    public Task<ReviewQueueDto> GetReviewQueueAsync(CancellationToken ct) =>
-        bus.InvokeAsync<ReviewQueueDto>(new GetReviewQueueQuery(), ct);
+    public Task<ReviewQueueDto> GetReviewQueueAsync([FromQuery] int timesheetPage = 1, [FromQuery] int correctionPage = 1, CancellationToken ct = default) =>
+        bus.InvokeAsync<ReviewQueueDto>(new GetReviewQueueQuery(timesheetPage, correctionPage), ct);
 
     [HttpGet("approved-csv/{weekStart}")]
     public async Task<FileContentResult> ExportApprovedAsync(DateOnly weekStart, [FromQuery] Guid? teamId, CancellationToken ct)

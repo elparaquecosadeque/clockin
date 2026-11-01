@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { ClockedIn } from '../models/clocked-in.model';
 import { WeekException } from '../models/week-exception.model';
 import { TeamWeek } from '../models/team-week.model';
+import { ReportPage } from '../../../shared/models/report-page.model';
 
 /** Reports for supervisors (their team) and admins (everyone); the server scopes them. */
 @Injectable({ providedIn: 'root' })
@@ -18,8 +19,10 @@ export class ReportsService {
     return firstValueFrom(this.http.get<ClockedIn[]>('/api/reports/clocked-in'));
   }
 
-  exceptions(): Promise<WeekException[]> {
-    return firstValueFrom(this.http.get<WeekException[]>('/api/reports/exceptions'));
+  exceptions(page = 1): Promise<ReportPage<WeekException>> {
+    return firstValueFrom(
+      this.http.get<ReportPage<WeekException>>('/api/reports/exceptions', { params: { page } }),
+    );
   }
 
   /** The approved timesheets of a week as a CSV file, with the server's file name. */

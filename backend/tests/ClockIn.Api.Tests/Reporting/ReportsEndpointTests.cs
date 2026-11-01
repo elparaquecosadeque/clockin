@@ -6,8 +6,10 @@ using AwesomeAssertions;
 using ClockIn.Api.Tests.Common;
 using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Teams.Interfaces;
+using ClockIn.Application.Timesheets.Interfaces;
 using ClockIn.Domain.Accounts;
 using ClockIn.Domain.Teams;
+using ClockIn.Domain.Timesheets;
 
 namespace ClockIn.Api.Tests.Reporting;
 
@@ -48,13 +50,147 @@ public sealed class ReportsEndpointTests(ApiFactory factory)
         row.GetProperty("daySeconds")[1].GetInt64().Should().Be(11 * 3600);
         grid.GetProperty("groups")[0].GetProperty("teamId").GetGuid().Should().Be(teamId);
         clockedIn.GetArrayLength().Should().Be(1);
-        exceptions.EnumerateArray().Select(e => e.GetProperty("kind").GetString()).Should().Contain("LongEntry");
+        exceptions.GetProperty("items").EnumerateArray().Select(e => e.GetProperty("kind").GetString()).Should().Contain("LongEntry");
         samToDos.GetProperty("timesheetsToReview").GetInt32().Should().Be(1);
         csv.StatusCode.Should().Be(HttpStatusCode.OK);
         csv.Content.Headers.ContentType!.MediaType.Should().Be("text/csv");
         string text = Encoding.UTF8.GetString(await csv.Content.ReadAsByteArrayAsync(Ct));
         text.Should().Contain($",{week.AddDays(1):yyyy-MM-dd},08:00,19:00,11:00,11.00,true,\"long day, client, on site\"\r\n");
         forbidden.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    public async Task Pages_old_unresolved_work_without_loading_it_into_badges_or_clocked_in_lists()
+    {
+        User sam = await CreateAsync(Role.Supervisor);
+        User eve = await CreateAsync(Role.Employee);
+        await TeamAsync(sam, eve);
+        using (var scopes = new Scopes(factory))
+        {
+            ITimesheetRepository repository = scopes.Get<ITimesheetRepository>();
+            for (int i = 1; i <= 52; i++)
+            {
+                var sheet = Timesheet.Start(eve.Id, new Week(PastMonday(i)));
+                await repository.SaveOrUpdateAsync(sheet, Ct);
+            }
+        }
+        HttpClient client = await SignedInAsync(sam);
+
+        JsonElement first = await JsonAsync(client, "/api/reports/exceptions?page=1");
+        JsonElement second = await JsonAsync(client, "/api/reports/exceptions?page=2");
+        JsonElement badges = await JsonAsync(client, "/api/me/to-dos");
+        JsonElement clockedIn = await JsonAsync(client, "/api/reports/clocked-in");
+
+        first.GetProperty("items").GetArrayLength().Should().Be(50);
+        first.GetProperty("hasMore").GetBoolean().Should().BeTrue();
+        second.GetProperty("items").GetArrayLength().Should().Be(2);
+        second.GetProperty("hasMore").GetBoolean().Should().BeFalse();
+        first.GetProperty("items").EnumerateArray().Select(e => e.GetProperty("timesheetId").GetGuid())
+            .Should().NotIntersectWith(second.GetProperty("items").EnumerateArray().Select(e => e.GetProperty("timesheetId").GetGuid()));
+        badges.GetProperty("timesheetsToReview").GetInt32().Should().Be(0);
+        clockedIn.GetArrayLength().Should().Be(0);
+    }
+
+    [Theory]
+    [InlineData("/api/reports/exceptions?page=0")]
+    [InlineData("/api/reports/exceptions?page=2147483647")]
+    [InlineData("/api/reports/review-queue?timesheetPage=-1")]
+    [InlineData("/api/reports/review-queue?correctionPage=0")]
+    public async Task Rejects_invalid_pagination(string path)
+    {
+        User sam = await CreateAsync(Role.Supervisor);
+        HttpClient client = await SignedInAsync(sam);
+
+        (await client.GetAsync(path, Ct)).StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Pages_submissions_and_corrections_independently_but_counts_the_entire_authorized_queue()
+    {
+        User sam = await CreateAsync(Role.Supervisor);
+        User eve = await CreateAsync(Role.Employee);
+        User outsider = await CreateAsync(Role.Employee);
+        await TeamAsync(sam, eve);
+        DateTimeOffset now = TimeProvider.System.GetUtcNow();
+        using (var scopes = new Scopes(factory))
+        {
+            ITimesheetRepository sheets = scopes.Get<ITimesheetRepository>();
+            ICorrectionRequestRepository requests = scopes.Get<ICorrectionRequestRepository>();
+            for (int i = 1; i <= 52; i++)
+            {
+                var sheet = Timesheet.Start(eve.Id, new Week(PastMonday(i)));
+                sheet.Submit(eve.Id, now, Bogota);
+                await sheets.SaveOrUpdateAsync(sheet, Ct);
+                await requests.SaveOrUpdateAsync(CorrectionRequest.Create(sheet.Id, eve.Id, "Missing shift", now), Ct);
+            }
+            var other = Timesheet.Start(outsider.Id, new Week(PastMonday(1)));
+            other.Submit(outsider.Id, now, Bogota);
+            await sheets.SaveOrUpdateAsync(other, Ct);
+            await requests.SaveOrUpdateAsync(CorrectionRequest.Create(other.Id, outsider.Id, "Private", now), Ct);
+        }
+        HttpClient client = await SignedInAsync(sam);
+
+        JsonElement first = await JsonAsync(client, "/api/reports/review-queue");
+        JsonElement nextSheets = await JsonAsync(client, "/api/reports/review-queue?timesheetPage=2");
+        JsonElement nextRequests = await JsonAsync(client, "/api/reports/review-queue?correctionPage=2");
+        JsonElement badges = await JsonAsync(client, "/api/me/to-dos");
+
+        first.GetProperty("timesheets").GetArrayLength().Should().Be(50);
+        first.GetProperty("corrections").GetArrayLength().Should().Be(50);
+        first.GetProperty("hasMoreTimesheets").GetBoolean().Should().BeTrue();
+        first.GetProperty("hasMoreCorrections").GetBoolean().Should().BeTrue();
+        nextSheets.GetProperty("timesheets").GetArrayLength().Should().Be(2);
+        nextSheets.GetProperty("hasMoreTimesheets").GetBoolean().Should().BeFalse();
+        nextSheets.GetProperty("corrections").GetRawText().Should().Be(first.GetProperty("corrections").GetRawText());
+        nextRequests.GetProperty("corrections").GetArrayLength().Should().Be(2);
+        nextRequests.GetProperty("hasMoreCorrections").GetBoolean().Should().BeFalse();
+        first.GetProperty("timesheets").EnumerateArray().Select(t => t.GetProperty("timesheetId").GetGuid()).Should()
+            .NotIntersectWith(nextSheets.GetProperty("timesheets").EnumerateArray().Select(t => t.GetProperty("timesheetId").GetGuid()));
+        first.GetProperty("corrections").EnumerateArray().Select(t => t.GetProperty("requestId").GetGuid()).Should()
+            .NotIntersectWith(nextRequests.GetProperty("corrections").EnumerateArray().Select(t => t.GetProperty("requestId").GetGuid()));
+        badges.GetProperty("timesheetsToReview").GetInt32().Should().Be(52);
+        badges.GetProperty("correctionsToDecide").GetInt32().Should().Be(52);
+        nextSheets.GetProperty("timesheets").EnumerateArray().Should().OnlyContain(t => t.GetProperty("ownerId").GetGuid() == eve.Id.Value);
+        nextRequests.GetProperty("corrections").EnumerateArray().Should().OnlyContain(t => t.GetProperty("ownerId").GetGuid() == eve.Id.Value);
+    }
+
+    [Fact]
+    public async Task Computes_exception_thresholds_in_sql_and_excludes_approved_and_other_team_weeks()
+    {
+        User sam = await CreateAsync(Role.Supervisor);
+        User eve = await CreateAsync(Role.Employee);
+        User outsider = await CreateAsync(Role.Employee);
+        Guid teamId = await TeamAsync(sam, eve);
+        DateTimeOffset now = TimeProvider.System.GetUtcNow();
+        using (var scopes = new Scopes(factory))
+        {
+            ITimesheetRepository sheets = scopes.Get<ITimesheetRepository>();
+            foreach ((User owner, int ago) in new[] { (eve, 1), (eve, 2), (outsider, 1) })
+            {
+                DateOnly week = PastMonday(ago);
+                var sheet = Timesheet.Start(owner.Id, new Week(week));
+                var source = new PunchSource("127.0.0.1", "report test");
+                sheet.AddEntry(owner.Id, At(week, 0, 8), At(week, 0, 18), "exactly ten hours", source, now, Bogota, []);
+                sheet.AddEntry(owner.Id, At(week, 1, 8), At(week, 1, 19), "eleven hours", source, now, Bogota, []);
+                sheet.AddEntry(owner.Id, At(week, 2, 8), At(week, 2, 9), "third manual entry", source, now, Bogota, []);
+                sheet.Submit(owner.Id, now, Bogota);
+                if (ago == 2)
+                {
+                    sheet.Approve(sam.Id, new TeamId(teamId), now);
+                }
+                await sheets.SaveOrUpdateAsync(sheet, Ct);
+            }
+        }
+        HttpClient client = await SignedInAsync(sam);
+
+        JsonElement result = await JsonAsync(client, "/api/reports/exceptions");
+        JsonElement queue = await JsonAsync(client, "/api/reports/review-queue");
+
+        JsonElement[] items = result.GetProperty("items").EnumerateArray().ToArray();
+        items.Should().HaveCount(2).And.OnlyContain(e => e.GetProperty("userId").GetGuid() == eve.Id.Value);
+        items.Single(e => e.GetProperty("kind").GetString() == "LongEntry").GetProperty("seconds").GetInt64().Should().Be(11 * 3600);
+        items.Single(e => e.GetProperty("kind").GetString() == "ManyManualChanges").GetProperty("count").GetInt32().Should().Be(3);
+        queue.GetProperty("timesheets")[0].GetProperty("totalSeconds").GetInt64().Should().Be(22 * 3600);
     }
 
     private async Task<Guid> TeamAsync(User supervisor, User employee)

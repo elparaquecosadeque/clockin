@@ -44,6 +44,10 @@ export class TeamWeekComponent {
   protected readonly grid = signal<TeamWeek | null>(null);
   protected readonly clockedIn = signal<ClockedIn[]>([]);
   protected readonly exceptions = signal<WeekException[]>([]);
+  protected readonly exceptionPage = signal(1);
+  protected readonly moreExceptions = signal(false);
+  protected readonly exceptionsBusy = signal(false);
+  protected readonly exceptionsFailed = signal(false);
   protected readonly loadFailed = signal(false);
   protected readonly exporting = signal(false);
   /** The team id to show, or '' for all. Filtering happens here; the CSV export asks the server for the team. */
@@ -103,14 +107,26 @@ export class TeamWeekComponent {
 
   private async loadMonitoring(): Promise<void> {
     try {
-      const [clockedIn, exceptions] = await Promise.all([
-        this.reports.clockedIn(),
-        this.reports.exceptions(),
-      ]);
+      const [clockedIn] = await Promise.all([this.reports.clockedIn(), this.loadExceptions()]);
       this.clockedIn.set(clockedIn);
-      this.exceptions.set(exceptions);
     } catch {
       // The grid is the page; these panels stay empty if they fail.
+    }
+  }
+
+  protected async loadExceptions(page = this.exceptionPage()): Promise<void> {
+    if (this.exceptionsBusy()) return;
+    this.exceptionsBusy.set(true);
+    this.exceptionsFailed.set(false);
+    try {
+      const result = await this.reports.exceptions(page);
+      this.exceptions.set(result.items);
+      this.moreExceptions.set(result.hasMore);
+      this.exceptionPage.set(page);
+    } catch {
+      this.exceptionsFailed.set(true);
+    } finally {
+      this.exceptionsBusy.set(false);
     }
   }
 }

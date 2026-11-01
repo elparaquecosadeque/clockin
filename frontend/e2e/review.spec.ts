@@ -22,6 +22,7 @@ const text = {
 };
 
 const now = new Date('2026-10-30T15:00:00Z');
+const eveId = '0192f0a4-7c1e-7b3a-9d2e-5f6a7b8c9d0e';
 const can = {
   changeEntries: false,
   submit: false,
@@ -37,7 +38,7 @@ async function mockApi(page: Page): Promise<void> {
   const timesheet = () => ({
     id: 't1',
     version: 2,
-    ownerId: 'eve',
+    ownerId: eveId,
     ownerName: 'Eve',
     teamName: 'Warehouse',
     weekStart: '2026-10-19',
@@ -101,12 +102,14 @@ async function mockApi(page: Page): Promise<void> {
       case '/api/reports/review-queue':
         return route.fulfill({
           json: {
+            hasMoreTimesheets: false,
+            hasMoreCorrections: false,
             timesheets: approved
               ? []
               : [
                   {
                     timesheetId: 't1',
-                    ownerId: 'eve',
+                    ownerId: eveId,
                     name: 'Eve',
                     teamName: 'Warehouse',
                     weekStart: '2026-10-19',
@@ -117,7 +120,7 @@ async function mockApi(page: Page): Promise<void> {
             corrections: [],
           },
         });
-      case '/api/timesheets/users/eve/2026-10-19':
+      case `/api/timesheets/users/${eveId}/2026-10-19`:
         return route.fulfill({ json: timesheet() });
       case '/api/timesheets/t1/approve':
         approved = true;
@@ -140,7 +143,7 @@ test('a supervisor approves a submitted timesheet from the review queue and prin
   await expect(review).toContainText('1');
   await page.getByRole('link', { name: /Eve/ }).click();
 
-  await expect(page).toHaveURL(/\/review\/eve\/2026-10-19$/);
+  await expect(page).toHaveURL(new RegExp(`/review/${eveId}/2026-10-19$`));
   await expect(page.getByRole('heading', { name: 'Eve' })).toBeVisible();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 
@@ -154,4 +157,48 @@ test('a supervisor approves a submitted timesheet from the review queue and prin
   await expect(page.getByRole('button', { name: t.print })).toBeHidden();
   await expect(page.getByRole('navigation', { name: t.mainNav })).toBeHidden();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+});
+
+test('pages review work with accessible controls', async ({ page }, testInfo) => {
+  const spanish = testInfo.project.name === 'es';
+  await mockApi(page);
+  await page.route('**/api/reports/review-queue?*', (route) => {
+    const params = new URL(route.request().url()).searchParams;
+    const second = params.get('timesheetPage') === '2';
+    return route.fulfill({
+      json: {
+        timesheets: [
+          {
+            timesheetId: second ? 't2' : 't1',
+            ownerId: eveId,
+            name: second ? 'Ed' : 'Eve',
+            teamName: 'Warehouse',
+            weekStart: '2026-10-19',
+            totalSeconds: 28800,
+            submittedAt: null,
+          },
+        ],
+        corrections: [],
+        hasMoreTimesheets: !second,
+        hasMoreCorrections: false,
+      },
+    });
+  });
+  await page.goto('/review');
+  const pages = page.getByRole('navigation', {
+    name: spanish ? 'Páginas de hojas de horas' : 'Timesheet pages',
+  });
+  await expect(
+    pages.getByRole('button', { name: spanish ? 'Anterior' : 'Previous', exact: true }),
+  ).toBeDisabled();
+  await pages.getByRole('button', { name: spanish ? 'Siguiente' : 'Next', exact: true }).click();
+  await expect(page.getByRole('link', { name: /Ed/ })).toBeVisible();
+  await expect(pages).toContainText(spanish ? 'Página 2' : 'Page 2');
+  await expect(
+    pages.getByRole('button', { name: spanish ? 'Siguiente' : 'Next', exact: true }),
+  ).toBeDisabled();
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await page.screenshot({ path: testInfo.outputPath('review-pagination.png'), fullPage: true });
+  await pages.getByRole('button', { name: spanish ? 'Anterior' : 'Previous', exact: true }).click();
+  await expect(page.getByRole('link', { name: /Eve/ })).toBeVisible();
 });

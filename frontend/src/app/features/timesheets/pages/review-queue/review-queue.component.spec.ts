@@ -4,6 +4,41 @@ import { TimesheetService } from '../../services/timesheet.service';
 import { ReviewQueueComponent } from './review-queue.component';
 
 describe('ReviewQueueComponent', () => {
+  it('pages the two queues independently and keeps the page on a failed request', async () => {
+    const reviewQueue = vi.fn(async () => ({
+      timesheets: [],
+      corrections: [],
+      hasMoreTimesheets: true,
+      hasMoreCorrections: true,
+    }));
+    TestBed.configureTestingModule({
+      imports: [ReviewQueueComponent],
+      providers: [provideRouter([]), { provide: TimesheetService, useValue: { reviewQueue } }],
+    });
+    const fixture = TestBed.createComponent(ReviewQueueComponent);
+    await fixture.whenStable();
+    const element = fixture.nativeElement as HTMLElement;
+    element
+      .querySelector<HTMLButtonElement>('[aria-label="Timesheet pages"] button:last-child')!
+      .click();
+    await fixture.whenStable();
+    expect(reviewQueue).toHaveBeenLastCalledWith(2, 1);
+    element
+      .querySelector<HTMLButtonElement>('[aria-label="Correction pages"] button:last-child')!
+      .click();
+    await fixture.whenStable();
+    expect(reviewQueue).toHaveBeenLastCalledWith(2, 2);
+    reviewQueue.mockRejectedValueOnce(new Error('offline'));
+    element
+      .querySelector<HTMLButtonElement>('[aria-label="Timesheet pages"] button:last-child')!
+      .click();
+    await fixture.whenStable();
+    expect(element.querySelector('[role=alert]')).not.toBeNull();
+    expect(element.querySelector('[aria-label="Timesheet pages"]')!.textContent).toContain(
+      'Page 2',
+    );
+  });
+
   it('links each queued timesheet and correction to its week', async () => {
     TestBed.configureTestingModule({
       imports: [ReviewQueueComponent],

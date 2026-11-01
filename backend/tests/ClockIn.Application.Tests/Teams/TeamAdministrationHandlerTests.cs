@@ -28,10 +28,9 @@ public sealed class TeamAdministrationHandlerTests
         _world.TeamsRepository.NameInUseAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns(c => new[] { "warehouse", "office" }.Contains(c.Arg<string>().Trim().ToLowerInvariant()));
         _reads.PeopleAsync(Arg.Any<CancellationToken>()).Returns(_ => _people);
-        _reads.TimesheetsAsync(Arg.Any<IReadOnlyCollection<Guid>>(), null, Arg.Any<CancellationToken>())
-            .Returns(c => (IReadOnlyList<TimesheetRow>)[.. _timesheets.Where(t => c.Arg<IReadOnlyCollection<Guid>>().Contains(t.OwnerId))]);
-        _reads.CorrectionsAsync(Arg.Any<IReadOnlyCollection<Guid>>(), Arg.Any<CancellationToken>())
-            .Returns(c => (IReadOnlyList<CorrectionRow>)[.. _corrections.Where(r => c.Arg<IReadOnlyCollection<Guid>>().Contains(r.OwnerId))]);
+        _reads.HasPendingReviewsAsync(Arg.Any<IReadOnlyCollection<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(c => _timesheets.Any(t => c.Arg<IReadOnlyCollection<Guid>>().Contains(t.OwnerId) && t.Status == TimesheetStatus.Submitted)
+                || _corrections.Any(r => c.Arg<IReadOnlyCollection<Guid>>().Contains(r.OwnerId) && r.Status == CorrectionStatus.Pending));
     }
 
     private static CancellationToken Ct => CancellationToken.None;

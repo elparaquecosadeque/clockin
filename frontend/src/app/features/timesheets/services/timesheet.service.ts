@@ -63,8 +63,12 @@ export class TimesheetService {
     return this.post(`/api/correction-requests/${requestId}/decline`, { comment });
   }
 
-  reviewQueue(): Promise<ReviewQueue> {
-    return firstValueFrom(this.http.get<ReviewQueue>('/api/reports/review-queue'));
+  reviewQueue(timesheetPage = 1, correctionPage = 1): Promise<ReviewQueue> {
+    return firstValueFrom(
+      this.http.get<ReviewQueue>('/api/reports/review-queue', {
+        params: { timesheetPage, correctionPage },
+      }),
+    );
   }
 
   private async post(url: string, body: unknown = null): Promise<void> {

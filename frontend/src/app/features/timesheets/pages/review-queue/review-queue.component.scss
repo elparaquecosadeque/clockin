@@ -25,6 +25,14 @@ mat-nav-list {
   font-variant-numeric: tabular-nums;
 }
 
+.pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
 .empty {
   margin: 0;
   color: var(--mat-sys-on-surface-variant);

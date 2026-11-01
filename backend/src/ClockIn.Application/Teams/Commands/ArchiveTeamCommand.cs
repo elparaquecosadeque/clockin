@@ -5,7 +5,6 @@ using ClockIn.Application.Teams.Interfaces;
 using ClockIn.Domain.Accounts;
 using ClockIn.Domain.Common;
 using ClockIn.Domain.Teams;
-using ClockIn.Domain.Timesheets;
 
 namespace ClockIn.Application.Teams.Commands;
 
@@ -24,8 +23,7 @@ public sealed class ArchiveTeamHandler(ITeamRepository teamsRepository, IReporti
         }
 
         Guid[] ids = [.. members.Select(p => p.Id)];
-        if ((await reads.TimesheetsAsync(ids, null, ct)).Any(t => t.Status == TimesheetStatus.Submitted)
-            || (await reads.CorrectionsAsync(ids, ct)).Any(r => r.Status == CorrectionStatus.Pending))
+        if (await reads.HasPendingReviewsAsync(ids, ct))
         {
             throw new DomainException("TeamHasPendingReviews", "Approve or return the team's pending timesheets and corrections first.");
         }

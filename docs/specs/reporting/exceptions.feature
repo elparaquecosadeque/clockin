@@ -5,6 +5,14 @@ Feature: Exceptions
     Given it is Friday 2026-10-30 10:00
     And Sam is signed in
 
+  @api
+  Scenario: Pages matching exceptions without hiding old unresolved weeks
+    Given the supervisor has 52 unresolved overdue weeks in scope
+    When the supervisor requests the first page of exceptions
+    Then it contains the newest 50 matching exceptions and indicates another page
+    And the second page contains the remaining 2 without duplicates
+    And invalid page numbers return 400 Bad Request
+
   Scenario: Lists overdue Drafts from ended weeks
     Given Eve's timesheet for week 2026-10-19 is a Draft
     And Ed's timesheet for week 2026-10-19 is Submitted

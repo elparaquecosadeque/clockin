@@ -144,7 +144,7 @@
     }
   </section>
 
-  <section class="panel" aria-labelledby="exceptions-title">
+  <section class="panel" aria-labelledby="exceptions-title" [attr.aria-busy]="exceptionsBusy()">
     <h2 id="exceptions-title" i18n="@@exceptions">Exceptions</h2>
     @if (exceptions().length) {
       <ul>
@@ -176,8 +176,42 @@
           </li>
         }
       </ul>
-    } @else {
+    } @else if (!exceptionsFailed() && !exceptionsBusy()) {
       <p class="empty" i18n="@@noExceptions">No exceptions.</p>
+    }
+    @if (exceptionsFailed()) {
+      <div role="alert">
+        <p i18n="@@exceptionsLoadFailed">Exceptions couldn't be loaded.</p>
+        <button
+          mat-button
+          (click)="loadExceptions()"
+          [disabled]="exceptionsBusy()"
+          i18n="@@tryAgain"
+        >
+          Try again
+        </button>
+      </div>
+    }
+    @if (exceptionPage() > 1 || moreExceptions()) {
+      <nav class="pages" aria-label="Exception pages" i18n-aria-label="@@exceptionPages">
+        <button
+          mat-button
+          [disabled]="exceptionsBusy() || exceptionPage() === 1"
+          (click)="loadExceptions(exceptionPage() - 1)"
+          i18n="@@previousPage"
+        >
+          Previous
+        </button>
+        <span aria-live="polite" i18n="@@reportPageNumber">Page {{ exceptionPage() }}</span>
+        <button
+          mat-button
+          [disabled]="exceptionsBusy() || !moreExceptions()"
+          (click)="loadExceptions(exceptionPage() + 1)"
+          i18n="@@nextPage"
+        >
+          Next
+        </button>
+      </nav>
     }
   </section>
 </div>

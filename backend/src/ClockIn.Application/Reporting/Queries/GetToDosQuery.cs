@@ -6,34 +6,26 @@ using ClockIn.Domain.Timesheets;
 
 namespace ClockIn.Application.Reporting.Queries;
 
-/// <summary>The signed-in user's own to-dos plus, for approvers, their queue counts.</summary>
 public sealed record GetToDosQuery;
 
+/// <summary>Badges use SQL counts, never a materialized review queue.</summary>
 public sealed class GetToDosHandler(
     ICurrentUser currentUser,
     IReportingReads reads,
     TimeProvider time)
 {
-    /// <summary>Declined requests stay on the badge this long (to-do-badges.feature).</summary>
     public static readonly TimeSpan DeclinedWindow = TimeSpan.FromDays(7);
 
     public async Task<ToDosDto> HandleAsync(GetToDosQuery query, CancellationToken ct)
     {
         ReportingScope scope = await ReportingScope.LoadAsync(currentUser, reads, ct);
         DateTimeOffset now = time.GetUtcNow();
-        Guid me = scope.Actor.Id;
-
-        IReadOnlyList<TimesheetRow> mine = scope.Actor.Role.Can(Permissions.PunchTime) ? await reads.TimesheetsAsync([me], null, ct) : [];
-        IReadOnlyList<CorrectionRow> myRequests = mine.Count > 0 ? await reads.CorrectionsAsync([me], ct) : [];
-        List<TimesheetRow> drafts = [.. mine.Where(t => t.Status == TimesheetStatus.Draft).OrderBy(t => t.WeekStart)];
-        ReviewQueueDto queue = scope.CanReview ? await GetReviewQueueHandler.BuildAsync(scope, reads, now, ct) : new([], []);
-
-        return new ToDosDto(
-            mine.SelectMany(t => t.Entries).FirstOrDefault(e => e.End is null)?.Start,
-            [.. drafts.Where(t => t.ReturnComment is not null).Select(t => t.WeekStart)],
-            [.. drafts.Where(t => t.ReturnComment is null && WorkedTimeHelper.HasEnded(t.WeekStart, now, time.LocalTimeZone)).Select(t => t.WeekStart)],
-            myRequests.Count(r => r.Status == CorrectionStatus.Declined && r.DecidedAt >= now - DeclinedWindow),
-            queue.Timesheets.Count,
-            queue.Corrections.Count);
+        ToDosDto mine = scope.Actor.Role.Can(Permissions.PunchTime)
+            ? await reads.PersonalToDosAsync(scope.Actor.Id, Week.Containing(now, time.LocalTimeZone).Start, now - DeclinedWindow, ct)
+            : new(null, [], [], 0, 0, 0);
+        (int timesheets, int corrections) = scope.CanReview
+            ? await reads.ReviewCountsAsync(scope.QueueOwners.Select(p => p.Id).ToArray(), ct)
+            : (0, 0);
+        return mine with { TimesheetsToReview = timesheets, CorrectionsToDecide = corrections };
     }
 }

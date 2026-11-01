@@ -46,7 +46,7 @@ describe('TeamWeekComponent', () => {
         overLimit: false,
       },
     ]),
-    exceptions: vi.fn(async () => []),
+    exceptions: vi.fn(async (_page: number = 1) => ({ items: [], hasMore: true })),
   };
   let fixture: ComponentFixture<TeamWeekComponent>;
 
@@ -95,5 +95,15 @@ describe('TeamWeekComponent', () => {
 
   it('shows who is clocked in now', () => {
     expect(element().querySelector('.panel')?.textContent).toContain('since Fri, Oct 30, 08:00');
+  });
+
+  it('pages exceptions without reloading the weekly grid', async () => {
+    const gridCalls = reports.teamWeek.mock.calls.length;
+    element()
+      .querySelector<HTMLButtonElement>('[aria-label="Exception pages"] button:last-child')!
+      .click();
+    await fixture.whenStable();
+    expect(reports.exceptions).toHaveBeenLastCalledWith(2);
+    expect(reports.teamWeek.mock.calls.length).toBe(gridCalls);
   });
 });

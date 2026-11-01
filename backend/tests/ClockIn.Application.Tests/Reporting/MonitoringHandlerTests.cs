@@ -157,8 +157,8 @@ public sealed class MonitoringHandlerTests
     private Task<IReadOnlyList<ClockedInDto>> ClockedIn() =>
         new GetClockedInHandler(_world.CurrentUser, _world.Reads, _world.Clock).HandleAsync(new GetClockedInQuery(), CancellationToken.None);
 
-    private Task<IReadOnlyList<ExceptionDto>> Exceptions() =>
-        new GetExceptionsHandler(_world.CurrentUser, _world.Reads, _world.Clock).HandleAsync(new GetExceptionsQuery(), CancellationToken.None);
+    private async Task<IReadOnlyList<ExceptionDto>> Exceptions() =>
+        (await new GetExceptionsHandler(_world.CurrentUser, _world.Reads, _world.Clock).HandleAsync(new GetExceptionsQuery(), CancellationToken.None)).Items;
 
     private Task<ToDosDto> ToDos() =>
         new GetToDosHandler(_world.CurrentUser, _world.Reads, _world.Clock).HandleAsync(new GetToDosQuery(), CancellationToken.None);
