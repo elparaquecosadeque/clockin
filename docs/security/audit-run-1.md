@@ -35,7 +35,7 @@ Two leads on the sign-in endpoint needed a test to confirm, and the review liste
 |---|---|
 | The former supervisor of an archived team kept approval rights over members left in it | Fixed in `2ebaf34` |
 | An admin can issue a password link for another admin | Accepted: admins are equally trusted, and it is the only way back in for an admin who forgot their password |
-| Two admins deactivating each other at the same moment could leave no active admin | Fixed in `f4d5896` |
+| Two admins deactivating each other at the same moment could leave no active admin | Partly fixed in `f4d5896`; the remaining case is open in [run 2](audit-run-2.md) |
 | Concurrent admin actions on users and teams could leave a team led by a deactivated or demoted user | Fixed in `020515e` |
 | Unlocking a user wrote no audit entry | Fixed in `f4d5896` |
 
