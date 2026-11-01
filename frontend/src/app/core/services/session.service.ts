@@ -83,7 +83,16 @@ export class SessionService {
     }
   }
 
-  private async requestRefresh(): Promise<boolean> {
+  /**
+   * Tabs share the refresh cookie and each refresh rotates it, so one tab at a time: a second tab sending the old
+   * cookie looks like a stolen token, and the server ends every session. Web Locks needs HTTPS or localhost.
+   */
+  private requestRefresh(): Promise<boolean> {
+    const locks = navigator.locks as LockManager | undefined;
+    return locks ? locks.request('clockin-refresh', () => this.sendRefresh()) : this.sendRefresh();
+  }
+
+  private async sendRefresh(): Promise<boolean> {
     try {
       const response = await firstValueFrom(
         this.http.post<AccessToken>('/api/auth/refresh', null, { context: silent() }),

@@ -60,6 +60,31 @@ describe('SessionService', () => {
     expect(session.accessToken()).toBe('token-2');
   });
 
+  it('refreshes inside a lock shared by every tab, so another tab never sends the rotated token', async () => {
+    let grant: () => void = () => undefined;
+    const request = vi.fn((_name: string, callback: () => Promise<boolean>) =>
+      new Promise<void>((resolve) => (grant = resolve)).then(callback),
+    );
+    Object.defineProperty(navigator, 'locks', { value: { request }, configurable: true });
+
+    try {
+      const refreshed = session.refresh();
+      await flushMicrotasks();
+      // Another tab holds the lock: nothing is sent yet.
+      http.expectNone('/api/auth/refresh');
+
+      grant();
+      await flushMicrotasks();
+      http.expectOne('/api/auth/refresh').flush({ accessToken: 'token-5', expiresAt: '' });
+
+      expect(await refreshed).toBe(true);
+      expect(request).toHaveBeenCalledWith('clockin-refresh', expect.any(Function));
+      expect(session.accessToken()).toBe('token-5');
+    } finally {
+      delete (navigator as { locks?: unknown }).locks;
+    }
+  });
+
   it('signs out locally when the refresh is rejected', async () => {
     const refreshed = session.refresh();
     http.expectOne('/api/auth/refresh').flush(null, { status: 401, statusText: 'Unauthorized' });

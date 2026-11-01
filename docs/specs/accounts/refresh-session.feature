@@ -12,6 +12,12 @@ Feature: Refresh a session
     Given Eve refreshes the session every 15 minutes for 20 hours
     Then every refresh succeeds
 
+  Scenario: Two tabs refresh at the same moment
+    Given Eve has the app open in two tabs and her access token has expired
+    When both tabs refresh the session at the same moment
+    Then the second tab waits for the first and refreshes with the new refresh token
+    And Eve stays signed in on every device
+
   Scenario: Rejects an expired refresh token
     Given Eve's refresh token was issued 12 hours and 1 second ago
     When Eve refreshes the session

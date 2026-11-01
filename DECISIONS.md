@@ -8,6 +8,7 @@ Each entry has the decision, the reason, and who decided (**user**, or **dev** w
 
 | Decision | Why | By |
 |---|---|---|
+| The SPA refreshes the session inside a Web Lock shared by every tab; without Web Locks (plain HTTP off localhost) it refreshes as before. No grace window for the previous refresh token on the server. | Two tabs refreshing at once sent the rotated cookie, which reads as a stolen token and ended every session (security audit run 1). The lock fixes it with no loosening of reuse detection. | user |
 | Admin commands whose rule reads a user and writes a team, or the other way round, also save the row they read (users before teams) and run in one transaction: create team, change supervisor, move employee, archive team, change role, reactivate. Of two admins racing, the second gets a 409 `ConcurrencyConflict`. Archive against a concurrent timesheet submit stays open. | READ COMMITTED alone lets each rule pass on a stale read (security audit run 1). The version check already exists, so no locks or new constraints are needed. | user |
 | Phase 2: HSTS and the HTTPS redirect. | Whether the API or the proxy terminates TLS isn't known yet. | user |
 | Not fixed: the set-password `?token=` left in browser history, CSV formulas behind leading spaces or full-width signs, and approve/return without the page's version. | Judged not worth it for now. | user |
