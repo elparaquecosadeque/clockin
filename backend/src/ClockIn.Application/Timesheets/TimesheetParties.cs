@@ -16,7 +16,7 @@ public sealed record TimesheetParties(User Actor, User Owner, Team? OwnerTeam)
     public bool IsApprover =>
         !IsOwner
         && (Actor.Role.Can(Permissions.ReviewAll)
-            || (Actor.Role.Can(Permissions.ReviewTeam) && OwnerTeam is not null && OwnerTeam.SupervisorId == Actor.Id));
+            || (Actor.Role.Can(Permissions.ReviewTeam) && OwnerTeam is { IsArchived: false } && OwnerTeam.SupervisorId == Actor.Id));
 
     public bool CanView => IsOwner || IsApprover;
 

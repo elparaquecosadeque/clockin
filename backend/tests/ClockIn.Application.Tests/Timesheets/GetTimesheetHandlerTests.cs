@@ -99,6 +99,18 @@ public sealed class GetTimesheetHandlerTests
     }
 
     [Fact]
+    public async Task Hides_the_timesheet_from_the_supervisor_of_an_archived_team()
+    {
+        _world.Week(_world.Eve, LastWeek, TimesheetStatus.Approved);
+        _world.Warehouse.Archive();
+        _world.SignIn(_world.Sam);
+
+        var act = () => View(_world.Eve.Id, LastWeek);
+
+        await act.Should().ThrowAsync<ForbiddenException>();
+    }
+
+    [Fact]
     public async Task Offers_the_approver_the_decisions_and_the_owner_a_correction_request()
     {
         Timesheet week = _world.Week(_world.Eve, LastWeek, TimesheetStatus.Submitted);

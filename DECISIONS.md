@@ -10,6 +10,9 @@ Each entry has the decision, the reason, and who decided (**user**, or **dev** w
 |---|---|---|
 | A sign-in whose save loses a concurrency race is rejected with `InvalidCredentials`, not 409. A user signing in from two tabs at once may have to retry. | Only registered emails reached the versioned save, so the 409 revealed which emails exist. Confirmed by a failing handler test. | user |
 | The email in the failed sign-in audit entry has its control characters replaced by `?`. | It comes from an anonymous caller, and Serilog's default text template writes it unquoted, so a line break forged audit lines. Confirmed by a failing handler test. | user |
+| The supervisor of an archived team is no longer its members' approver; admins still are. | Archiving frees the supervisor to lead another team (archive-team.feature), so keeping rights over the old one was an oversight. Reporting already ignored archived teams. | user |
+| Every API response carries `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Content-Security-Policy: default-src 'none'; frame-ancestors 'none'` and `Referrer-Policy: no-referrer`. The SPA's headers are left to its host. | The API only serves JSON, so nothing may load from it or frame it. The repository has no frontend hosting configuration to put headers in. | user / dev |
+| The SPA refuses an owner id from the page URL that isn't a GUID, without calling the API. | The id went into the request path raw, so `..` could point the request at another endpoint; encoding alone doesn't stop `..`. | user / dev |
 
 ## 2026-10-31: Code review naming
 

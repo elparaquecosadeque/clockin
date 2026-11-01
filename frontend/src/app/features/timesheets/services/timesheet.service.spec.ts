@@ -17,13 +17,20 @@ describe('TimesheetService', () => {
 
   afterEach(() => http.verify());
 
+  const owner = '0192f0a4-7c1e-7b3a-9d2e-5f6a7b8c9d0e';
+
   it('reads and submits the own week or another user’s', async () => {
     void service.get(null, '2026-10-19');
     http.expectOne({ method: 'GET', url: '/api/timesheets/mine/2026-10-19' }).flush({});
-    void service.submit('u2', '2026-10-19');
+    void service.submit(owner, '2026-10-19');
     http
-      .expectOne({ method: 'POST', url: '/api/timesheets/users/u2/2026-10-19/submit' })
+      .expectOne({ method: 'POST', url: `/api/timesheets/users/${owner}/2026-10-19/submit` })
       .flush(null);
+  });
+
+  it('refuses an owner id from the URL that is not a user id, without calling the API', async () => {
+    await expect(service.get('..', '2026-10-19')).rejects.toThrow();
+    await expect(service.submit('../../reports/team-week', '2026-10-19')).rejects.toThrow();
   });
 
   it('sends the version with edits and deletes', () => {

@@ -170,6 +170,7 @@ public sealed class Program
     private static void UsePipeline(WebApplication app)
     {
         app.UseMiddleware<CorrelationIdMiddleware>();
+        app.UseMiddleware<SecurityHeadersMiddleware>();
         app.UseSerilogRequestLogging();
         app.UseExceptionHandler();
         app.UseStatusCodePages();

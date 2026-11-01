@@ -10,6 +10,7 @@ Feature: Archive a team
     Then team "Night Shift" is archived
     And Sid leads no team and can be given another one
     And Rob's timesheets still show team "Night Shift"
+    And Sid can no longer view or decide on Rob's timesheets; admins still can
 
   Scenario: Archives a team with no employees at all
     Given team "Empty" is led by "Pat" and has no employees

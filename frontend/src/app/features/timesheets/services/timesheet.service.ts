@@ -9,11 +9,11 @@ import { Timesheet } from '../models/timesheet.model';
 export class TimesheetService {
   private readonly http = inject(HttpClient);
 
-  get(ownerId: string | null, weekStart: string): Promise<Timesheet> {
+  async get(ownerId: string | null, weekStart: string): Promise<Timesheet> {
     return firstValueFrom(this.http.get<Timesheet>(`${weekPath(ownerId)}/${weekStart}`));
   }
 
-  submit(ownerId: string | null, weekStart: string): Promise<void> {
+  async submit(ownerId: string | null, weekStart: string): Promise<void> {
     return this.post(`${weekPath(ownerId)}/${weekStart}/submit`);
   }
 
@@ -72,6 +72,17 @@ export class TimesheetService {
   }
 }
 
+const userId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 function weekPath(ownerId: string | null): string {
-  return ownerId ? `/api/timesheets/users/${ownerId}` : '/api/timesheets/mine';
+  if (!ownerId) {
+    return '/api/timesheets/mine';
+  }
+
+  // The id comes from the page URL: anything but a user id, such as "..", could point the request elsewhere.
+  if (!userId.test(ownerId)) {
+    throw new Error(`Not a user id: ${ownerId}`);
+  }
+
+  return `/api/timesheets/users/${ownerId}`;
 }

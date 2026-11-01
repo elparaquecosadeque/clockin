@@ -51,4 +51,18 @@ public sealed class HostTests(ApiFactory factory)
         string generated = response.Headers.GetValues(CorrelationIdMiddleware.Header).Single();
         generated.Should().MatchRegex("^[0-9a-f]{32}$");
     }
+
+    [Theory]
+    [InlineData("/health/live")]
+    [InlineData("/api/me")]
+    public async Task Sends_the_security_headers_on_every_response(string path)
+    {
+        HttpResponseMessage response = await factory.CreateClient().GetAsync(path, TestContext.Current.CancellationToken);
+
+        response.Headers.GetValues("X-Content-Type-Options").Should().ContainSingle().Which.Should().Be("nosniff");
+        response.Headers.GetValues("X-Frame-Options").Should().ContainSingle().Which.Should().Be("DENY");
+        response.Headers.GetValues("Content-Security-Policy").Should().ContainSingle()
+            .Which.Should().Be("default-src 'none'; frame-ancestors 'none'");
+        response.Headers.GetValues("Referrer-Policy").Should().ContainSingle().Which.Should().Be("no-referrer");
+    }
 }
