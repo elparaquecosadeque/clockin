@@ -40,6 +40,24 @@ public sealed class EntryChangeHandlerTests
     }
 
     [Fact]
+    public async Task Locks_the_owner_before_reading_the_neighbouring_weeks()
+    {
+        Timesheet week = _world.Week(_world.Eve, LastWeek);
+
+        await Add(null, "2026-10-29 08:00", "2026-10-29 12:00");
+        await Edit(week.Entries.Single().Id, "2026-10-20 07:30", "2026-10-20 12:00", week.Version);
+
+        // Two writes for Eve in neighbouring weeks would each miss the other's entry.
+        Received.InOrder(() =>
+        {
+            _world.TimesheetsRepository.LockOwnerAsync(_world.Eve.Id, Arg.Any<CancellationToken>());
+            _world.TimesheetsRepository.FindWithOpenEntryAsync(_world.Eve.Id, Arg.Any<CancellationToken>());
+            _world.TimesheetsRepository.LockOwnerAsync(_world.Eve.Id, Arg.Any<CancellationToken>());
+            _world.TimesheetsRepository.FindWithOpenEntryAsync(_world.Eve.Id, Arg.Any<CancellationToken>());
+        });
+    }
+
+    [Fact]
     public async Task Lets_an_admin_add_to_anyones_draft_flagged_as_the_admin()
     {
         _world.SignIn(_world.Ada);

@@ -65,4 +65,4 @@ All are domain constants, not configuration.
 | `Timesheet` | its entries and its history | Entries live inside, because whether they can change depends on the timesheet's status. |
 | `CorrectionRequest` | status, reason, decision | Accepting raises `CorrectionRequestAccepted`; a handler reopens the timesheet in the same transaction. |
 
-Rules that span aggregates (one open entry per user, no overlaps across a week boundary) are checked by the handler and backed by a database constraint (a unique partial index on open entries), so concurrent requests can't break them.
+Rules that span aggregates are checked by the handler and protected against concurrent requests: one open entry per user by a database constraint (a unique partial index on open entries), and no overlaps across a week boundary by a per-user lock that entry writes take before reading the neighbouring weeks.

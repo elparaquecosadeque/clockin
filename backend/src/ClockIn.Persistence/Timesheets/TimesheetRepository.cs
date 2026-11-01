@@ -6,6 +6,7 @@ using ClockIn.Domain.Timesheets;
 using ClockIn.Persistence.Common;
 using LinqToDB;
 using LinqToDB.Async;
+using LinqToDB.Data;
 
 namespace ClockIn.Persistence.Timesheets;
 
@@ -44,6 +45,11 @@ public sealed class TimesheetRepository(AppDataConnection db) : ITimesheetReposi
             select timesheet).FirstOrDefaultAsync(ct);
         return record is null ? null : await LoadAsync(record, ct);
     }
+
+    // A transaction-scoped advisory lock: released on commit or rollback. Two owners whose ids hash alike only wait
+    // for each other.
+    public Task LockOwnerAsync(UserId ownerId, CancellationToken ct) =>
+        db.ExecuteAsync("SELECT pg_advisory_xact_lock(hashtextextended(@owner::text, 0))", ct, new DataParameter("owner", ownerId.Value));
 
     public async Task SaveOrUpdateAsync(Timesheet timesheet, CancellationToken ct)
     {
