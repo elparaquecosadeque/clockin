@@ -8,6 +8,10 @@ Each entry has the decision, the reason, and who decided (**user**, or **dev** w
 
 | Decision | Why | By |
 |---|---|---|
+| Not fixed: the set-password `?token=` left in browser history, CSV formulas behind leading spaces or full-width signs, and approve/return without the page's version. | Judged not worth it for now. | user |
+| Phase 2 ([backlog](docs/backlog.md)): rate limiting behind a proxy, the SPA host's security headers, and log access and retention. | They depend on how and where the app is deployed. | user |
+| `.gitignore` excludes `.env*`, `*.pem`, `*.key`, `*.pfx`, `*.p12` and `appsettings.*.local.json`. | The JWT signing key is a PEM file; secrets never reach the repository. | user |
+| The team dialog's own "no free supervisor" hint is removed. | The page refuses to open the dialog when nobody is free and explains why in a snackbar, so the hint could never show. | user |
 | An admin may still issue an access link for another admin. | Admins are equally trusted: one can already deactivate another, the link is audited, and blocking it would leave an admin who forgot their password with no way back in (there's no email channel). | user |
 | Deactivating an admin also saves the acting admin, in id order, inside the same transaction. | Its version check makes the second of two admins deactivating each other at once fail with 409, so an active admin always remains. Saving in id order keeps the two transactions from deadlocking. Admins can't be demoted (`AdminRoleIsFixed`), so deactivation was the only way to lose one. | user / dev |
 | Unlocking a user writes a `UserUnlocked` audit entry. | Every other admin action on an account is audited. | user |

@@ -18,7 +18,7 @@ public sealed class CreateTeamValidator : AbstractValidator<CreateTeamCommand>
     public CreateTeamValidator()
     {
         RuleFor(c => c.Name).Must(n => !string.IsNullOrWhiteSpace(n)).WithMessage("Enter a name.")
-            .Must(n => n.Trim().Length <= Team.MaxNameLength).WithMessage($"Use at most {Team.MaxNameLength} characters.");
+            .Must(n => (n ?? "").Trim().Length <= Team.MaxNameLength).WithMessage($"Use at most {Team.MaxNameLength} characters.");
         RuleFor(c => c.SupervisorId).NotEmpty();
     }
 }

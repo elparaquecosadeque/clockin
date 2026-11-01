@@ -66,9 +66,10 @@ public sealed class CreateTeamHandlerTests
     }
 
     [Theory]
+    [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Fails_validation_on_a_blank_name(string name) =>
+    public void Fails_validation_on_a_blank_name(string? name) =>
         new CreateTeamValidator().TestValidate(new CreateTeamCommand(name, Guid.CreateVersion7()))
             .ShouldHaveValidationErrorFor(c => c.Name);
 

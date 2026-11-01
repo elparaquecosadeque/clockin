@@ -8,3 +8,12 @@ logs/
 *.db-shm
 *.db-wal
 TestResults/
+
+# Secrets: keys and local settings never reach the repository (CODE_STYLE.md, Configuration and secrets)
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.p12
+appsettings.*.local.json

@@ -20,11 +20,6 @@
             <mat-option [value]="supervisor.id">{{ supervisor.name }}</mat-option>
           }
         </mat-select>
-        @if (!data.supervisors?.length) {
-          <mat-hint i18n="@@noFreeSupervisors"
-            >Every supervisor leads a team. Create or promote one first.</mat-hint
-          >
-        }
         <mat-error i18n="@@supervisorRequired">Choose a supervisor.</mat-error>
       </mat-form-field>
     }

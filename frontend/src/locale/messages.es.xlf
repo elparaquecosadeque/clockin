@@ -277,15 +277,6 @@
         <target>Supervisor</target>
       </segment>
     </unit>
-    <unit id="noFreeSupervisors">
-      <notes>
-        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:25,27</note>
-      </notes>
-      <segment>
-        <source>Every supervisor leads a team. Create or promote one first.</source>
-        <target>Todos los supervisores ya dirigen un equipo. Crea o promueve uno primero.</target>
-      </segment>
-    </unit>
     <unit id="supervisorRequired">
       <notes>
         <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:28,29</note>

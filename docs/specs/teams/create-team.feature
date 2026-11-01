@@ -34,6 +34,7 @@ Feature: Create a team
 
       Examples:
         | name      |
+        | (missing) |
         |           |
         | "   "     |
         | 101 chars |

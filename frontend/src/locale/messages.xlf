@@ -247,17 +247,9 @@
         <source>Supervisor</source>
       </segment>
     </unit>
-    <unit id="noFreeSupervisors">
-      <notes>
-        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:25,27</note>
-      </notes>
-      <segment>
-        <source>Every supervisor leads a team. Create or promote one first.</source>
-      </segment>
-    </unit>
     <unit id="supervisorRequired">
       <notes>
-        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:28,29</note>
+        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:23,24</note>
       </notes>
       <segment>
         <source>Choose a supervisor.</source>
@@ -265,7 +257,7 @@
     </unit>
     <unit id="cancel">
       <notes>
-        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:36,37</note>
+        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:31,32</note>
         <note category="location">src/app/features/admin/components/user-dialog/user-dialog.component.html:54,55</note>
         <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:50,51</note>
         <note category="location">src/app/shared/components/choice-dialog/choice-dialog.component.html:18,19</note>
@@ -277,7 +269,7 @@
     </unit>
     <unit id="save">
       <notes>
-        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:37,38</note>
+        <note category="location">src/app/features/admin/components/team-dialog/team-dialog.component.html:32,33</note>
         <note category="location">src/app/features/admin/pages/teams/teams.component.ts:95</note>
         <note category="location">src/app/features/admin/pages/users/users.component.ts:164</note>
         <note category="location">src/app/features/timesheets/components/entry-dialog/entry-dialog.component.html:51,52</note>
