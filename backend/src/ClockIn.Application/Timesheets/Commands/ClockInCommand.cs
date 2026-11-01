@@ -11,7 +11,10 @@ namespace ClockIn.Application.Timesheets.Commands;
 /// <summary>Opens an entry now. The IP and user agent come from the request, not from the user.</summary>
 public sealed record ClockInCommand(string IpAddress, string UserAgent) : ITransactional;
 
-public sealed class ClockInHandler(ICurrentUser currentUser, ITimesheetRepository timesheetsRepository, TimeProvider time)
+public sealed class ClockInHandler(
+    ICurrentUser currentUser,
+    ITimesheetRepository timesheetsRepository,
+    TimeProvider time)
 {
     public async Task<TimeEntryDto> HandleAsync(ClockInCommand command, CancellationToken ct)
     {

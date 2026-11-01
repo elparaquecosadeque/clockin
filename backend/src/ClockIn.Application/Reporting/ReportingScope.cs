@@ -46,7 +46,10 @@ public sealed class ReportingScope
         ? People.Where(p => p.Role.Can(Permissions.PunchTime) && p.TeamId is null)
         : Reviewees;
 
-    public static async Task<ReportingScope> LoadAsync(ICurrentUser currentUser, IReportingReads reads, CancellationToken ct)
+    public static async Task<ReportingScope> LoadAsync(
+        ICurrentUser currentUser,
+        IReportingReads reads,
+        CancellationToken ct)
     {
         IReadOnlyList<PersonRow> people = await reads.PeopleAsync(ct);
         PersonRow actor = people.FirstOrDefault(p => p.Id == currentUser.Id.Value) ?? throw new UnauthorizedException();

@@ -9,7 +9,10 @@ namespace ClockIn.Application.Reporting.Queries;
 /// <summary>Submitted timesheets and pending correction requests waiting for the signed-in approver, oldest first.</summary>
 public sealed record GetReviewQueueQuery;
 
-public sealed class GetReviewQueueHandler(ICurrentUser currentUser, IReportingReads reads, TimeProvider time)
+public sealed class GetReviewQueueHandler(
+    ICurrentUser currentUser,
+    IReportingReads reads,
+    TimeProvider time)
 {
     public async Task<ReviewQueueDto> HandleAsync(GetReviewQueueQuery query, CancellationToken ct)
     {

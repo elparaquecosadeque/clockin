@@ -10,7 +10,10 @@ namespace ClockIn.Application.Timesheets.Commands;
 /// <summary>Closes the open entry now, even when it started in an earlier week.</summary>
 public sealed record ClockOutCommand(string IpAddress, string UserAgent) : ITransactional;
 
-public sealed class ClockOutHandler(ICurrentUser currentUser, ITimesheetRepository timesheetsRepository, TimeProvider time)
+public sealed class ClockOutHandler(
+    ICurrentUser currentUser,
+    ITimesheetRepository timesheetsRepository,
+    TimeProvider time)
 {
     public async Task<TimeEntryDto> HandleAsync(ClockOutCommand command, CancellationToken ct)
     {

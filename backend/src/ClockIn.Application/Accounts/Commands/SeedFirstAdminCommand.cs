@@ -8,7 +8,10 @@ namespace ClockIn.Application.Accounts.Commands;
 /// <param name="Email">The <c>FirstAdmin:Email</c> deploy setting; ignored once any admin is active.</param>
 public sealed record SeedFirstAdminCommand(string? Email);
 
-public sealed class SeedFirstAdminHandler(IUserRepository usersRepository, IAuditLog audit, TimeProvider time)
+public sealed class SeedFirstAdminHandler(
+    IUserRepository usersRepository,
+    IAuditLog audit,
+    TimeProvider time)
 {
     public async Task HandleAsync(SeedFirstAdminCommand command, CancellationToken ct)
     {

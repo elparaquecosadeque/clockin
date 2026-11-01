@@ -10,7 +10,10 @@ namespace ClockIn.Application.Accounts.Queries;
 
 public sealed record GetMeQuery;
 
-public sealed class GetMeHandler(ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository)
+public sealed class GetMeHandler(
+    ICurrentUser currentUser,
+    IUserRepository usersRepository,
+    ITeamRepository teamsRepository)
 {
     // ponytail: reads through the repositories; switch to an IUserReads projection when this query grows.
     public async Task<MeDto> HandleAsync(GetMeQuery query, CancellationToken ct)

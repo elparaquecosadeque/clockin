@@ -11,7 +11,10 @@ namespace ClockIn.Application.Timesheets;
 public static class CorrectionRules
 {
     /// <summary>A pending correction request blocks approving, returning and reopening until it is decided.</summary>
-    public static async Task EnsureNonePendingAsync(this ICorrectionRequestRepository correctionsRepository, TimesheetId timesheetId, CancellationToken ct)
+    public static async Task EnsureNonePendingAsync(
+        this ICorrectionRequestRepository correctionsRepository,
+        TimesheetId timesheetId,
+        CancellationToken ct)
     {
         if (await correctionsRepository.FindPendingAsync(timesheetId, ct) is not null)
         {
@@ -21,8 +24,12 @@ public static class CorrectionRules
 
     /// <summary>The request, once the signed-in user is the owner's current approver.</summary>
     public static async Task<CorrectionRequest> GetForApproverAsync(
-        this ICorrectionRequestRepository correctionsRepository, Guid requestId, ICurrentUser currentUser, IUserRepository usersRepository,
-        ITeamRepository teamsRepository, CancellationToken ct)
+        this ICorrectionRequestRepository correctionsRepository,
+        Guid requestId,
+        ICurrentUser currentUser,
+        IUserRepository usersRepository,
+        ITeamRepository teamsRepository,
+        CancellationToken ct)
     {
         CorrectionRequest request = await correctionsRepository.FindAsync(new CorrectionRequestId(requestId), ct)
             ?? throw new NotFoundException("Correction request not found.");

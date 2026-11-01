@@ -26,7 +26,11 @@ public sealed class ChangeRoleValidator : AbstractValidator<ChangeRoleCommand>
     }
 }
 
-public sealed class ChangeRoleHandler(ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, IAuditLog audit)
+public sealed class ChangeRoleHandler(
+    ICurrentUser currentUser,
+    IUserRepository usersRepository,
+    ITeamRepository teamsRepository,
+    IAuditLog audit)
 {
     public async Task HandleAsync(ChangeRoleCommand command, CancellationToken ct)
     {

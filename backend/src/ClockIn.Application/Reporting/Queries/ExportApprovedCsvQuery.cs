@@ -19,7 +19,10 @@ public sealed class ExportApprovedCsvValidator : AbstractValidator<ExportApprove
         RuleFor(q => q.WeekStart).Must(d => d.DayOfWeek == DayOfWeek.Monday).WithMessage("A week starts on a Monday.");
 }
 
-public sealed class ExportApprovedCsvHandler(ICurrentUser currentUser, IReportingReads reads, TimeProvider time)
+public sealed class ExportApprovedCsvHandler(
+    ICurrentUser currentUser,
+    IReportingReads reads,
+    TimeProvider time)
 {
     public async Task<CsvFileDto> HandleAsync(ExportApprovedCsvQuery query, CancellationToken ct)
     {

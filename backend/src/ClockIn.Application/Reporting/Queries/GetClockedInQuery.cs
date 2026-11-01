@@ -8,7 +8,10 @@ namespace ClockIn.Application.Reporting.Queries;
 /// <summary>Who has an open entry now: a supervisor's team, or everyone for admins.</summary>
 public sealed record GetClockedInQuery;
 
-public sealed class GetClockedInHandler(ICurrentUser currentUser, IReportingReads reads, TimeProvider time)
+public sealed class GetClockedInHandler(
+    ICurrentUser currentUser,
+    IReportingReads reads,
+    TimeProvider time)
 {
     public async Task<IReadOnlyList<ClockedInDto>> HandleAsync(GetClockedInQuery query, CancellationToken ct)
     {

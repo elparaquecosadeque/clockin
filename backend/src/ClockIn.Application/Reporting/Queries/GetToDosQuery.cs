@@ -9,7 +9,10 @@ namespace ClockIn.Application.Reporting.Queries;
 /// <summary>The signed-in user's own to-dos plus, for approvers, their queue counts.</summary>
 public sealed record GetToDosQuery;
 
-public sealed class GetToDosHandler(ICurrentUser currentUser, IReportingReads reads, TimeProvider time)
+public sealed class GetToDosHandler(
+    ICurrentUser currentUser,
+    IReportingReads reads,
+    TimeProvider time)
 {
     /// <summary>Declined requests stay on the badge this long (to-do-badges.feature).</summary>
     public static readonly TimeSpan DeclinedWindow = TimeSpan.FromDays(7);

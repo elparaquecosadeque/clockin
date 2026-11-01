@@ -17,7 +17,11 @@ public sealed class DeleteEntryValidator : AbstractValidator<DeleteEntryCommand>
 }
 
 public sealed class DeleteEntryHandler(
-    ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository, ITimesheetRepository timesheetsRepository, TimeProvider time)
+    ICurrentUser currentUser,
+    IUserRepository usersRepository,
+    ITeamRepository teamsRepository,
+    ITimesheetRepository timesheetsRepository,
+    TimeProvider time)
 {
     public async Task HandleAsync(DeleteEntryCommand command, CancellationToken ct)
     {

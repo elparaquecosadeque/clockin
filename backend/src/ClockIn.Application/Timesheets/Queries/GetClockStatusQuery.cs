@@ -8,7 +8,10 @@ namespace ClockIn.Application.Timesheets.Queries;
 
 public sealed record GetClockStatusQuery;
 
-public sealed class GetClockStatusHandler(ICurrentUser currentUser, ITimesheetRepository timesheetsRepository, TimeProvider time)
+public sealed class GetClockStatusHandler(
+    ICurrentUser currentUser,
+    ITimesheetRepository timesheetsRepository,
+    TimeProvider time)
 {
     // ponytail: reads through the repository; switch to an ITimesheetReads projection when reporting needs one.
     public async Task<ClockStatusDto> HandleAsync(GetClockStatusQuery query, CancellationToken ct)

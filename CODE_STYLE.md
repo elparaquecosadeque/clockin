@@ -70,7 +70,7 @@ Api, PublicApi ──► Application ──► Domain
 - Nullable reference types enabled.
 - File-scoped namespaces.
 - Classes are `sealed` by default; unseal only for a reason.
-- Primary constructors for dependency injection.
+- Primary constructors for dependency injection. With more than 2 dependencies, each goes on its own line, so the count shows at a glance; the same goes for methods that take dependencies (repositories, services) as parameters.
 - Variables of a repository type end in `Repository`: `ITimesheetRepository timesheetsRepository` ([ADR 0006](docs/adr/0006-repository-suffix-on-variables.md)).
 - Async methods end in `Async`, take a `CancellationToken` as the last parameter and always pass it on.
 - `var` only when the type is obvious from the right-hand side.

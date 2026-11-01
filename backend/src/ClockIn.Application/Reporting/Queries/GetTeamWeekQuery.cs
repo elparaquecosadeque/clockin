@@ -16,7 +16,10 @@ public sealed class GetTeamWeekValidator : AbstractValidator<GetTeamWeekQuery>
         RuleFor(q => q.WeekStart).Must(d => d.DayOfWeek == DayOfWeek.Monday).WithMessage("A week starts on a Monday.");
 }
 
-public sealed class GetTeamWeekHandler(ICurrentUser currentUser, IReportingReads reads, TimeProvider time)
+public sealed class GetTeamWeekHandler(
+    ICurrentUser currentUser,
+    IReportingReads reads,
+    TimeProvider time)
 {
     public async Task<TeamWeekDto> HandleAsync(GetTeamWeekQuery query, CancellationToken ct)
     {

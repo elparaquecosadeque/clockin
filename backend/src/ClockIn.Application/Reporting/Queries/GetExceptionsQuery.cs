@@ -11,7 +11,10 @@ namespace ClockIn.Application.Reporting.Queries;
 /// </summary>
 public sealed record GetExceptionsQuery;
 
-public sealed class GetExceptionsHandler(ICurrentUser currentUser, IReportingReads reads, TimeProvider time)
+public sealed class GetExceptionsHandler(
+    ICurrentUser currentUser,
+    IReportingReads reads,
+    TimeProvider time)
 {
     public async Task<IReadOnlyList<ExceptionDto>> HandleAsync(GetExceptionsQuery query, CancellationToken ct)
     {

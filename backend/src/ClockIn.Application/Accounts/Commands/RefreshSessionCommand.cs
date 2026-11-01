@@ -9,7 +9,11 @@ namespace ClockIn.Application.Accounts.Commands;
 
 public sealed record RefreshSessionCommand(string? RefreshToken);
 
-public sealed class RefreshSessionHandler(IUserRepository usersRepository, ISessionRepository sessionsRepository, IAuditLog audit, TimeProvider time)
+public sealed class RefreshSessionHandler(
+    IUserRepository usersRepository,
+    ISessionRepository sessionsRepository,
+    IAuditLog audit,
+    TimeProvider time)
 {
     public async Task<SessionResult> HandleAsync(RefreshSessionCommand command, CancellationToken ct)
     {

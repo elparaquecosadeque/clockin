@@ -11,6 +11,7 @@ Each entry has the decision, the reason, and who decided (**user**, or **dev** w
 | Repository variables end in `Repository`. | [ADR 0006](docs/adr/0006-repository-suffix-on-variables.md). | user |
 | Repositories' save method is `SaveOrUpdateAsync`: it inserts a new aggregate (`Version` 0) and otherwise updates with the version check. | The name says it does both. | user |
 | `TimesheetLoading.NeighboursAsync` keeps its lookups sequential, not `Task.WhenAll`. | They share one database connection, which isn't thread-safe. | user |
+| Constructors with more than 2 dependencies, and methods that take dependencies as parameters, list one parameter per line. Checked in review; reflection can't see line breaks. | The number of dependencies is visible at a glance. | user |
 
 ## 2026-10-31: Demo sign-in list and own team
 

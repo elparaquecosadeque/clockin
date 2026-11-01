@@ -30,7 +30,11 @@ public sealed record TimesheetParties(User Actor, User Owner, Team? OwnerTeam)
     public bool CanReopen => !IsOwner && Actor.Role.Can(Permissions.ManageTimesheets);
 
     public static async Task<TimesheetParties> LoadAsync(
-        IUserRepository usersRepository, ITeamRepository teamsRepository, UserId actorId, UserId ownerId, CancellationToken ct)
+        IUserRepository usersRepository,
+        ITeamRepository teamsRepository,
+        UserId actorId,
+        UserId ownerId,
+        CancellationToken ct)
     {
         var actor = await usersRepository.FindAsync(actorId, ct) ?? throw new UnauthorizedException();
         var owner = actorId == ownerId ? actor : await usersRepository.FindAsync(ownerId, ct) ?? throw new NotFoundException("User not found.");

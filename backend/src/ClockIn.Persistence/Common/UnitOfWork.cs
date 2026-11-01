@@ -7,7 +7,10 @@ namespace ClockIn.Persistence.Common;
 /// One transaction per command. The subscribers are built in the command's scope, so they share its connection and
 /// transaction: either everything is saved or nothing.
 /// </summary>
-public sealed class UnitOfWork(AppDataConnection db, PendingDomainEvents events, IEnumerable<IDomainEventSubscriber> subscribers)
+public sealed class UnitOfWork(
+    AppDataConnection db,
+    PendingDomainEvents events,
+    IEnumerable<IDomainEventSubscriber> subscribers)
     : IUnitOfWork
 {
     private readonly IReadOnlyList<IDomainEventSubscriber> _subscribers = [.. subscribers];

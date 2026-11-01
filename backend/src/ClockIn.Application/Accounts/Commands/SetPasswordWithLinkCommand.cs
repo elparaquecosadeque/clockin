@@ -21,7 +21,10 @@ public sealed class SetPasswordWithLinkValidator : AbstractValidator<SetPassword
     }
 }
 
-public sealed class SetPasswordWithLinkHandler(IUserRepository usersRepository, IPasswordHasher hasher, TimeProvider time)
+public sealed class SetPasswordWithLinkHandler(
+    IUserRepository usersRepository,
+    IPasswordHasher hasher,
+    TimeProvider time)
 {
     public async Task HandleAsync(SetPasswordWithLinkCommand command, CancellationToken ct)
     {

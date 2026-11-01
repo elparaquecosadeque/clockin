@@ -13,7 +13,10 @@ public static class TimesheetLoading
 {
     /// <summary>The owner's timesheets an entry of <paramref name="week"/> could overlap: entries last at most 16 hours.</summary>
     public static async Task<IReadOnlyList<Timesheet>> NeighboursAsync(
-        this ITimesheetRepository timesheetsRepository, UserId ownerId, Week week, CancellationToken ct)
+        this ITimesheetRepository timesheetsRepository,
+        UserId ownerId,
+        Week week,
+        CancellationToken ct)
     {
         // Sequential on purpose: parallelizing with Task.WhenAll is not recommended. The lookups share the request's
         // single database connection, which runs one command at a time and isn't thread-safe. If this ever gets
@@ -29,8 +32,13 @@ public static class TimesheetLoading
 
     /// <summary>The timesheet holding the entry, once the signed-in user may change it and has seen its latest version.</summary>
     public static async Task<Timesheet> ForEntryChangeAsync(
-        this ITimesheetRepository timesheetsRepository, ICurrentUser currentUser, IUserRepository usersRepository, ITeamRepository teamsRepository,
-        TimeEntryId entryId, int version, CancellationToken ct)
+        this ITimesheetRepository timesheetsRepository,
+        ICurrentUser currentUser,
+        IUserRepository usersRepository,
+        ITeamRepository teamsRepository,
+        TimeEntryId entryId,
+        int version,
+        CancellationToken ct)
     {
         var timesheet = await timesheetsRepository.FindByEntryAsync(entryId, ct) ?? throw new NotFoundException("Entry not found.");
         var parties = await TimesheetParties.LoadAsync(usersRepository, teamsRepository, currentUser.Id, timesheet.OwnerId, ct);
@@ -43,6 +51,9 @@ public static class TimesheetLoading
         return timesheet;
     }
 
-    public static async Task<Timesheet> GetAsync(this ITimesheetRepository timesheetsRepository, Guid id, CancellationToken ct) =>
+    public static async Task<Timesheet> GetAsync(
+        this ITimesheetRepository timesheetsRepository,
+        Guid id,
+        CancellationToken ct) =>
         await timesheetsRepository.FindAsync(new TimesheetId(id), ct) ?? throw new NotFoundException("Timesheet not found.");
 }
