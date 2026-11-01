@@ -4,6 +4,15 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-11-01: Project-wide code coverage
+
+| Decision | Why | By |
+|---|---|---|
+| Use `Microsoft.Testing.Extensions.CodeCoverage` for backend tests, matching `@vitest/coverage-v8` for Angular, and a locally pinned ReportGenerator for HTML/Markdown/JSON reports. | Fits the existing runners without replacing them or adding a hosted reporting service. | user |
+| Merge backend test coverage across all production assemblies, report line and branch coverage separately, and enforce 80% line coverage in each of Domain and Application using exact counts. Missing assemblies fail the gate. | Implements the existing core-layer quality gate without letting another layer's percentage hide a gap. Tests and generated code are excluded. | user / dev |
+| Include all frontend TypeScript source, including untested files. Other backend layers and frontend have no new threshold yet. Playwright coverage is not merged into the figures. | Establish an honest baseline before setting further gates; keep browser behavior checks separate. | user / dev |
+| Regenerate coverage for each run, ignore generated reports in Git, and publish Markdown summaries plus separate HTML report artifacts in CI. | Makes local and CI results reproducible and reviewable without committing changing report files. | user / dev |
+
 ## 2026-11-01: Bounded reporting (audit run 2)
 
 | Decision | Why | By |

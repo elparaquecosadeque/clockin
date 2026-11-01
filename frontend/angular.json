@@ -108,7 +108,12 @@
           }
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "coverageInclude": ["src/**/*.ts"],
+            "coverageExclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
+            "coverageReporters": ["html", "lcovonly", "text-summary"]
+          }
         },
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n",
