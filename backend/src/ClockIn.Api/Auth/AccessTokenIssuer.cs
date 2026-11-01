@@ -6,7 +6,10 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace ClockIn.Api.Auth;
 
-/// <summary>Signs access tokens that carry identity only: <c>sub</c>, <c>security_stamp</c> and the audience.</summary>
+/// <summary>
+/// Signs access tokens that carry identity only: <c>sub</c>, the session (<c>sid</c>), <c>security_stamp</c> and the
+/// audience (ADR 0009).
+/// </summary>
 public sealed class AccessTokenIssuer
 {
     public const string Issuer = "ClockIn";
@@ -41,6 +44,7 @@ public sealed class AccessTokenIssuer
             Claims = new Dictionary<string, object>
             {
                 [JwtRegisteredClaimNames.Sub] = session.UserId.ToString(),
+                [JwtRegisteredClaimNames.Sid] = session.SessionId.ToString(),
                 [SecurityStampClaim] = session.SecurityStamp.ToString(),
             },
             SigningCredentials = _credentials,

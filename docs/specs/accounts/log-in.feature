@@ -3,7 +3,7 @@ Feature: Log in
 
   Scenario: Signs in an active user
     When Eve signs in with the correct email and password
-    Then Eve receives an access token valid for 15 minutes carrying sub and security_stamp only
+    Then Eve receives an access token valid for 15 minutes carrying sub, sid (the session) and security_stamp only
     And a refresh token in an HttpOnly, Secure, SameSite=Strict cookie valid for 12 hours
     And the Audit log records a successful sign-in for Eve
 

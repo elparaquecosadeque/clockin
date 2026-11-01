@@ -166,12 +166,27 @@ public sealed class UserAdministrationTests
     {
         Guid stamp = _eve.SecurityStamp;
 
-        var wrong = () => _eve.ChangePassword(currentPasswordMatches: false, "new hash");
-        wrong.Should().Throw<DomainException>().Which.Code.Should().Be("InvalidCurrentPassword");
+        _eve.ChangePassword(currentPasswordMatches: false, "new hash", Now).Should().Be(PasswordChangeOutcome.Rejected);
         _eve.PasswordHash.Should().Be("hash");
+        _eve.FailedSignIns.Should().Be(1);
 
-        _eve.ChangePassword(currentPasswordMatches: true, "new hash");
+        _eve.ChangePassword(currentPasswordMatches: true, "new hash", Now).Should().Be(PasswordChangeOutcome.Changed);
         _eve.PasswordHash.Should().Be("new hash");
         _eve.SecurityStamp.Should().NotBe(stamp);
+        _eve.FailedSignIns.Should().Be(0);
+    }
+
+    [Fact]
+    public void Locks_the_account_on_the_fifth_wrong_current_password()
+    {
+        for (int i = 1; i < User.MaxFailedSignIns; i++)
+        {
+            _eve.SignIn(passwordMatches: false, Now);
+        }
+
+        _eve.ChangePassword(currentPasswordMatches: false, "new hash", Now).Should().Be(PasswordChangeOutcome.LockedOut);
+        _eve.LockedUntil.Should().Be(Now + User.LockoutLength);
+        _eve.ChangePassword(currentPasswordMatches: true, "new hash", Now).Should().Be(PasswordChangeOutcome.Rejected);
+        _eve.PasswordHash.Should().Be("hash");
     }
 }

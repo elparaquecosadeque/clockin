@@ -23,6 +23,8 @@ public sealed partial class AuditLog(ILoggerFactory loggers) : IAuditLog
 
     public void UserDeactivated(UserId actorId, UserId userId) => LogUserDeactivated(actorId.Value, userId.Value);
 
+    public void UserUnlocked(UserId actorId, UserId userId) => LogUserUnlocked(actorId.Value, userId.Value);
+
     public void FirstAdminLinkIssued(Email email, string token) => LogFirstAdminLinkIssued(email.Value, token);
 
     [LoggerMessage(Level = LogLevel.Information, Message = "Sign-in succeeded for user {UserId}")]
@@ -45,6 +47,9 @@ public sealed partial class AuditLog(ILoggerFactory loggers) : IAuditLog
 
     [LoggerMessage(Level = LogLevel.Information, Message = "User {ActorId} deactivated user {UserId}")]
     private partial void LogUserDeactivated(Guid actorId, Guid userId);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "User {ActorId} unlocked user {UserId}")]
+    private partial void LogUserUnlocked(Guid actorId, Guid userId);
 
     // seed-first-admin.feature: the deploy log is the delivery channel, so this entry, alone, carries the token.
     [LoggerMessage(Level = LogLevel.Warning, Message = "First admin {Email} must activate the account at /set-password?token={Token}")]

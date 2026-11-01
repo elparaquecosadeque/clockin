@@ -361,7 +361,7 @@ Breaking changes in `PublicApi` require a new version; old versions stay until c
 - The application issues its own tokens, from an `Auth` feature in `<Project>.Api`. Moving to an external identity provider is an ADR when the project needs it; the APIs only validate tokens, so they don't change.
 - **Asymmetric signing** (ES256 or RS256). Only `<Project>.Api` holds the private key; `PublicApi` validates with the public key.
 - Signing keys come from the secret store per environment. Locally, a development key is generated and never committed.
-- **Access token:** short-lived JWT (10–15 minutes) carrying identity only: `sub`, `security_stamp`, audience. **No permissions in the token.**
+- **Access token:** short-lived JWT (10–15 minutes) carrying identity only: `sub`, `sid` (its session, checked on every request), `security_stamp`, audience ([ADR 0009](docs/adr/0009-session-id-in-the-access-token.md)). **No permissions in the token.**
 - **Refresh token:** opaque random value, stored **hashed**, **rotated** on every use. Reuse of an old refresh token revokes the whole token family.
 - **Users** are a domain aggregate (`User`) persisted like any other. Passwords are hashed with a versioned, well-tested hasher (see [`STACK.md`](STACK.md)), never with hand-written crypto.
 - **External consumers** of `PublicApi` use client credentials: a client id and secret (stored hashed) exchanged at the token endpoint for a short-lived JWT with audience `PublicApi` and scoped permissions.

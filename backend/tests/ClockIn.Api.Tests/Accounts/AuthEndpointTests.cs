@@ -114,6 +114,19 @@ public sealed class AuthEndpointTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task Rejects_the_access_token_of_a_logged_out_session_only()
+    {
+        User eve = await TestUsers.CreateActiveAsync(factory, Role.Employee, Ct);
+        HttpClient phone = await TestUsers.SignedInClientAsync(factory, eve, Ct);
+        HttpClient laptop = await TestUsers.SignedInClientAsync(factory, eve, Ct);
+
+        await phone.PostAsync("/api/auth/logout", null, Ct);
+
+        (await phone.GetAsync("/api/me", Ct)).StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        (await laptop.GetAsync("/api/me", Ct)).StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
     public async Task Rate_limits_sign_in_attempts_per_client()
     {
         using WebApplicationFactory<Program> strict = factory.WithWebHostBuilder(b => b.UseSetting("Auth:SignInPermitsPerMinute", "2"));

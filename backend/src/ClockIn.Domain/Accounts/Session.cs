@@ -46,6 +46,9 @@ public sealed class Session
 
     public bool Matches(string secret) => OpaqueTokenHelper.Matches(TokenHash, secret);
 
+    /// <summary>Neither logged out nor expired: its access tokens are still honoured.</summary>
+    public bool IsActive(DateTimeOffset now) => RevokedAt is null && now <= ExpiresAt;
+
     public (RefreshOutcome Outcome, RefreshToken? Token) Refresh(string secret, DateTimeOffset now)
     {
         if (RevokedAt is not null)

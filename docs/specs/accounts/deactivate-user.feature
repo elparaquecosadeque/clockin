@@ -46,6 +46,12 @@ Feature: Deactivate a user
       When Ada deactivates Ada
       Then it breaks the rule "CannotDeactivateSelf"
 
+    Scenario: Two admins deactivating each other at the same moment
+      Given Ada and Abe are the only active admins
+      When Ada deactivates Abe while Abe deactivates Ada
+      Then the second to save gets a 409 "ConcurrencyConflict" and changes nothing
+      And one of them is still an active admin
+
   Scenario: Rejects a user who is already deactivated
     Given Ed is deactivated
     When Ada deactivates Ed

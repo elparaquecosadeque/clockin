@@ -4,6 +4,7 @@ Feature: Log out
     Given Eve is signed in
     When Eve logs out
     Then Eve's refresh token no longer works
+    And Eve's access token is rejected on its next request
     And the refresh cookie is cleared
 
   Scenario: Leaves other sessions signed in

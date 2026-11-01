@@ -40,7 +40,20 @@ public sealed class DeactivateUserHandler(
         }
 
         user.Deactivate();
-        await usersRepository.SaveOrUpdateAsync(user, ct);
+        if (user.Role == Role.Admin)
+        {
+            // Saving the acting admin too checks its version: of two admins deactivating each other at once, the
+            // second gets a conflict, so an active admin remains. Saving in id order means the two can't deadlock.
+            User actor = await usersRepository.FindAsync(currentUser.Id, ct) ?? throw new UnauthorizedException();
+            foreach (User admin in new[] { user, actor }.OrderBy(u => u.Id.Value))
+            {
+                await usersRepository.SaveOrUpdateAsync(admin, ct);
+            }
+        }
+        else
+        {
+            await usersRepository.SaveOrUpdateAsync(user, ct);
+        }
         await sessionsRepository.RevokeAllAsync(userId, time.GetUtcNow(), ct);
         audit.UserDeactivated(currentUser.Id, userId);
     }

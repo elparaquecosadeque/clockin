@@ -128,6 +128,16 @@ public sealed class UserAdministrationHandlerTests
     }
 
     [Fact]
+    public async Task Saves_the_acting_admin_too_when_deactivating_another_admin()
+    {
+        // Its version check makes the second of two admins deactivating each other at once fail with a conflict.
+        await Deactivate().HandleAsync(new DeactivateUserCommand(_world.Abe.Id.Value), Ct);
+
+        _world.Abe.Status.Should().Be(UserStatus.Deactivated);
+        await _world.UsersRepository.Received(1).SaveOrUpdateAsync(_world.Ada, Ct);
+    }
+
+    [Fact]
     public async Task Leaves_nothing_dangling_when_deactivating()
     {
         var open = Timesheet.Start(_world.Ed.Id, Week.Containing(_world.Clock.GetUtcNow(), CompanyClock.Zone));
@@ -165,10 +175,11 @@ public sealed class UserAdministrationHandlerTests
             _world.Eve.SignIn(passwordMatches: false, _world.Clock.GetUtcNow());
         }
 
-        await new UnlockUserHandler(_world.UsersRepository).HandleAsync(new UnlockUserCommand(_world.Eve.Id.Value), Ct);
+        await new UnlockUserHandler(_world.CurrentUser, _world.UsersRepository, _audit).HandleAsync(new UnlockUserCommand(_world.Eve.Id.Value), Ct);
 
         _world.Eve.IsLockedOut(_world.Clock.GetUtcNow()).Should().BeFalse();
         await _world.UsersRepository.Received(1).SaveOrUpdateAsync(_world.Eve, Ct);
+        _audit.Received(1).UserUnlocked(_world.Ada.Id, _world.Eve.Id);
     }
 
     [Fact]
@@ -199,6 +210,27 @@ public sealed class UserAdministrationHandlerTests
 
         (await act.Should().ThrowAsync<DomainException>()).Which.Code.Should().Be("InvalidCurrentPassword");
         _world.Eve.PasswordHash.Should().Be("hash:old password!!");
+        _world.Eve.FailedSignIns.Should().Be(1);
+        await _world.UsersRepository.Received(1).SaveOrUpdateAsync(_world.Eve, Ct);
+    }
+
+    [Fact]
+    public async Task Locks_the_account_and_ends_its_sessions_on_the_fifth_wrong_current_password()
+    {
+        _world.SignIn(_world.Eve);
+        _world.Eve.SetPassword("hash:old password!!");
+        DateTimeOffset now = _world.Clock.GetUtcNow();
+        for (int i = 1; i < User.MaxFailedSignIns; i++)
+        {
+            _world.Eve.SignIn(passwordMatches: false, now);
+        }
+
+        var act = () => ChangePassword().HandleAsync(new ChangeOwnPasswordCommand("wrong", "a new long password"), Ct);
+
+        (await act.Should().ThrowAsync<DomainException>()).Which.Code.Should().Be("InvalidCurrentPassword");
+        _world.Eve.LockedUntil.Should().Be(now + User.LockoutLength);
+        await _sessionsRepository.Received(1).RevokeAllAsync(_world.Eve.Id, now, Ct);
+        _audit.Received(1).LockedOut(_world.Eve.Id);
     }
 
     [Fact]
@@ -236,7 +268,7 @@ public sealed class UserAdministrationHandlerTests
 
     private ReactivateUserHandler Reactivate() => new(_world.CurrentUser, _world.UsersRepository, _world.TeamsRepository, _audit, _world.Clock);
 
-    private ChangeOwnPasswordHandler ChangePassword() => new(_world.CurrentUser, _world.UsersRepository, _sessionsRepository, _hasher, _world.Clock);
+    private ChangeOwnPasswordHandler ChangePassword() => new(_world.CurrentUser, _world.UsersRepository, _sessionsRepository, _hasher, _audit, _world.Clock);
 
     private User SavedUser() => (User)_world.UsersRepository.ReceivedCalls().Single(c => c.GetMethodInfo().Name == "SaveOrUpdateAsync").GetArguments()[0]!;
 }

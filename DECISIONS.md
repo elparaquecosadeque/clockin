@@ -4,6 +4,16 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-11-01: Admin and session hardening (audit run 1)
+
+| Decision | Why | By |
+|---|---|---|
+| An admin may still issue an access link for another admin. | Admins are equally trusted: one can already deactivate another, the link is audited, and blocking it would leave an admin who forgot their password with no way back in (there's no email channel). | user |
+| Deactivating an admin also saves the acting admin, in id order, inside the same transaction. | Its version check makes the second of two admins deactivating each other at once fail with 409, so an active admin always remains. Saving in id order keeps the two transactions from deadlocking. Admins can't be demoted (`AdminRoleIsFixed`), so deactivation was the only way to lose one. | user / dev |
+| Unlocking a user writes a `UserUnlocked` audit entry. | Every other admin action on an account is audited. | user |
+| Access tokens carry `sid` and are rejected once their session is revoked or expired. | [ADR 0009](docs/adr/0009-session-id-in-the-access-token.md). | user |
+| A wrong current password on password change counts toward the lockout; the fifth locks the account, ends every session and is audited. `ChangeOwnPasswordCommand` is no longer `ITransactional`, like sign-in. | A stolen session could otherwise guess the password without limit. The failure count is saved before the rule is broken, and a rollback would lose it; an HTTP test proves it survives. | user |
+
 ## 2026-10-31: Security audit leads (run 1)
 
 | Decision | Why | By |
@@ -243,4 +253,4 @@ The interview decisions are in [`docs/specs/`](docs/specs/) and [`docs/glossary.
 | The "declined request" badge counts the last 7 days. | user |
 | Deactivation and correction requests need no reason. | user |
 
-Larger decisions: [ADR 0001](docs/adr/0001-internationalization.md) (i18n), [ADR 0002](docs/adr/0002-reqnroll-for-api-specs.md) (Reqnroll), [ADR 0003](docs/adr/0003-adopt-baseline-code-style-and-stack.md) (baseline and ADR sync), [ADR 0004](docs/adr/0004-http-tests-instead-of-reqnroll.md) (no Reqnroll; supersedes 0002), [ADR 0006](docs/adr/0006-repository-suffix-on-variables.md) (repository variable names), [ADR 0007](docs/adr/0007-suffixes-for-static-classes.md) (static class suffixes), [ADR 0008](docs/adr/0008-shared-handler-logic-in-injected-services.md) (shared handler logic as a service).
+Larger decisions: [ADR 0001](docs/adr/0001-internationalization.md) (i18n), [ADR 0002](docs/adr/0002-reqnroll-for-api-specs.md) (Reqnroll), [ADR 0003](docs/adr/0003-adopt-baseline-code-style-and-stack.md) (baseline and ADR sync), [ADR 0004](docs/adr/0004-http-tests-instead-of-reqnroll.md) (no Reqnroll; supersedes 0002), [ADR 0006](docs/adr/0006-repository-suffix-on-variables.md) (repository variable names), [ADR 0007](docs/adr/0007-suffixes-for-static-classes.md) (static class suffixes), [ADR 0008](docs/adr/0008-shared-handler-logic-in-injected-services.md) (shared handler logic as a service), [ADR 0009](docs/adr/0009-session-id-in-the-access-token.md) (session id in the access token).

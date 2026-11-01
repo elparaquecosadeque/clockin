@@ -6,6 +6,7 @@ Feature: Unlock an account
     When Ada unlocks Eve
     Then Eve can sign in with the correct password
     And Eve's failure counter is zero
+    And the Audit log records the unlock
 
   Scenario: Accepts unlocking a user who is not locked
     Given Ada is signed in

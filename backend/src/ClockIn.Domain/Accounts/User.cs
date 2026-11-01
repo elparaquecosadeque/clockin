@@ -185,15 +185,24 @@ public sealed class User
         LockedUntil = null;
     }
 
-    /// <summary>A new password ends every other session; the caller starts a fresh one for this device.</summary>
-    public void ChangePassword(bool currentPasswordMatches, string newPasswordHash)
+    /// <summary>
+    /// A new password ends every other session; the caller starts a fresh one for this device. A wrong current
+    /// password counts like a failed sign-in, so a stolen session can't be used to guess it.
+    /// </summary>
+    public PasswordChangeOutcome ChangePassword(bool currentPasswordMatches, string newPasswordHash, DateTimeOffset now)
     {
+        if (LockedUntil > now)
+        {
+            return PasswordChangeOutcome.Rejected;
+        }
+
         if (!currentPasswordMatches)
         {
-            throw new DomainException("InvalidCurrentPassword", "The current password is incorrect.");
+            return CountFailure(now) ? PasswordChangeOutcome.LockedOut : PasswordChangeOutcome.Rejected;
         }
 
         SetPassword(newPasswordHash);
+        return PasswordChangeOutcome.Changed;
     }
 
     /// <summary>Keeps every session valid.</summary>
@@ -250,14 +259,20 @@ public sealed class User
             return SignInOutcome.SignedIn;
         }
 
+        return CountFailure(now) ? SignInOutcome.LockedOut : SignInOutcome.Rejected;
+    }
+
+    /// <summary>Counts a wrong password; the fifth in a row locks the account. True when this one locked it.</summary>
+    private bool CountFailure(DateTimeOffset now)
+    {
         FailedSignIns++;
         if (FailedSignIns < MaxFailedSignIns)
         {
-            return SignInOutcome.Rejected;
+            return false;
         }
 
         FailedSignIns = 0;
         LockedUntil = now + LockoutLength;
-        return SignInOutcome.LockedOut;
+        return true;
     }
 }

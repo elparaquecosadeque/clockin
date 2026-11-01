@@ -56,6 +56,27 @@ public sealed class AdministrationEndpointTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task Locks_the_account_after_five_wrong_current_passwords()
+    {
+        User eve = await TestUsers.CreateActiveAsync(factory, Role.Employee, Ct);
+        HttpClient client = await TestUsers.SignedInClientAsync(factory, eve, Ct);
+
+        for (int i = 0; i < User.MaxFailedSignIns; i++)
+        {
+            HttpResponseMessage wrong = await client.PostAsJsonAsync(
+                "/api/me/password", new { currentPassword = "not my password!", newPassword = "a brand new password" }, Ct);
+            wrong.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
+        }
+
+        HttpResponseMessage signIn = await TestUsers.HttpsClient(factory).PostAsJsonAsync(
+            "/api/auth/login", new { email = eve.Email.Value, password = TestUsers.Password }, Ct);
+        HttpResponseMessage oldSession = await client.GetAsync("/api/me", Ct);
+
+        signIn.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
+        oldSession.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
     public async Task Changes_preferences_and_password_for_the_signed_in_user()
     {
         User eve = await TestUsers.CreateActiveAsync(factory, Role.Employee, Ct);
