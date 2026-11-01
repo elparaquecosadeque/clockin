@@ -19,7 +19,7 @@ public sealed class GetTimesheetValidator : AbstractValidator<GetTimesheetQuery>
 
 public sealed class GetTimesheetHandler(
     ICurrentUser currentUser,
-    TimesheetAccess access,
+    TimesheetAccess timesheetAccess,
     IUserRepository usersRepository,
     ITimesheetRepository timesheetsRepository,
     ICorrectionRequestRepository correctionsRepository,
@@ -29,7 +29,7 @@ public sealed class GetTimesheetHandler(
     public async Task<TimesheetDto> HandleAsync(GetTimesheetQuery query, CancellationToken ct)
     {
         UserId ownerId = query.OwnerId is { } id ? new UserId(id) : currentUser.Id;
-        TimesheetParties parties = await access.PartiesAsync(ownerId, ct);
+        TimesheetParties parties = await timesheetAccess.PartiesAsync(ownerId, ct);
         TimesheetParties.Require(parties.CanView);
 
         var week = new Week(query.WeekStart);

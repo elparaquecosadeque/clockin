@@ -16,14 +16,14 @@ public sealed class DeleteEntryValidator : AbstractValidator<DeleteEntryCommand>
 
 public sealed class DeleteEntryHandler(
     ICurrentUser currentUser,
-    TimesheetAccess access,
+    TimesheetAccess timesheetAccess,
     ITimesheetRepository timesheetsRepository,
     TimeProvider time)
 {
     public async Task HandleAsync(DeleteEntryCommand command, CancellationToken ct)
     {
         var entryId = new TimeEntryId(command.EntryId);
-        Timesheet timesheet = await access.ForEntryChangeAsync(timesheetsRepository, entryId, command.Version, ct);
+        Timesheet timesheet = await timesheetAccess.ForEntryChangeAsync(timesheetsRepository, entryId, command.Version, ct);
         timesheet.DeleteEntry(currentUser.Id, entryId, command.Note, time.GetUtcNow());
         await timesheetsRepository.SaveOrUpdateAsync(timesheet, ct);
     }

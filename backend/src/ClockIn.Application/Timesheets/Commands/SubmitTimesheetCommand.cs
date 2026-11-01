@@ -17,14 +17,14 @@ public sealed class SubmitTimesheetValidator : AbstractValidator<SubmitTimesheet
 
 public sealed class SubmitTimesheetHandler(
     ICurrentUser currentUser,
-    TimesheetAccess access,
+    TimesheetAccess timesheetAccess,
     ITimesheetRepository timesheetsRepository,
     TimeProvider time)
 {
     public async Task HandleAsync(SubmitTimesheetCommand command, CancellationToken ct)
     {
         UserId ownerId = command.OwnerId is { } id ? new UserId(id) : currentUser.Id;
-        TimesheetParties parties = await access.PartiesAsync(ownerId, ct);
+        TimesheetParties parties = await timesheetAccess.PartiesAsync(ownerId, ct);
         TimesheetParties.Require(parties.CanChange);
 
         var week = new Week(command.WeekStart);

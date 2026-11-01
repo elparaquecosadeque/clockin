@@ -86,7 +86,7 @@ public sealed class TimesheetWorld
 
     public ITeamRepository TeamsRepository { get; } = Substitute.For<ITeamRepository>();
 
-    public TimesheetAccess Access => new(CurrentUser, UsersRepository, TeamsRepository);
+    public TimesheetAccess TimesheetAccess => new(CurrentUser, UsersRepository, TeamsRepository);
 
     public ITimesheetRepository TimesheetsRepository { get; } = Substitute.For<ITimesheetRepository>();
 

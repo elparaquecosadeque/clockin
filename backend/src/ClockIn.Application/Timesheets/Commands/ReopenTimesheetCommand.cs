@@ -16,7 +16,7 @@ public sealed class ReopenTimesheetValidator : AbstractValidator<ReopenTimesheet
 
 public sealed class ReopenTimesheetHandler(
     ICurrentUser currentUser,
-    TimesheetAccess access,
+    TimesheetAccess timesheetAccess,
     ITimesheetRepository timesheetsRepository,
     ICorrectionRequestRepository correctionsRepository,
     TimeProvider time)
@@ -24,7 +24,7 @@ public sealed class ReopenTimesheetHandler(
     public async Task HandleAsync(ReopenTimesheetCommand command, CancellationToken ct)
     {
         Timesheet timesheet = await timesheetsRepository.GetAsync(command.TimesheetId, ct);
-        TimesheetParties parties = await access.PartiesAsync(timesheet.OwnerId, ct);
+        TimesheetParties parties = await timesheetAccess.PartiesAsync(timesheet.OwnerId, ct);
         TimesheetParties.Require(parties.CanReopen);
         await correctionsRepository.EnsureNonePendingAsync(timesheet.Id, ct);
 

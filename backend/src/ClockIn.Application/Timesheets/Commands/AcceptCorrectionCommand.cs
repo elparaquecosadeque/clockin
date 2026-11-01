@@ -17,13 +17,13 @@ public sealed class AcceptCorrectionValidator : AbstractValidator<AcceptCorrecti
 
 public sealed class AcceptCorrectionHandler(
     ICurrentUser currentUser,
-    TimesheetAccess access,
+    TimesheetAccess timesheetAccess,
     ICorrectionRequestRepository correctionsRepository,
     TimeProvider time)
 {
     public async Task HandleAsync(AcceptCorrectionCommand command, CancellationToken ct)
     {
-        CorrectionRequest request = await access.ForApproverAsync(correctionsRepository, command.RequestId, ct);
+        CorrectionRequest request = await timesheetAccess.ForApproverAsync(correctionsRepository, command.RequestId, ct);
         request.Accept(currentUser.Id, command.Comment, time.GetUtcNow());
         await correctionsRepository.SaveOrUpdateAsync(request, ct);
     }

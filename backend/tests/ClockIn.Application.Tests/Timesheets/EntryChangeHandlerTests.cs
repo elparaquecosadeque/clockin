@@ -110,7 +110,7 @@ public sealed class EntryChangeHandlerTests
     {
         Timesheet week = _world.Week(_world.Eve, LastWeek);
 
-        await new DeleteEntryHandler(_world.CurrentUser, _world.Access, _world.TimesheetsRepository, _world.Clock)
+        await new DeleteEntryHandler(_world.CurrentUser, _world.TimesheetAccess, _world.TimesheetsRepository, _world.Clock)
             .HandleAsync(new DeleteEntryCommand(week.Entries.Single().Id.Value, "duplicate", week.Version), CancellationToken.None);
 
         week.Entries.Should().BeEmpty();
@@ -118,10 +118,10 @@ public sealed class EntryChangeHandlerTests
     }
 
     private Task<Guid> Add(UserId? owner, string start, string end, string note = "forgot") =>
-        new AddEntryHandler(_world.CurrentUser, _world.Access, _world.TimesheetsRepository, _world.Clock)
+        new AddEntryHandler(_world.CurrentUser, _world.TimesheetAccess, _world.TimesheetsRepository, _world.Clock)
             .HandleAsync(new AddEntryCommand(owner?.Value, CompanyClock.At(start), CompanyClock.At(end), note, "203.0.113.7", "Safari"), CancellationToken.None);
 
     private Task Edit(TimeEntryId entry, string start, string end, int version) =>
-        new EditEntryHandler(_world.CurrentUser, _world.Access, _world.TimesheetsRepository, _world.Clock)
+        new EditEntryHandler(_world.CurrentUser, _world.TimesheetAccess, _world.TimesheetsRepository, _world.Clock)
             .HandleAsync(new EditEntryCommand(entry.Value, CompanyClock.At(start), CompanyClock.At(end), "note", version), CancellationToken.None);
 }

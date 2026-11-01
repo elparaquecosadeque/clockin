@@ -16,7 +16,7 @@ public sealed class RequestCorrectionValidator : AbstractValidator<RequestCorrec
 }
 
 public sealed class RequestCorrectionHandler(
-    TimesheetAccess access,
+    TimesheetAccess timesheetAccess,
     ITimesheetRepository timesheetsRepository,
     ICorrectionRequestRepository correctionsRepository,
     TimeProvider time)
@@ -24,7 +24,7 @@ public sealed class RequestCorrectionHandler(
     public async Task<Guid> HandleAsync(RequestCorrectionCommand command, CancellationToken ct)
     {
         Timesheet timesheet = await timesheetsRepository.GetAsync(command.TimesheetId, ct);
-        TimesheetParties parties = await access.PartiesAsync(timesheet.OwnerId, ct);
+        TimesheetParties parties = await timesheetAccess.PartiesAsync(timesheet.OwnerId, ct);
         TimesheetParties.Require(parties.IsOwner && parties.CanChange);
         if (await correctionsRepository.FindPendingAsync(timesheet.Id, ct) is not null)
         {

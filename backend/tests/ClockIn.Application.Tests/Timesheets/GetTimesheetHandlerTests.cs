@@ -118,6 +118,6 @@ public sealed class GetTimesheetHandlerTests
     }
 
     private Task<TimesheetDto> View(UserId? owner, Week week) =>
-        new GetTimesheetHandler(_world.CurrentUser, _world.Access, _world.UsersRepository, _world.TimesheetsRepository, _world.CorrectionsRepository, _world.Clock)
+        new GetTimesheetHandler(_world.CurrentUser, _world.TimesheetAccess, _world.UsersRepository, _world.TimesheetsRepository, _world.CorrectionsRepository, _world.Clock)
             .HandleAsync(new GetTimesheetQuery(owner?.Value, week.Start), CancellationToken.None);
 }

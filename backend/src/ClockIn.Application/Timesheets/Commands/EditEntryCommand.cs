@@ -16,14 +16,14 @@ public sealed class EditEntryValidator : AbstractValidator<EditEntryCommand>
 
 public sealed class EditEntryHandler(
     ICurrentUser currentUser,
-    TimesheetAccess access,
+    TimesheetAccess timesheetAccess,
     ITimesheetRepository timesheetsRepository,
     TimeProvider time)
 {
     public async Task HandleAsync(EditEntryCommand command, CancellationToken ct)
     {
         var entryId = new TimeEntryId(command.EntryId);
-        Timesheet timesheet = await access.ForEntryChangeAsync(timesheetsRepository, entryId, command.Version, ct);
+        Timesheet timesheet = await timesheetAccess.ForEntryChangeAsync(timesheetsRepository, entryId, command.Version, ct);
         timesheet.EditEntry(
             currentUser.Id, entryId, command.Start, command.End, command.Note, time.GetUtcNow(), time.LocalTimeZone,
             await timesheetsRepository.NeighboursAsync(timesheet.OwnerId, timesheet.Week, ct));
