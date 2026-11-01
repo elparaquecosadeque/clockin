@@ -14,3 +14,4 @@ Agreed during the v1 requirements interview (2026-10-30) as out of scope for v1.
 | Rate limiting behind a reverse proxy | Depends on the deploy topology; security audit run 1 | Configure forwarded headers with the proxy's address, so limits key on the client's IP and not the proxy's |
 | Security headers on the SPA's host (CSP, frame options) | The repository has no frontend hosting yet; security audit run 1 | The API already sends them; copy the policy to the host |
 | Restrict access and retention of the log files | The first-admin activation link is logged while that admin is pending (by design); security audit run 1 | Logs stay under `logs/`, 31 days by default |
+| HSTS and the HTTPS redirect | Depends on whether the API or the reverse proxy terminates TLS; security audit run 1 | Add `UseHsts` and `UseHttpsRedirection` to the API, or set them on the proxy |

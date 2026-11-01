@@ -8,6 +8,8 @@ Each entry has the decision, the reason, and who decided (**user**, or **dev** w
 
 | Decision | Why | By |
 |---|---|---|
+| Admin commands whose rule reads a user and writes a team, or the other way round, also save the row they read (users before teams) and run in one transaction: create team, change supervisor, move employee, archive team, change role, reactivate. Of two admins racing, the second gets a 409 `ConcurrencyConflict`. Archive against a concurrent timesheet submit stays open. | READ COMMITTED alone lets each rule pass on a stale read (security audit run 1). The version check already exists, so no locks or new constraints are needed. | user |
+| Phase 2: HSTS and the HTTPS redirect. | Whether the API or the proxy terminates TLS isn't known yet. | user |
 | Not fixed: the set-password `?token=` left in browser history, CSV formulas behind leading spaces or full-width signs, and approve/return without the page's version. | Judged not worth it for now. | user |
 | Phase 2 ([backlog](docs/backlog.md)): rate limiting behind a proxy, the SPA host's security headers, and log access and retention. | They depend on how and where the app is deployed. | user |
 | `.gitignore` excludes `.env*`, `*.pem`, `*.key`, `*.pfx`, `*.p12` and `appsettings.*.local.json`. | The JWT signing key is a PEM file; secrets never reach the repository. | user |

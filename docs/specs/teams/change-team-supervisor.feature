@@ -32,6 +32,11 @@ Feature: Change a team's supervisor
       | Eve                 | UserIsNotSupervisor |
       | a deactivated "Rob" | UserIsDeactivated   |
 
+  Scenario: Two admins at the same moment
+    When Ada makes Sid the supervisor of team "Warehouse" while Abe deactivates Sid
+    Then the second to save gets a 409 "ConcurrencyConflict" and changes nothing
+    And team "Warehouse" is never led by a deactivated user
+
   Scenario: Rejects an archived team
     Given team "Old Store" is archived
     When Ada makes Sid the supervisor of team "Old Store"

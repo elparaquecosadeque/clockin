@@ -31,7 +31,12 @@ public sealed class MoveEmployeeHandlerTests
         await _handler.HandleAsync(new MoveEmployeeCommand(_eve.Id.Value, _office.Id.Value), CancellationToken.None);
 
         _eve.TeamId.Should().Be(_office.Id);
-        await _usersRepository.Received(1).SaveOrUpdateAsync(_eve, Arg.Any<CancellationToken>());
+        Received.InOrder(() =>
+        {
+            // Saving the team too makes a concurrent archive of Office conflict.
+            _usersRepository.SaveOrUpdateAsync(_eve, Arg.Any<CancellationToken>());
+            _teamsRepository.SaveOrUpdateAsync(_office, Arg.Any<CancellationToken>());
+        });
     }
 
     [Fact]

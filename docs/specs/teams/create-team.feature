@@ -59,6 +59,11 @@ Feature: Create a team
       When Ada creates team "Night Shift" without a supervisor
       Then it fails validation on "supervisorId"
 
+  Scenario: Two admins at the same moment
+    When Ada creates team "Night Shift" led by Sid while Abe changes Sid's role to Employee
+    Then the second to save gets a 409 "ConcurrencyConflict" and changes nothing
+    And no team is led by an employee
+
   Scenario Outline: Forbids non-admins
     Given <user> is signed in
     When <user> creates team "Night Shift" led by Sid

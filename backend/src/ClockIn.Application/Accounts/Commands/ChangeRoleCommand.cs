@@ -14,7 +14,7 @@ namespace ClockIn.Application.Accounts.Commands;
 /// Admins only (permission policy). Pending timesheets need no change: the approver is derived from the team
 /// at decision time, so a promoted employee's lands in the admin queue.
 /// </summary>
-public sealed record ChangeRoleCommand(Guid UserId, string Role, Guid? TeamId);
+public sealed record ChangeRoleCommand(Guid UserId, string Role, Guid? TeamId) : ITransactional;
 
 public sealed class ChangeRoleValidator : AbstractValidator<ChangeRoleCommand>
 {
@@ -46,6 +46,13 @@ public sealed class ChangeRoleHandler(
 
         user.ChangeRole(role, team);
         await usersRepository.SaveOrUpdateAsync(user, ct);
+        if (team is not null)
+        {
+            // Saving the team too checks its version: a concurrent archive or change of it conflicts. Users before teams,
+            // like every handler, so two of them can't deadlock.
+            await teamsRepository.SaveOrUpdateAsync(team, ct);
+        }
+
         audit.RoleChanged(currentUser.Id, user.Id, role);
     }
 }

@@ -1,4 +1,5 @@
 using ClockIn.Application.Common.Exceptions;
+using ClockIn.Application.Common.Interfaces;
 using ClockIn.Application.Reporting.Interfaces;
 using ClockIn.Application.Teams.Interfaces;
 using ClockIn.Domain.Accounts;
@@ -9,7 +10,7 @@ using ClockIn.Domain.Timesheets;
 namespace ClockIn.Application.Teams.Commands;
 
 /// <summary>Admins only (permission policy). Frees the supervisor; history keeps the team's name.</summary>
-public sealed record ArchiveTeamCommand(Guid TeamId);
+public sealed record ArchiveTeamCommand(Guid TeamId) : ITransactional;
 
 public sealed class ArchiveTeamHandler(ITeamRepository teamsRepository, IReportingReads reads)
 {

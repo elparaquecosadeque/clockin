@@ -1,5 +1,8 @@
 using System.Reflection;
 using AwesomeAssertions;
+using ClockIn.Application.Accounts.Commands;
+using ClockIn.Application.Common.Interfaces;
+using ClockIn.Application.Teams.Commands;
 using NetArchTest.Rules;
 
 namespace ClockIn.Architecture.Tests;
@@ -22,6 +25,17 @@ public sealed class ConventionTests
 
         result.FailingTypeNames.Should().BeNullOrEmpty();
     }
+
+    [Theory]
+    [InlineData(typeof(CreateTeamCommand))]
+    [InlineData(typeof(ChangeTeamSupervisorCommand))]
+    [InlineData(typeof(MoveEmployeeCommand))]
+    [InlineData(typeof(ArchiveTeamCommand))]
+    [InlineData(typeof(ChangeRoleCommand))]
+    [InlineData(typeof(ReactivateUserCommand))]
+    [InlineData(typeof(DeactivateUserCommand))]
+    public void Commands_whose_rule_spans_a_user_and_a_team_are_transactional(Type command) =>
+        command.Should().BeAssignableTo<ITransactional>();
 
     [Theory]
     [MemberData(nameof(Layers))]

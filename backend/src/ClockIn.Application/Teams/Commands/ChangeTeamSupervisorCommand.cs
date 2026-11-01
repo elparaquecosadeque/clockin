@@ -1,5 +1,6 @@
 using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Common.Exceptions;
+using ClockIn.Application.Common.Interfaces;
 using ClockIn.Application.Teams.Interfaces;
 using ClockIn.Domain.Accounts;
 using ClockIn.Domain.Common;
@@ -8,7 +9,7 @@ using ClockIn.Domain.Teams;
 namespace ClockIn.Application.Teams.Commands;
 
 /// <summary>Admins only (permission policy). Pending work follows the team; past approvals keep their approver.</summary>
-public sealed record ChangeTeamSupervisorCommand(Guid TeamId, Guid SupervisorId);
+public sealed record ChangeTeamSupervisorCommand(Guid TeamId, Guid SupervisorId) : ITransactional;
 
 public sealed class ChangeTeamSupervisorHandler(IUserRepository usersRepository, ITeamRepository teamsRepository)
 {
@@ -23,6 +24,8 @@ public sealed class ChangeTeamSupervisorHandler(IUserRepository usersRepository,
         }
 
         team.ChangeSupervisor(supervisor);
+        // Saving the supervisor too checks its version: a concurrent role change or deactivation of it conflicts.
+        await usersRepository.SaveOrUpdateAsync(supervisor, ct);
         await teamsRepository.SaveOrUpdateAsync(team, ct);
     }
 }

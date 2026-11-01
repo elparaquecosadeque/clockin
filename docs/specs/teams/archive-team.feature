@@ -38,6 +38,17 @@ Feature: Archive a team
       When Ada archives team "Night Shift"
       Then it breaks the rule "TeamHasPendingReviews"
 
+  Scenario Outline: Two admins at the same moment
+    When Ada archives team "Night Shift" while Abe <action>
+    Then the second to save gets a 409 "ConcurrencyConflict" and changes nothing
+    And no archived team has an active employee
+
+    Examples:
+      | action                                             |
+      | moves Eve to it                                    |
+      | reactivates Rob into it                            |
+      | changes a free supervisor's role to Employee in it |
+
   Scenario: Rejects a team that is already archived
     Given team "Old Store" is archived
     When Ada archives team "Old Store"

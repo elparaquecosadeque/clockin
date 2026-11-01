@@ -1,5 +1,6 @@
 using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Common.Exceptions;
+using ClockIn.Application.Common.Interfaces;
 using ClockIn.Application.Teams.Interfaces;
 using ClockIn.Application.Teams.Mappings;
 using ClockIn.Application.Teams.Results;
@@ -11,7 +12,7 @@ using FluentValidation;
 namespace ClockIn.Application.Teams.Commands;
 
 /// <summary>Admins only (permission policy).</summary>
-public sealed record CreateTeamCommand(string Name, Guid? SupervisorId);
+public sealed record CreateTeamCommand(string Name, Guid? SupervisorId) : ITransactional;
 
 public sealed class CreateTeamValidator : AbstractValidator<CreateTeamCommand>
 {
@@ -40,6 +41,8 @@ public sealed class CreateTeamHandler(IUserRepository usersRepository, ITeamRepo
             throw new DomainException("SupervisorAlreadyLeadsTeam", "This supervisor already leads a team.");
         }
 
+        // Saving the supervisor too checks its version: a concurrent role change or deactivation of it conflicts.
+        await usersRepository.SaveOrUpdateAsync(supervisor, ct);
         await teamsRepository.SaveOrUpdateAsync(team, ct);
         return team.ToDto();
     }

@@ -9,7 +9,7 @@ using ClockIn.Domain.Teams;
 namespace ClockIn.Application.Accounts.Commands;
 
 /// <summary>Admins only (permission policy). An employee goes back to the chosen team, or else to the one they had.</summary>
-public sealed record ReactivateUserCommand(Guid UserId, Guid? TeamId);
+public sealed record ReactivateUserCommand(Guid UserId, Guid? TeamId) : ITransactional;
 
 public sealed class ReactivateUserHandler(
     ICurrentUser currentUser,
@@ -26,6 +26,13 @@ public sealed class ReactivateUserHandler(
             : null;
         AccessLink link = user.Reactivate(team, time.GetUtcNow());
         await usersRepository.SaveOrUpdateAsync(user, ct);
+        if (team is not null)
+        {
+            // Saving the team too checks its version: a concurrent archive or change of it conflicts. Users before teams,
+            // like every handler, so two of them can't deadlock.
+            await teamsRepository.SaveOrUpdateAsync(team, ct);
+        }
+
         audit.AccessLinkGenerated(currentUser.Id, user.Id);
         return new AccessLinkDto(link.Token, link.ExpiresAt);
     }

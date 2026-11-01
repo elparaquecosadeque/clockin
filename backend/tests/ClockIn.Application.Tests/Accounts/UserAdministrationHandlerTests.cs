@@ -93,6 +93,22 @@ public sealed class UserAdministrationHandlerTests
     }
 
     [Fact]
+    public async Task Saves_the_team_too_when_demoting_a_free_supervisor_into_it()
+    {
+        var sid = User.Create(new Email("sid@clockin.test"), "Sid", Role.Supervisor);
+        _world.UsersRepository.FindAsync(sid.Id, Arg.Any<CancellationToken>()).Returns(sid);
+
+        await ChangeRole().HandleAsync(new ChangeRoleCommand(sid.Id.Value, "Employee", _world.Office.Id.Value), Ct);
+
+        (sid.Role, sid.TeamId).Should().Be((Role.Employee, _world.Office.Id));
+        Received.InOrder(() =>
+        {
+            _world.UsersRepository.SaveOrUpdateAsync(sid, Ct);
+            _world.TeamsRepository.SaveOrUpdateAsync(_world.Office, Ct);
+        });
+    }
+
+    [Fact]
     public async Task Rejects_demoting_a_supervisor_who_leads_a_team()
     {
         var act = () => ChangeRole().HandleAsync(new ChangeRoleCommand(_world.Sam.Id.Value, "Employee", _world.Office.Id.Value), Ct);
@@ -165,6 +181,13 @@ public sealed class UserAdministrationHandlerTests
         (_world.Eve.Status, _world.Eve.TeamId).Should().Be((UserStatus.PendingActivation, _world.Warehouse.Id));
         _world.Ed.TeamId.Should().Be(_world.Office.Id);
         link.Token.Should().NotBeEmpty();
+        Received.InOrder(() =>
+        {
+            _world.UsersRepository.SaveOrUpdateAsync(_world.Eve, Ct);
+            _world.TeamsRepository.SaveOrUpdateAsync(_world.Warehouse, Ct);
+            _world.UsersRepository.SaveOrUpdateAsync(_world.Ed, Ct);
+            _world.TeamsRepository.SaveOrUpdateAsync(_world.Office, Ct);
+        });
     }
 
     [Fact]

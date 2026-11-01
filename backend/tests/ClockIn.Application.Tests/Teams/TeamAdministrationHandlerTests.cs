@@ -61,6 +61,11 @@ public sealed class TeamAdministrationHandlerTests
         await ChangeSupervisor().HandleAsync(new ChangeTeamSupervisorCommand(_world.Warehouse.Id.Value, sid.Id.Value), Ct);
 
         _world.Warehouse.SupervisorId.Should().Be(sid.Id);
+        Received.InOrder(() =>
+        {
+            _world.UsersRepository.SaveOrUpdateAsync(sid, Ct);
+            _world.TeamsRepository.SaveOrUpdateAsync(_world.Warehouse, Ct);
+        });
     }
 
     [Fact]

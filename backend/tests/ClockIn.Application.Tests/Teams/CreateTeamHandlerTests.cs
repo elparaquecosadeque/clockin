@@ -34,7 +34,12 @@ public sealed class CreateTeamHandlerTests
         team.Name.Should().Be("Night Shift");
         team.SupervisorId.Should().Be(_sid.Id.Value);
         team.IsArchived.Should().BeFalse();
-        await _teamsRepository.Received(1).SaveOrUpdateAsync(Arg.Is<Team>(t => t.Name == "Night Shift"), Arg.Any<CancellationToken>());
+        Received.InOrder(() =>
+        {
+            // Saving the supervisor too makes a concurrent role change or deactivation of Sid conflict.
+            _usersRepository.SaveOrUpdateAsync(_sid, Arg.Any<CancellationToken>());
+            _teamsRepository.SaveOrUpdateAsync(Arg.Is<Team>(t => t.Name == "Night Shift"), Arg.Any<CancellationToken>());
+        });
     }
 
     [Fact]
@@ -70,7 +75,7 @@ public sealed class CreateTeamHandlerTests
     [InlineData("")]
     [InlineData("   ")]
     public void Fails_validation_on_a_blank_name(string? name) =>
-        new CreateTeamValidator().TestValidate(new CreateTeamCommand(name, Guid.CreateVersion7()))
+        new CreateTeamValidator().TestValidate(new CreateTeamCommand(name!, Guid.CreateVersion7()))
             .ShouldHaveValidationErrorFor(c => c.Name);
 
     [Fact]
