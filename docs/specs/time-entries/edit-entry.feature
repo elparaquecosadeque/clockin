@@ -30,6 +30,16 @@ Feature: Edit an entry
     When Eve sets the open entry's start to 08:45 with a note
     Then the entry is still open, starting at 08:45
 
+  Scenario Outline: Keeps an open entry within 16 hours of now
+    Given it is 2026-10-30 10:00 and Eve clocked in at 09:15
+    When Eve sets the open entry's start to <start> with a note
+    Then <outcome>
+
+    Examples:
+      | start            | outcome                           |
+      | 2026-10-29 18:00 | the entry is still open           |
+      | 2026-10-29 17:59 | it breaks the rule "EntryTooLong" |
+
   Scenario: Rejects an edit without a note
     When Eve edits the entry to 08:00 to 17:00 without a note
     Then it fails validation on "note"

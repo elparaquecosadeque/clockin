@@ -75,6 +75,28 @@ public sealed class TimesheetPunchTests
     }
 
     [Fact]
+    public void Rejects_a_clock_out_when_the_timesheet_is_not_a_draft()
+    {
+        // Unreachable through the other rules (a week with an open entry can't be submitted); this guards them.
+        var open = TimeEntry.Restore(
+            TimeEntryId.New(), CompanyClock.At("2026-10-30 08:00"), null, Phone, null, ManualChange.None, null, null, null, null);
+        var submitted = Timesheet.Restore(
+            TimesheetId.New(), UserId.New(), new Week(new DateOnly(2026, 10, 26)), TimesheetStatus.Submitted, 1, null, null, [open], []);
+
+        var act = () => submitted.ClockOut(CompanyClock.At("2026-10-30 16:30"), Phone);
+
+        act.Should().Throw<DomainException>().Which.Code.Should().Be("TimesheetNotEditable");
+        open.End.Should().BeNull();
+    }
+
+    [Fact]
+    public void Drops_the_zone_of_a_link_local_ipv6_address()
+    {
+        // The zone names the server's network interface; with it, an address can outgrow the 45-character column.
+        new PunchSource("fe80::1ff:fe23:4567:890a%ethernet-adapter-12", "Safari").IpAddress.Should().Be("fe80::1ff:fe23:4567:890a");
+    }
+
+    [Fact]
     public void Rejects_a_clock_out_when_no_entry_is_open()
     {
         var timesheet = NewTimesheetFor("2026-10-30 08:00");

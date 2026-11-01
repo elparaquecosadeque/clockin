@@ -94,6 +94,7 @@ public sealed class Timesheet
 
     public void ClockOut(DateTimeOffset now, PunchSource source)
     {
+        EnsureEditable();
         TimeEntry entry = OpenEntry ?? throw new DomainException("NoOpenEntry", "There is no open entry to clock out of.");
         entry.ClockOut(now, source);
     }
@@ -140,7 +141,7 @@ public sealed class Timesheet
             throw new DomainException("EntryInFuture", "An entry can't lie in the future.");
         }
 
-        CheckSpan(start, end ?? now, now, entry, neighbours, open: end is null);
+        CheckSpan(start, end ?? now, now, entry, neighbours);
 
         EntrySnapshot before = entry.Snapshot;
         entry.Change(actor, start, end, note.Trim());
@@ -214,8 +215,11 @@ public sealed class Timesheet
         Record(TimesheetEventKind.CorrectionRequested, owner, now, reason.Trim());
     }
 
-    public void RecordCorrectionDeclined(UserId approver, string comment, DateTimeOffset now) =>
+    public void RecordCorrectionDeclined(UserId approver, string comment, DateTimeOffset now)
+    {
+        EnsureLocked();
         Record(TimesheetEventKind.CorrectionDeclined, approver, now, comment.Trim());
+    }
 
     private void BackToDraft(UserId actor, string? comment, DateTimeOffset now)
     {
@@ -225,17 +229,15 @@ public sealed class Timesheet
     }
 
     private void CheckSpan(
-        DateTimeOffset start, DateTimeOffset end, DateTimeOffset now, TimeEntry? self, IEnumerable<Timesheet> neighbours, bool open = false)
+        DateTimeOffset start, DateTimeOffset end, DateTimeOffset now, TimeEntry? self, IEnumerable<Timesheet> neighbours)
     {
         if (end > now)
         {
             throw new DomainException("EntryInFuture", "An entry can't lie in the future.");
         }
 
-        if (!open)
-        {
-            TimeEntry.CheckLength(start, end);
-        }
+        // An open entry is measured to now: past 16 hours it could never be clocked out of.
+        TimeEntry.CheckLength(start, end);
 
         IEnumerable<TimeEntry> others = neighbours
             .Where(t => t.Id != Id)

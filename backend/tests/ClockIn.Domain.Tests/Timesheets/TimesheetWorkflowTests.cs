@@ -136,6 +136,14 @@ public sealed class TimesheetWorkflowTests
         act.Should().Throw<DomainException>().Which.Code.Should().Be("TimesheetIsEditable");
     }
 
+    [Fact]
+    public void Records_a_declined_correction_only_on_a_locked_timesheet()
+    {
+        var act = () => _week.RecordCorrectionDeclined(_sam, "Wednesday is right", Monday);
+
+        act.Should().Throw<DomainException>().Which.Code.Should().Be("TimesheetIsEditable");
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

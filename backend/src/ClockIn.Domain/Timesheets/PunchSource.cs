@@ -9,7 +9,9 @@ public sealed record PunchSource
 
     public PunchSource(string ipAddress, string userAgent)
     {
-        IpAddress = Guard.Against.NullOrWhiteSpace(ipAddress).Trim();
+        // An IPv6 zone (fe80::1%12) names the server's network interface, not the client, and can push the address
+        // past the 45-character column.
+        IpAddress = Guard.Against.NullOrWhiteSpace(ipAddress).Trim().Split('%')[0];
         // A long user agent is not a reason to lose a punch: keep the first part.
         UserAgent = userAgent.Length > MaxUserAgentLength ? userAgent[..MaxUserAgentLength] : userAgent;
     }

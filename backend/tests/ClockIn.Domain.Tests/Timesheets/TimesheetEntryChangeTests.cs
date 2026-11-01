@@ -164,6 +164,26 @@ public sealed class TimesheetEntryChangeTests
         entry.Start.Should().Be(CompanyClock.At("2026-10-30 08:45"));
     }
 
+    [Theory]
+    [InlineData("2026-10-29 18:00", null)]
+    [InlineData("2026-10-29 17:59", "EntryTooLong")]
+    public void Keeps_an_open_entry_within_16_hours_of_now(string start, string? code)
+    {
+        // Otherwise the entry could never be clocked out of, and neighbouring weeks would be checked too narrowly.
+        _week.ClockIn(CompanyClock.At("2026-10-30 09:15"), Phone, CompanyClock.Zone);
+
+        var act = () => _week.EditEntry(_eve, _week.OpenEntry!.Id, CompanyClock.At(start), null, "note", Now, CompanyClock.Zone, []);
+
+        if (code is null)
+        {
+            act.Should().NotThrow();
+        }
+        else
+        {
+            act.Should().Throw<DomainException>().Which.Code.Should().Be(code);
+        }
+    }
+
     [Fact]
     public void Rejects_reopening_a_closed_entry()
     {
