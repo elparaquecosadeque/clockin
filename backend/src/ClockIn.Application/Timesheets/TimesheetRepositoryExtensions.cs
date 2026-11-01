@@ -1,7 +1,4 @@
-using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Common.Exceptions;
-using ClockIn.Application.Common.Interfaces;
-using ClockIn.Application.Teams.Interfaces;
 using ClockIn.Application.Timesheets.Interfaces;
 using ClockIn.Domain.Accounts;
 using ClockIn.Domain.Timesheets;
@@ -28,27 +25,6 @@ public static class TimesheetRepositoryExtensions
             await timesheetsRepository.FindWithOpenEntryAsync(ownerId, ct),
         ];
         return [.. found.OfType<Timesheet>()];
-    }
-
-    /// <summary>The timesheet holding the entry, once the signed-in user may change it and has seen its latest version.</summary>
-    public static async Task<Timesheet> ForEntryChangeAsync(
-        this ITimesheetRepository timesheetsRepository,
-        ICurrentUser currentUser,
-        IUserRepository usersRepository,
-        ITeamRepository teamsRepository,
-        TimeEntryId entryId,
-        int version,
-        CancellationToken ct)
-    {
-        var timesheet = await timesheetsRepository.FindByEntryAsync(entryId, ct) ?? throw new NotFoundException("Entry not found.");
-        var parties = await TimesheetParties.LoadAsync(usersRepository, teamsRepository, currentUser.Id, timesheet.OwnerId, ct);
-        TimesheetParties.Require(parties.CanChange);
-        if (timesheet.Version != version)
-        {
-            throw new ConflictException("ConcurrencyConflict", "The timesheet was changed by someone else. Reload and try again.");
-        }
-
-        return timesheet;
     }
 
     public static async Task<Timesheet> GetAsync(

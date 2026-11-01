@@ -1,6 +1,7 @@
 using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Common.Interfaces;
 using ClockIn.Application.Teams.Interfaces;
+using ClockIn.Application.Timesheets;
 using ClockIn.Application.Timesheets.Interfaces;
 using ClockIn.Domain.Accounts;
 using ClockIn.Domain.Teams;
@@ -84,6 +85,8 @@ public sealed class TimesheetWorld
     public IUserRepository UsersRepository { get; } = Substitute.For<IUserRepository>();
 
     public ITeamRepository TeamsRepository { get; } = Substitute.For<ITeamRepository>();
+
+    public TimesheetAccess Access => new(CurrentUser, UsersRepository, TeamsRepository);
 
     public ITimesheetRepository TimesheetsRepository { get; } = Substitute.For<ITimesheetRepository>();
 

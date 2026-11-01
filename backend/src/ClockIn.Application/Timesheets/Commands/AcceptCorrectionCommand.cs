@@ -1,6 +1,4 @@
-using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Common.Interfaces;
-using ClockIn.Application.Teams.Interfaces;
 using ClockIn.Application.Timesheets.Interfaces;
 using ClockIn.Domain.Timesheets;
 using FluentValidation;
@@ -19,14 +17,13 @@ public sealed class AcceptCorrectionValidator : AbstractValidator<AcceptCorrecti
 
 public sealed class AcceptCorrectionHandler(
     ICurrentUser currentUser,
-    IUserRepository usersRepository,
-    ITeamRepository teamsRepository,
+    TimesheetAccess access,
     ICorrectionRequestRepository correctionsRepository,
     TimeProvider time)
 {
     public async Task HandleAsync(AcceptCorrectionCommand command, CancellationToken ct)
     {
-        CorrectionRequest request = await correctionsRepository.GetForApproverAsync(command.RequestId, currentUser, usersRepository, teamsRepository, ct);
+        CorrectionRequest request = await access.ForApproverAsync(correctionsRepository, command.RequestId, ct);
         request.Accept(currentUser.Id, command.Comment, time.GetUtcNow());
         await correctionsRepository.SaveOrUpdateAsync(request, ct);
     }

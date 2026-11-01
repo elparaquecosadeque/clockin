@@ -1,6 +1,4 @@
-using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Common.Exceptions;
-using ClockIn.Application.Teams.Interfaces;
 using ClockIn.Domain.Accounts;
 using ClockIn.Domain.Teams;
 
@@ -28,19 +26,6 @@ public sealed record TimesheetParties(User Actor, User Owner, Team? OwnerTeam)
         && ((IsOwner && Actor.Role.Can(Permissions.PunchTime)) || (!IsOwner && Actor.Role.Can(Permissions.ManageTimesheets)));
 
     public bool CanReopen => !IsOwner && Actor.Role.Can(Permissions.ManageTimesheets);
-
-    public static async Task<TimesheetParties> LoadAsync(
-        IUserRepository usersRepository,
-        ITeamRepository teamsRepository,
-        UserId actorId,
-        UserId ownerId,
-        CancellationToken ct)
-    {
-        var actor = await usersRepository.FindAsync(actorId, ct) ?? throw new UnauthorizedException();
-        var owner = actorId == ownerId ? actor : await usersRepository.FindAsync(ownerId, ct) ?? throw new NotFoundException("User not found.");
-        Team? team = owner.TeamId is { } teamId ? await teamsRepository.FindAsync(teamId, ct) : null;
-        return new TimesheetParties(actor, owner, team);
-    }
 
     public static void Require(bool allowed)
     {

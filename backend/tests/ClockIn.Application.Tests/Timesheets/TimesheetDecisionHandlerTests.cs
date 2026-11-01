@@ -174,7 +174,7 @@ public sealed class TimesheetDecisionHandlerTests
     {
         _world.SignIn(_world.Ada);
 
-        var act = () => new ApproveTimesheetHandler(_world.CurrentUser, _world.UsersRepository, _world.TeamsRepository, _world.TimesheetsRepository, _world.CorrectionsRepository, _world.Clock)
+        var act = () => new ApproveTimesheetHandler(_world.CurrentUser, _world.Access, _world.TimesheetsRepository, _world.CorrectionsRepository, _world.Clock)
             .HandleAsync(new ApproveTimesheetCommand(Guid.CreateVersion7()), CancellationToken.None);
 
         await act.Should().ThrowAsync<NotFoundException>();
@@ -191,18 +191,18 @@ public sealed class TimesheetDecisionHandlerTests
     };
 
     private Task Submit(UserId? owner, Week week) =>
-        new SubmitTimesheetHandler(_world.CurrentUser, _world.UsersRepository, _world.TeamsRepository, _world.TimesheetsRepository, _world.Clock)
+        new SubmitTimesheetHandler(_world.CurrentUser, _world.Access, _world.TimesheetsRepository, _world.Clock)
             .HandleAsync(new SubmitTimesheetCommand(owner?.Value, week.Start), CancellationToken.None);
 
     private Task Approve(Timesheet week) =>
-        new ApproveTimesheetHandler(_world.CurrentUser, _world.UsersRepository, _world.TeamsRepository, _world.TimesheetsRepository, _world.CorrectionsRepository, _world.Clock)
+        new ApproveTimesheetHandler(_world.CurrentUser, _world.Access, _world.TimesheetsRepository, _world.CorrectionsRepository, _world.Clock)
             .HandleAsync(new ApproveTimesheetCommand(week.Id.Value), CancellationToken.None);
 
     private Task Return(Timesheet week, string comment) =>
-        new ReturnTimesheetHandler(_world.CurrentUser, _world.UsersRepository, _world.TeamsRepository, _world.TimesheetsRepository, _world.CorrectionsRepository, _world.Clock)
+        new ReturnTimesheetHandler(_world.CurrentUser, _world.Access, _world.TimesheetsRepository, _world.CorrectionsRepository, _world.Clock)
             .HandleAsync(new ReturnTimesheetCommand(week.Id.Value, comment), CancellationToken.None);
 
     private Task Reopen(Timesheet week, string reason) =>
-        new ReopenTimesheetHandler(_world.CurrentUser, _world.UsersRepository, _world.TeamsRepository, _world.TimesheetsRepository, _world.CorrectionsRepository, _world.Clock)
+        new ReopenTimesheetHandler(_world.CurrentUser, _world.Access, _world.TimesheetsRepository, _world.CorrectionsRepository, _world.Clock)
             .HandleAsync(new ReopenTimesheetCommand(week.Id.Value, reason), CancellationToken.None);
 }

@@ -1,6 +1,4 @@
-using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Common.Interfaces;
-using ClockIn.Application.Teams.Interfaces;
 using ClockIn.Application.Timesheets.Interfaces;
 using ClockIn.Domain.Timesheets;
 
@@ -11,8 +9,7 @@ public sealed record ApproveTimesheetCommand(Guid TimesheetId) : ITransactional;
 
 public sealed class ApproveTimesheetHandler(
     ICurrentUser currentUser,
-    IUserRepository usersRepository,
-    ITeamRepository teamsRepository,
+    TimesheetAccess access,
     ITimesheetRepository timesheetsRepository,
     ICorrectionRequestRepository correctionsRepository,
     TimeProvider time)
@@ -20,7 +17,7 @@ public sealed class ApproveTimesheetHandler(
     public async Task HandleAsync(ApproveTimesheetCommand command, CancellationToken ct)
     {
         Timesheet timesheet = await timesheetsRepository.GetAsync(command.TimesheetId, ct);
-        TimesheetParties parties = await TimesheetParties.LoadAsync(usersRepository, teamsRepository, currentUser.Id, timesheet.OwnerId, ct);
+        TimesheetParties parties = await access.PartiesAsync(timesheet.OwnerId, ct);
         TimesheetParties.Require(parties.IsApprover);
         await correctionsRepository.EnsureNonePendingAsync(timesheet.Id, ct);
 

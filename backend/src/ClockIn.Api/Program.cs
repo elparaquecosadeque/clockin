@@ -7,6 +7,7 @@ using ClockIn.Api.Demo;
 using ClockIn.Application.Common.Exceptions;
 using ClockIn.Application.Common.Interfaces;
 using ClockIn.Application.Common.Middleware;
+using ClockIn.Application.Timesheets;
 using ClockIn.Infrastructure.Common;
 using ClockIn.Persistence.Common;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -70,6 +71,7 @@ public sealed class Program
     private static void AddModules(IServiceCollection services, IConfiguration configuration)
     {
         services.AddPersistence(configuration).AddInfrastructure();
+        services.AddScoped<TimesheetAccess>();
         AddDomainEventSubscribers(services);
     }
 

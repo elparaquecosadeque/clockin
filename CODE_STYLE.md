@@ -224,6 +224,7 @@ Each configuration block goes in a named private method. Both hosts (`Api`, `Pub
 - Controllers dispatch through the mediator; they never inject or call a handler directly.
 - **Validation** runs as middleware before the handler. A failure becomes a 400 with field errors. Handlers assume valid input.
 - **Command handlers** load aggregates through repositories, call domain methods and save. **Query handlers** use reads that project straight into results and may skip the domain.
+- Static helpers and extensions only use what they are given; they never take a dependency just to pass it on. Logic that several handlers share and that needs dependencies is a sealed, scoped service injected into them (`TimesheetAccess`), and a handler injects a repository only when it calls it itself ([ADR 0008](docs/adr/0008-shared-handler-logic-in-injected-services.md)).
 - Cross-cutting concerns (validation, transactions, logging) are mediator middleware in `Application/Common/Middleware/`, never repeated inside handlers.
 
 ```csharp

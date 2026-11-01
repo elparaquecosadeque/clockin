@@ -1,6 +1,5 @@
 using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Common.Interfaces;
-using ClockIn.Application.Teams.Interfaces;
 using ClockIn.Application.Timesheets.Interfaces;
 using ClockIn.Application.Timesheets.Results;
 using ClockIn.Domain.Accounts;
@@ -20,8 +19,8 @@ public sealed class GetTimesheetValidator : AbstractValidator<GetTimesheetQuery>
 
 public sealed class GetTimesheetHandler(
     ICurrentUser currentUser,
+    TimesheetAccess access,
     IUserRepository usersRepository,
-    ITeamRepository teamsRepository,
     ITimesheetRepository timesheetsRepository,
     ICorrectionRequestRepository correctionsRepository,
     TimeProvider time)
@@ -30,7 +29,7 @@ public sealed class GetTimesheetHandler(
     public async Task<TimesheetDto> HandleAsync(GetTimesheetQuery query, CancellationToken ct)
     {
         UserId ownerId = query.OwnerId is { } id ? new UserId(id) : currentUser.Id;
-        TimesheetParties parties = await TimesheetParties.LoadAsync(usersRepository, teamsRepository, currentUser.Id, ownerId, ct);
+        TimesheetParties parties = await access.PartiesAsync(ownerId, ct);
         TimesheetParties.Require(parties.CanView);
 
         var week = new Week(query.WeekStart);

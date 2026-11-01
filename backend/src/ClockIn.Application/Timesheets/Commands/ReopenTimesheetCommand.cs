@@ -1,7 +1,5 @@
-using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Common.Interfaces;
 using ClockIn.Application.Common.Validation;
-using ClockIn.Application.Teams.Interfaces;
 using ClockIn.Application.Timesheets.Interfaces;
 using ClockIn.Domain.Timesheets;
 using FluentValidation;
@@ -18,8 +16,7 @@ public sealed class ReopenTimesheetValidator : AbstractValidator<ReopenTimesheet
 
 public sealed class ReopenTimesheetHandler(
     ICurrentUser currentUser,
-    IUserRepository usersRepository,
-    ITeamRepository teamsRepository,
+    TimesheetAccess access,
     ITimesheetRepository timesheetsRepository,
     ICorrectionRequestRepository correctionsRepository,
     TimeProvider time)
@@ -27,7 +24,7 @@ public sealed class ReopenTimesheetHandler(
     public async Task HandleAsync(ReopenTimesheetCommand command, CancellationToken ct)
     {
         Timesheet timesheet = await timesheetsRepository.GetAsync(command.TimesheetId, ct);
-        TimesheetParties parties = await TimesheetParties.LoadAsync(usersRepository, teamsRepository, currentUser.Id, timesheet.OwnerId, ct);
+        TimesheetParties parties = await access.PartiesAsync(timesheet.OwnerId, ct);
         TimesheetParties.Require(parties.CanReopen);
         await correctionsRepository.EnsureNonePendingAsync(timesheet.Id, ct);
 

@@ -1,7 +1,5 @@
-using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Common.Interfaces;
 using ClockIn.Application.Common.Validation;
-using ClockIn.Application.Teams.Interfaces;
 using ClockIn.Application.Timesheets.Interfaces;
 using ClockIn.Domain.Timesheets;
 using FluentValidation;
@@ -18,15 +16,14 @@ public sealed class DeleteEntryValidator : AbstractValidator<DeleteEntryCommand>
 
 public sealed class DeleteEntryHandler(
     ICurrentUser currentUser,
-    IUserRepository usersRepository,
-    ITeamRepository teamsRepository,
+    TimesheetAccess access,
     ITimesheetRepository timesheetsRepository,
     TimeProvider time)
 {
     public async Task HandleAsync(DeleteEntryCommand command, CancellationToken ct)
     {
         var entryId = new TimeEntryId(command.EntryId);
-        Timesheet timesheet = await timesheetsRepository.ForEntryChangeAsync(currentUser, usersRepository, teamsRepository, entryId, command.Version, ct);
+        Timesheet timesheet = await access.ForEntryChangeAsync(timesheetsRepository, entryId, command.Version, ct);
         timesheet.DeleteEntry(currentUser.Id, entryId, command.Note, time.GetUtcNow());
         await timesheetsRepository.SaveOrUpdateAsync(timesheet, ct);
     }

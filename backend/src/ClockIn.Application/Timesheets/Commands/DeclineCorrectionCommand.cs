@@ -1,7 +1,5 @@
-using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Common.Interfaces;
 using ClockIn.Application.Common.Validation;
-using ClockIn.Application.Teams.Interfaces;
 using ClockIn.Application.Timesheets.Interfaces;
 using ClockIn.Domain.Timesheets;
 using FluentValidation;
@@ -18,14 +16,13 @@ public sealed class DeclineCorrectionValidator : AbstractValidator<DeclineCorrec
 
 public sealed class DeclineCorrectionHandler(
     ICurrentUser currentUser,
-    IUserRepository usersRepository,
-    ITeamRepository teamsRepository,
+    TimesheetAccess access,
     ICorrectionRequestRepository correctionsRepository,
     TimeProvider time)
 {
     public async Task HandleAsync(DeclineCorrectionCommand command, CancellationToken ct)
     {
-        CorrectionRequest request = await correctionsRepository.GetForApproverAsync(command.RequestId, currentUser, usersRepository, teamsRepository, ct);
+        CorrectionRequest request = await access.ForApproverAsync(correctionsRepository, command.RequestId, ct);
         request.Decline(currentUser.Id, command.Comment, time.GetUtcNow());
         await correctionsRepository.SaveOrUpdateAsync(request, ct);
     }

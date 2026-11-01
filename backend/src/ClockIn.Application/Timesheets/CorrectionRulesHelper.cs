@@ -1,7 +1,3 @@
-using ClockIn.Application.Accounts.Interfaces;
-using ClockIn.Application.Common.Exceptions;
-using ClockIn.Application.Common.Interfaces;
-using ClockIn.Application.Teams.Interfaces;
 using ClockIn.Application.Timesheets.Interfaces;
 using ClockIn.Domain.Common;
 using ClockIn.Domain.Timesheets;
@@ -20,21 +16,5 @@ public static class CorrectionRulesHelper
         {
             throw new DomainException("PendingCorrectionRequest", "Decide the pending correction request first.");
         }
-    }
-
-    /// <summary>The request, once the signed-in user is the owner's current approver.</summary>
-    public static async Task<CorrectionRequest> GetForApproverAsync(
-        this ICorrectionRequestRepository correctionsRepository,
-        Guid requestId,
-        ICurrentUser currentUser,
-        IUserRepository usersRepository,
-        ITeamRepository teamsRepository,
-        CancellationToken ct)
-    {
-        CorrectionRequest request = await correctionsRepository.FindAsync(new CorrectionRequestId(requestId), ct)
-            ?? throw new NotFoundException("Correction request not found.");
-        TimesheetParties parties = await TimesheetParties.LoadAsync(usersRepository, teamsRepository, currentUser.Id, request.OwnerId, ct);
-        TimesheetParties.Require(parties.IsApprover);
-        return request;
     }
 }

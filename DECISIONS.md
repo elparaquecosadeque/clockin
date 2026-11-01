@@ -14,6 +14,7 @@ Each entry has the decision, the reason, and who decided (**user**, or **dev** w
 | Constructors with more than 2 dependencies, and methods that take dependencies as parameters, list one parameter per line. Checked in review; reflection can't see line breaks. | The number of dependencies is visible at a glance. | user |
 | Static classes end in `Extensions`, `Helper` or `Constants`. | [ADR 0007](docs/adr/0007-suffixes-for-static-classes.md). | user |
 | `CorrectionRules` becomes `CorrectionRulesHelper`, though its methods are extensions; `Permissions`, `TextRules`, `PreferenceRules` and `WeekGuards` keep their names for now. | Its rules are shared by two handlers. | user |
+| Logic shared by handlers that needs dependencies is an injected service; the timesheet permission checks move into `TimesheetAccess`. | [ADR 0008](docs/adr/0008-shared-handler-logic-in-injected-services.md). | user |
 
 ## 2026-10-31: Demo sign-in list and own team
 
@@ -232,4 +233,4 @@ The interview decisions are in [`docs/specs/`](docs/specs/) and [`docs/glossary.
 | The "declined request" badge counts the last 7 days. | user |
 | Deactivation and correction requests need no reason. | user |
 
-Larger decisions: [ADR 0001](docs/adr/0001-internationalization.md) (i18n), [ADR 0002](docs/adr/0002-reqnroll-for-api-specs.md) (Reqnroll), [ADR 0003](docs/adr/0003-adopt-baseline-code-style-and-stack.md) (baseline and ADR sync), [ADR 0004](docs/adr/0004-http-tests-instead-of-reqnroll.md) (no Reqnroll; supersedes 0002), [ADR 0006](docs/adr/0006-repository-suffix-on-variables.md) (repository variable names), [ADR 0007](docs/adr/0007-suffixes-for-static-classes.md) (static class suffixes).
+Larger decisions: [ADR 0001](docs/adr/0001-internationalization.md) (i18n), [ADR 0002](docs/adr/0002-reqnroll-for-api-specs.md) (Reqnroll), [ADR 0003](docs/adr/0003-adopt-baseline-code-style-and-stack.md) (baseline and ADR sync), [ADR 0004](docs/adr/0004-http-tests-instead-of-reqnroll.md) (no Reqnroll; supersedes 0002), [ADR 0006](docs/adr/0006-repository-suffix-on-variables.md) (repository variable names), [ADR 0007](docs/adr/0007-suffixes-for-static-classes.md) (static class suffixes), [ADR 0008](docs/adr/0008-shared-handler-logic-in-injected-services.md) (shared handler logic as a service).

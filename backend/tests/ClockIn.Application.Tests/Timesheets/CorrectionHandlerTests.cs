@@ -72,7 +72,7 @@ public sealed class CorrectionHandlerTests
         _world.SignIn(Person(actor));
 
         var accept = () => Accept(request, null);
-        var decline = () => new DeclineCorrectionHandler(_world.CurrentUser, _world.UsersRepository, _world.TeamsRepository, _world.CorrectionsRepository, _world.Clock)
+        var decline = () => new DeclineCorrectionHandler(_world.CurrentUser, _world.Access, _world.CorrectionsRepository, _world.Clock)
             .HandleAsync(new DeclineCorrectionCommand(request.Id.Value, "no"), CancellationToken.None);
 
         await accept.Should().ThrowAsync<ForbiddenException>();
@@ -117,10 +117,10 @@ public sealed class CorrectionHandlerTests
     };
 
     private Task<Guid> Request(Timesheet week) =>
-        new RequestCorrectionHandler(_world.CurrentUser, _world.UsersRepository, _world.TeamsRepository, _world.TimesheetsRepository, _world.CorrectionsRepository, _world.Clock)
+        new RequestCorrectionHandler(_world.Access, _world.TimesheetsRepository, _world.CorrectionsRepository, _world.Clock)
             .HandleAsync(new RequestCorrectionCommand(week.Id.Value, "Wednesday shift is missing"), CancellationToken.None);
 
     private Task Accept(CorrectionRequest request, string? comment) =>
-        new AcceptCorrectionHandler(_world.CurrentUser, _world.UsersRepository, _world.TeamsRepository, _world.CorrectionsRepository, _world.Clock)
+        new AcceptCorrectionHandler(_world.CurrentUser, _world.Access, _world.CorrectionsRepository, _world.Clock)
             .HandleAsync(new AcceptCorrectionCommand(request.Id.Value, comment), CancellationToken.None);
 }

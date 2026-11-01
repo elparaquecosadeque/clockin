@@ -1,8 +1,6 @@
-using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Common.Exceptions;
 using ClockIn.Application.Common.Interfaces;
 using ClockIn.Application.Common.Validation;
-using ClockIn.Application.Teams.Interfaces;
 using ClockIn.Application.Timesheets.Interfaces;
 using ClockIn.Domain.Timesheets;
 using FluentValidation;
@@ -18,9 +16,7 @@ public sealed class RequestCorrectionValidator : AbstractValidator<RequestCorrec
 }
 
 public sealed class RequestCorrectionHandler(
-    ICurrentUser currentUser,
-    IUserRepository usersRepository,
-    ITeamRepository teamsRepository,
+    TimesheetAccess access,
     ITimesheetRepository timesheetsRepository,
     ICorrectionRequestRepository correctionsRepository,
     TimeProvider time)
@@ -28,7 +24,7 @@ public sealed class RequestCorrectionHandler(
     public async Task<Guid> HandleAsync(RequestCorrectionCommand command, CancellationToken ct)
     {
         Timesheet timesheet = await timesheetsRepository.GetAsync(command.TimesheetId, ct);
-        TimesheetParties parties = await TimesheetParties.LoadAsync(usersRepository, teamsRepository, currentUser.Id, timesheet.OwnerId, ct);
+        TimesheetParties parties = await access.PartiesAsync(timesheet.OwnerId, ct);
         TimesheetParties.Require(parties.IsOwner && parties.CanChange);
         if (await correctionsRepository.FindPendingAsync(timesheet.Id, ct) is not null)
         {

@@ -1,7 +1,5 @@
-using ClockIn.Application.Accounts.Interfaces;
 using ClockIn.Application.Common.Interfaces;
 using ClockIn.Application.Common.Validation;
-using ClockIn.Application.Teams.Interfaces;
 using ClockIn.Application.Timesheets.Interfaces;
 using ClockIn.Domain.Accounts;
 using ClockIn.Domain.Timesheets;
@@ -20,15 +18,14 @@ public sealed class AddEntryValidator : AbstractValidator<AddEntryCommand>
 
 public sealed class AddEntryHandler(
     ICurrentUser currentUser,
-    IUserRepository usersRepository,
-    ITeamRepository teamsRepository,
+    TimesheetAccess access,
     ITimesheetRepository timesheetsRepository,
     TimeProvider time)
 {
     public async Task<Guid> HandleAsync(AddEntryCommand command, CancellationToken ct)
     {
         UserId ownerId = command.OwnerId is { } id ? new UserId(id) : currentUser.Id;
-        TimesheetParties parties = await TimesheetParties.LoadAsync(usersRepository, teamsRepository, currentUser.Id, ownerId, ct);
+        TimesheetParties parties = await access.PartiesAsync(ownerId, ct);
         TimesheetParties.Require(parties.CanChange);
 
         var week = Week.Containing(command.Start, time.LocalTimeZone);
