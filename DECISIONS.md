@@ -12,6 +12,7 @@ Each entry has the decision, the reason, and who decided (**user**, or **dev** w
 | Merge backend test coverage across all production assemblies, report line and branch coverage separately, and enforce 80% line coverage in each of Domain and Application using exact counts. Missing assemblies fail the gate. | Implements the existing core-layer quality gate without letting another layer's percentage hide a gap. Tests and generated code are excluded. | user / dev |
 | Include all frontend TypeScript source, including untested files. Other backend layers and frontend have no new threshold yet. Playwright coverage is not merged into the figures. | Establish an honest baseline before setting further gates; keep browser behavior checks separate. | user / dev |
 | Regenerate coverage for each run, ignore generated reports in Git, and publish Markdown summaries plus separate HTML report artifacts in CI. | Makes local and CI results reproducible and reviewable without committing changing report files. | user / dev |
+| Publish the latest successful `main` reports to GitHub Pages, with a landing page linking backend and frontend reports and recording the source commit. PRs do not deploy; main runs are serialized. | A permanent URL stays current without an older or failed run replacing the published result. | user / dev |
 
 ## 2026-11-01: Bounded reporting (audit run 2)
 

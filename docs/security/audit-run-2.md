@@ -35,7 +35,7 @@ The review left four leads. Each is reachable from the source but needs a test o
 
 | Item | Status |
 |---|---|
-| The CI workflow doesn't restrict its token to read-only | Open |
+| The CI workflow doesn't restrict its token to read-only | Fixed: the default token has `contents: read`; only the GitHub Pages deployment job adds `pages: write` and `id-token: write`. |
 | CI actions are pinned by tag, not by commit | Open, until the workflow gains secrets or a publish step |
 | No NuGet lock file | Open |
 | The test database image uses a movable tag | Open |

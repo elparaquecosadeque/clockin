@@ -67,6 +67,10 @@ Line and branch coverage are reported separately. Domain and Application must **
 
 CI uses the same commands, adds Markdown summaries to the Actions run summary and uploads separate `backend-coverage` and `frontend-coverage` artifacts, including reports available after a failing test run. Generated reports are ignored by Git. Playwright remains a separate behavior/accessibility check and does not contribute to these code coverage figures.
 
+**Latest published reports:** [Coverage dashboard](https://elparaquecosadeque.github.io/clockin/), [backend](https://elparaquecosadeque.github.io/clockin/backend/) and [frontend](https://elparaquecosadeque.github.io/clockin/frontend/). A successful push build on `main` deploys both reports from that same run to GitHub Pages. Pull requests never deploy, and a failed build leaves the last successful report online. Main runs are serialized so an older build cannot overwrite a newer report. The dashboard identifies the source commit and generation time.
+
+To preview the same static site locally after collecting coverage, run `node scripts/coverage-site.mjs` and open `coverage/site/index.html`. The site copies report assets and summaries; raw backend collector files remain downloadable CI artifacts but are not published to Pages.
+
 ## Architecture diagrams
 
 See [`docs/architecture/`](docs/architecture/README.md).
