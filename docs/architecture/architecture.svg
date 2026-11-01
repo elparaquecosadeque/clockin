@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1517.5 1054" width="1517.5" height="1054" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
+<rect width="1517.5" height="1054" fill="#ffffff"/>
+<text x="40" y="44" font-size="24" fill="#1e1e1e">ClockIn architecture (2026-10-31)</text>
+<rect x="502.5" y="80" width="435" height="132" rx="10" fill="#a5d8ff" stroke="#1e1e1e" stroke-width="2"/>
+<text x="720" y="111" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">Angular 22 SPA (frontend/)</text>
+<text x="720" y="131" font-size="16" text-anchor="middle" fill="#1e1e1e">features: auth · clock · timesheets</text>
+<text x="720" y="151" font-size="16" text-anchor="middle" fill="#1e1e1e">reports · admin · settings</text>
+<text x="720" y="171" font-size="16" text-anchor="middle" fill="#1e1e1e">core: guards · interceptors · layout</text>
+<text x="720" y="191" font-size="16" text-anchor="middle" fill="#1e1e1e">Angular Material · one build per locale (en, es)</text>
+<rect x="490" y="300" width="460" height="152" rx="10" fill="#ffec99" stroke="#1e1e1e" stroke-width="2"/>
+<text x="720" y="331" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">ClockIn.Api: ASP.NET Core host</text>
+<text x="720" y="351" font-size="16" text-anchor="middle" fill="#1e1e1e">REST controllers · JWT auth (ES256) · rate limiting</text>
+<text x="720" y="371" font-size="16" text-anchor="middle" fill="#1e1e1e">exception handler → ProblemDetails · health checks</text>
+<text x="720" y="391" font-size="16" text-anchor="middle" fill="#1e1e1e">Wolverine mediator · Serilog</text>
+<text x="720" y="411" font-size="16" text-anchor="middle" fill="#1e1e1e">hosted services: demo data · first-admin seed</text>
+<text x="720" y="431" font-size="16" text-anchor="middle" fill="#1e1e1e">composition root: wires every project</text>
+<rect x="481.5" y="540" width="477" height="132" rx="10" fill="#b2f2bb" stroke="#1e1e1e" stroke-width="2"/>
+<text x="720" y="571" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">ClockIn.Application</text>
+<text x="720" y="591" font-size="16" text-anchor="middle" fill="#1e1e1e">use cases: commands · queries · handlers</text>
+<text x="720" y="611" font-size="16" text-anchor="middle" fill="#1e1e1e">FluentValidation validators · transaction middleware</text>
+<text x="720" y="631" font-size="16" text-anchor="middle" fill="#1e1e1e">Accounts · Timesheets · Teams · Reporting · Demo</text>
+<text x="720" y="651" font-size="16" text-anchor="middle" fill="#1e1e1e">ports: repositories · reads · IAuditLog · IUnitOfWork</text>
+<rect x="85" y="560" width="250" height="92" rx="10" fill="#e9ecef" stroke="#1e1e1e" stroke-width="2"/>
+<text x="210" y="591" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">ClockIn.Infrastructure</text>
+<text x="210" y="611" font-size="16" text-anchor="middle" fill="#1e1e1e">password hasher (PBKDF2)</text>
+<text x="210" y="631" font-size="16" text-anchor="middle" fill="#1e1e1e">audit log (Audit category)</text>
+<rect x="1073" y="540" width="334" height="132" rx="10" fill="#e9ecef" stroke="#1e1e1e" stroke-width="2"/>
+<text x="1240" y="571" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">ClockIn.Persistence</text>
+<text x="1240" y="591" font-size="16" text-anchor="middle" fill="#1e1e1e">linq2db repositories and reads</text>
+<text x="1240" y="611" font-size="16" text-anchor="middle" fill="#1e1e1e">unit of work · domain event dispatch</text>
+<text x="1240" y="631" font-size="16" text-anchor="middle" fill="#1e1e1e">FluentMigrator migrations</text>
+<text x="1240" y="651" font-size="16" text-anchor="middle" fill="#1e1e1e">demo seed</text>
+<rect x="532" y="780" width="376" height="132" rx="10" fill="#d0bfff" stroke="#1e1e1e" stroke-width="2"/>
+<text x="720" y="811" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">ClockIn.Domain</text>
+<text x="720" y="831" font-size="16" text-anchor="middle" fill="#1e1e1e">aggregates: User · Session · Team</text>
+<text x="720" y="851" font-size="16" text-anchor="middle" fill="#1e1e1e">Timesheet · CorrectionRequest</text>
+<text x="720" y="871" font-size="16" text-anchor="middle" fill="#1e1e1e">value objects · typed ids · domain events</text>
+<text x="720" y="891" font-size="16" text-anchor="middle" fill="#1e1e1e">permissions · guard clauses (Ardalis)</text>
+<rect x="1029" y="800" width="242" height="72" rx="10" fill="#ffd8a8" stroke="#1e1e1e" stroke-width="2"/>
+<text x="1150" y="831" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">PostgreSQL</text>
+<text x="1150" y="851" font-size="16" text-anchor="middle" fill="#1e1e1e">tests · demo · production</text>
+<rect x="1302.5" y="800" width="175" height="72" rx="10" fill="#ffd8a8" stroke="#1e1e1e" stroke-width="2"/>
+<text x="1390" y="831" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">SQLite</text>
+<text x="1390" y="851" font-size="16" text-anchor="middle" fill="#1e1e1e">local development</text>
+<rect x="64" y="800" width="292" height="92" rx="10" fill="#e9ecef" stroke="#1e1e1e" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="210" y="831" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">Logs (Serilog)</text>
+<text x="210" y="851" font-size="16" text-anchor="middle" fill="#1e1e1e">console + logs/app-.log</text>
+<text x="210" y="871" font-size="16" text-anchor="middle" fill="#1e1e1e">security events: Audit category</text>
+<line x1="720" y1="216" x2="720" y2="294" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)" stroke-dasharray="8 6"/>
+<rect x="615.1" y="235" width="209.8" height="40" fill="#ffffff"/>
+<text x="720" y="251" font-size="14" text-anchor="middle" fill="#1e1e1e">HTTPS /api · bearer JWT</text>
+<text x="720" y="268" font-size="14" text-anchor="middle" fill="#1e1e1e">refresh cookie on /api/auth</text>
+<line x1="720" y1="456" x2="720" y2="534" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)"/>
+<line x1="542.6086956521739" y1="456" x2="325.30434782608694" y2="554" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)"/>
+<line x1="900.8695652173913" y1="456" x2="1077.2173913043478" y2="534" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)"/>
+<line x1="339" y1="606" x2="475.5" y2="606" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)"/>
+<line x1="1069" y1="606" x2="964.5" y2="606" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)"/>
+<line x1="720" y1="676" x2="720" y2="774" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)"/>
+<line x1="1212.608695652174" y1="676" x2="1166.4347826086957" y2="794" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)" stroke-dasharray="8 6"/>
+<line x1="1285.6521739130435" y1="676" x2="1362.608695652174" y2="794" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)" stroke-dasharray="8 6"/>
+<line x1="210" y1="656" x2="210" y2="794" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)" stroke-dasharray="8 6"/>
+<text x="40" y="974" font-size="14" fill="#495057">Solid arrow: project reference (depends on). Dashed: runtime traffic or I/O.</text>
+<text x="40" y="992" font-size="14" fill="#495057">Infrastructure and Persistence implement the ports Application declares; Domain depends on nothing of ours.</text>
+<text x="40" y="1010" font-size="14" fill="#495057">The engine comes from configuration (Database:Provider); LayerDependencyTests enforces the references.</text>
+</svg>

@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 1516" width="1260" height="1516" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
+<rect width="1260" height="1516" fill="#ffffff"/>
+<text x="40" y="44" font-size="24" fill="#1e1e1e">ClockIn request flow (2026-10-31)</text>
+<rect x="286.5" y="80" width="267" height="72" rx="10" fill="#a5d8ff" stroke="#1e1e1e" stroke-width="2"/>
+<text x="420" y="111" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">Angular SPA</text>
+<text x="420" y="131" font-size="16" text-anchor="middle" fill="#1e1e1e">HTTP request with bearer JWT</text>
+<rect x="181.5" y="200" width="477" height="112" rx="10" fill="#ffec99" stroke="#1e1e1e" stroke-width="2"/>
+<text x="420" y="231" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">ASP.NET Core pipeline</text>
+<text x="420" y="251" font-size="16" text-anchor="middle" fill="#1e1e1e">correlation id → request logging → exception handler</text>
+<text x="420" y="271" font-size="16" text-anchor="middle" fill="#1e1e1e">authentication: reloads user, role and security stamp</text>
+<text x="420" y="291" font-size="16" text-anchor="middle" fill="#1e1e1e">authorization (permission policies) → rate limiter</text>
+<rect x="206.5" y="380" width="427" height="92" rx="10" fill="#ffec99" stroke="#1e1e1e" stroke-width="2"/>
+<text x="420" y="411" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">Controller</text>
+<text x="420" y="431" font-size="16" text-anchor="middle" fill="#1e1e1e">maps the body to a command or query</text>
+<text x="420" y="451" font-size="16" text-anchor="middle" fill="#1e1e1e">IMessageBus.InvokeAsync (Wolverine, in process)</text>
+<rect x="194" y="520" width="452" height="72" rx="10" fill="#b2f2bb" stroke="#1e1e1e" stroke-width="2"/>
+<text x="420" y="551" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">Validation middleware</text>
+<text x="420" y="571" font-size="16" text-anchor="middle" fill="#1e1e1e">FluentValidation: 400 with field errors on failure</text>
+<rect x="96.5" y="650" width="267" height="92" rx="10" fill="#b2f2bb" stroke="#1e1e1e" stroke-width="2"/>
+<text x="230" y="681" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">Transaction middleware</text>
+<text x="230" y="701" font-size="16" text-anchor="middle" fill="#1e1e1e">ITransactional commands only</text>
+<text x="230" y="721" font-size="16" text-anchor="middle" fill="#1e1e1e">unitOfWork.BeginAsync</text>
+<rect x="21" y="800" width="418" height="112" rx="10" fill="#b2f2bb" stroke="#1e1e1e" stroke-width="2"/>
+<text x="230" y="831" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">Command handler</text>
+<text x="230" y="851" font-size="16" text-anchor="middle" fill="#1e1e1e">TimesheetAccess / repositories load aggregates</text>
+<text x="230" y="871" font-size="16" text-anchor="middle" fill="#1e1e1e">domain method enforces the rules</text>
+<text x="230" y="891" font-size="16" text-anchor="middle" fill="#1e1e1e">SaveOrUpdateAsync (version check → 409)</text>
+<rect x="113" y="970" width="234" height="92" rx="10" fill="#e9ecef" stroke="#1e1e1e" stroke-width="2"/>
+<text x="230" y="1001" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">Repository (linq2db)</text>
+<text x="230" y="1021" font-size="16" text-anchor="middle" fill="#1e1e1e">writes the aggregate</text>
+<text x="230" y="1041" font-size="16" text-anchor="middle" fill="#1e1e1e">queues its domain events</text>
+<rect x="84" y="1120" width="292" height="92" rx="10" fill="#e9ecef" stroke="#1e1e1e" stroke-width="2"/>
+<text x="230" y="1151" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">UnitOfWork.CommitAsync</text>
+<text x="230" y="1171" font-size="16" text-anchor="middle" fill="#1e1e1e">runs every queued event through</text>
+<text x="230" y="1191" font-size="16" text-anchor="middle" fill="#1e1e1e">the subscribers, then commits</text>
+<rect x="506.5" y="1080" width="427" height="112" rx="10" fill="#d0bfff" stroke="#1e1e1e" stroke-width="2"/>
+<text x="720" y="1111" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">Domain event subscribers</text>
+<text x="720" y="1131" font-size="16" text-anchor="middle" fill="#1e1e1e">e.g. ReopenTimesheetOnCorrectionRequestAccepted</text>
+<text x="720" y="1151" font-size="16" text-anchor="middle" fill="#1e1e1e">same scope, connection and transaction</text>
+<text x="720" y="1171" font-size="16" text-anchor="middle" fill="#1e1e1e">may save aggregates, queueing more events</text>
+<rect x="950.5" y="650" width="259" height="112" rx="10" fill="#b2f2bb" stroke="#1e1e1e" stroke-width="2"/>
+<text x="1080" y="681" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">Query handler</text>
+<text x="1080" y="701" font-size="16" text-anchor="middle" fill="#1e1e1e">IReportingReads projections</text>
+<text x="1080" y="721" font-size="16" text-anchor="middle" fill="#1e1e1e">or repositories → DTO</text>
+<text x="1080" y="741" font-size="16" text-anchor="middle" fill="#1e1e1e">no transaction</text>
+<rect x="660" y="860" width="200" height="72" rx="10" fill="#ffd8a8" stroke="#1e1e1e" stroke-width="2"/>
+<text x="760" y="891" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">Database</text>
+<text x="760" y="911" font-size="16" text-anchor="middle" fill="#1e1e1e">PostgreSQL or SQLite</text>
+<rect x="860" y="1300" width="360" height="92" rx="10" fill="#a5d8ff" stroke="#1e1e1e" stroke-width="2"/>
+<text x="1040" y="1331" font-size="16" text-anchor="middle" fill="#1e1e1e" font-weight="bold">Response</text>
+<text x="1040" y="1351" font-size="16" text-anchor="middle" fill="#1e1e1e">DTO or 204 · errors as ProblemDetails</text>
+<text x="1040" y="1371" font-size="16" text-anchor="middle" fill="#1e1e1e">400 · 401 · 403 · 404 · 409 · 422 · 500</text>
+<line x1="420" y1="156" x2="420" y2="194" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)"/>
+<line x1="420" y1="316" x2="420" y2="374" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)"/>
+<line x1="420" y1="476" x2="420" y2="514" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)"/>
+<line x1="365.7142857142857" y1="596" x2="300.57142857142856" y2="644" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)"/>
+<rect x="302.24285714285713" y="608.5" width="61.800000000000004" height="23" fill="#ffffff"/>
+<text x="333.1428571428571" y="624.5" font-size="14" text-anchor="middle" fill="#1e1e1e">command</text>
+<line x1="596" y1="596" x2="944.5" y2="675.2045454545455" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)"/>
+<rect x="746.75" y="624.1022727272727" width="47" height="23" fill="#ffffff"/>
+<text x="770.25" y="640.1022727272727" font-size="14" text-anchor="middle" fill="#1e1e1e">query</text>
+<line x1="230" y1="746" x2="230" y2="794" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)"/>
+<line x1="230" y1="916" x2="230" y2="964" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)"/>
+<line x1="351" y1="988.6037735849056" x2="654" y2="920" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)" stroke-dasharray="8 6"/>
+<line x1="978.9473684210526" y1="766" x2="830.7368421052631" y2="854" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)" stroke-dasharray="8 6"/>
+<line x1="230" y1="1066" x2="230" y2="1114" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)"/>
+<line x1="380" y1="1156.8163265306123" x2="500.5" y2="1149.438775510204" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)" stroke-dasharray="8 6"/>
+<rect x="387.15" y="1141.6275510204082" width="106.2" height="23" fill="#ffffff"/>
+<text x="440.25" y="1157.6275510204082" font-size="14" text-anchor="middle" fill="#1e1e1e">domain events</text>
+<line x1="380" y1="1199.3333333333333" x2="854" y2="1304.6666666666667" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)"/>
+<line x1="1080" y1="766" x2="1080" y2="1294" stroke="#1e1e1e" stroke-width="2" marker-end="url(#head)"/>
+<text x="40" y="1454" font-size="14" fill="#495057">An exception anywhere rolls the transaction back (TransactionMiddleware.FinallyAsync) and becomes ProblemDetails.</text>
+<text x="40" y="1472" font-size="14" fill="#495057">Sign-in saves the failure count outside a transaction, so a rejected attempt still counts.</text>
+</svg>
