@@ -84,6 +84,12 @@ Feature: Add a manual entry
       When Eve adds an entry on Monday 2026-10-26 from 01:00 to 03:00 with a note
       Then it breaks the rule "EntriesOverlap"
 
+    Scenario: Two entries for the same person at the same moment, either side of a week boundary
+      When Eve adds an entry from Sunday 2026-10-25 22:00 to Monday 2026-10-26 02:00
+      And at the same moment Ada adds an entry for Eve on Monday 2026-10-26 from 01:00 to 03:00
+      Then the second waits for the first to finish
+      And it breaks the rule "EntriesOverlap"
+
   Rule: Only a Draft timesheet accepts changes
 
     Scenario Outline: Rejects a week that is not a Draft

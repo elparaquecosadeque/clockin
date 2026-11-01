@@ -8,7 +8,10 @@ namespace ClockIn.Application.Timesheets;
 /// <summary>Loading shared by the timesheet commands.</summary>
 public static class TimesheetRepositoryExtensions
 {
-    /// <summary>The owner's timesheets an entry of <paramref name="week"/> could overlap: entries last at most 16 hours.</summary>
+    /// <summary>
+    /// The owner's timesheets an entry of <paramref name="week"/> could overlap: entries last at most 16 hours. Locks the
+    /// owner first, so a concurrent write in a neighbouring week waits and then sees this one's entry.
+    /// </summary>
     public static async Task<IReadOnlyList<Timesheet>> NeighboursAsync(
         this ITimesheetRepository timesheetsRepository,
         UserId ownerId,
@@ -18,6 +21,7 @@ public static class TimesheetRepositoryExtensions
         // Sequential on purpose: parallelizing with Task.WhenAll is not recommended. The lookups share the request's
         // single database connection, which runs one command at a time and isn't thread-safe. If this ever gets
         // slow, load the three timesheets in one query instead.
+        await timesheetsRepository.LockOwnerAsync(ownerId, ct);
         Timesheet?[] found =
         [
             await timesheetsRepository.FindAsync(ownerId, new Week(week.Start.AddDays(-7)), ct),

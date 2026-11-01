@@ -15,6 +15,12 @@ public interface ITimesheetRepository
     /// <summary>The owner's timesheet holding their open entry, whatever its week.</summary>
     Task<Timesheet?> FindWithOpenEntryAsync(UserId ownerId, CancellationToken ct);
 
+    /// <summary>
+    /// Makes other entry writes for <paramref name="ownerId"/> wait until this transaction ends. Outside a transaction
+    /// it holds nothing.
+    /// </summary>
+    Task LockOwnerAsync(UserId ownerId, CancellationToken ct);
+
     /// <summary>Inserts or updates the whole aggregate and appends its new history.</summary>
     Task SaveOrUpdateAsync(Timesheet timesheet, CancellationToken ct);
 }
