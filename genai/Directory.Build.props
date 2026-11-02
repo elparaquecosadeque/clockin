@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <TreatWarningsAsErrors Condition="'$(CI)' == 'true'">true</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>

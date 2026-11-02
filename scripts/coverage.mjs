@@ -49,6 +49,8 @@ for (const target of targets) {
       "dotnet",
       [
         "test",
+        "--solution",
+        join(root, "backend", "ClockIn.slnx"),
         "--no-restore",
         "--coverage",
         "--coverage-output-format",
