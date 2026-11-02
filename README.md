@@ -37,7 +37,9 @@ Both public APIs run locally after the existing API has prepared the shared demo
 
 In Scalar, open an operation, select its named request example where available, and send the request. Copy the login response's `accessToken` into **Bearer authentication**. Each host issues its own tokens; they cannot be shared between APIs. Neither public API is included in the remote deployment.
 
-### PublicApi: personal time and prefilled Scalar examples
+<details>
+<summary><strong>PublicApi: personal time and prefilled Scalar examples</strong></summary>
+
 
 The separate `ClockIn.PublicApi` exposes the personal-time workflow at `/api/v1`. It runs only in **Development**, sharing the existing API's database and business rules. Controllers call application handlers directly, without Wolverine.
 
@@ -75,7 +77,11 @@ Try login, punch in, punch out, read the example week, edit, then submit. Punche
 
 For Bruno, open the [collection](bruno/ClockIn.PublicApi/), select **Local**, and run its numbered requests. It captures the bearer token and edit values automatically. See the [sample JSON bodies](bruno/ClockIn.PublicApi/examples/), [full API guide](docs/public-api.md) and [feature specification](docs/specs/public-api/personal-time.feature).
 
-### SecondPublicApi: accounts, authorization and prefilled Scalar examples
+</details>
+
+<details>
+<summary><strong>SecondPublicApi: accounts, authorization and prefilled Scalar examples</strong></summary>
+
 
 After preparing the shared database through the existing API as above, start the separate account API from the repository root:
 
@@ -101,7 +107,11 @@ Copy the creation response's `token` into set-password, using the prefilled `new
 
 The [SecondPublicApi Bruno collection](bruno/ClockIn.SecondPublicApi/) captures tokens and generates unique emails. Select **Local**, run the root requests, then the **Employee** folder for the Office flow. See the [sample JSON](bruno/ClockIn.SecondPublicApi/examples/), [full guide](docs/second-public-api.md) and [feature specification](docs/specs/second-public-api/accounts.feature). All hosts share accounts and daily demo resets; this host never migrates, seeds or resets the database.
 
-### Hosted deployment
+</details>
+
+<details>
+<summary><strong>Hosted deployment</strong></summary>
+
 
 Try the deployed demo: **[English sign-in](https://clockin.gerardoleon.dev/en/sign-in)** · **[Español](https://clockin.gerardoleon.dev/es/)**.
 
@@ -139,7 +149,11 @@ For real employee data, use `Production`, disable demo seeding and provision a s
 
 Health endpoints: `/health/live` and `/health/ready`. The OpenAPI document at `/openapi/v1.json` is available in Development.
 
-## Architecture and Excalidraw diagrams
+</details>
+
+<details>
+<summary><strong>Architecture and Excalidraw diagrams</strong></summary>
+
 
 | Diagram | What it shows | Editable source | Preview |
 |---|---|---|---|
@@ -150,7 +164,11 @@ Health endpoints: `/health/live` and `/health/ready`. The OpenAPI document at `/
 
 Open the editable files in [Excalidraw](https://excalidraw.com/). See the [diagram guide](docs/architecture/README.md) for scope and maintenance notes.
 
-## Security audits
+</details>
+
+<details>
+<summary><strong>Security audits</strong></summary>
+
 
 | Review | Scope | Report |
 |---|---|---|
@@ -159,7 +177,11 @@ Open the editable files in [Excalidraw](https://excalidraw.com/). See the [diagr
 
 Both audits were source-only reviews. Their reports identify the reviewed commits and track fixes, accepted risks and unresolved leads. Deployment and logging validation is documented separately in the [operations](docs/deployment.md#validation-and-access) and [logging](docs/logging.md#validation) guides.
 
-## Features and specifications
+</details>
+
+<details>
+<summary><strong>Features and specifications</strong></summary>
+
 
 Behavior is specified in Gherkin `.feature` files. These scenarios drive domain and application tests; `@api` scenarios become xUnit HTTP tests against a real database. The [specification guide](docs/specs/README.md) explains the mapping to tests and the sample company.
 
@@ -175,7 +197,11 @@ Behavior is specified in Gherkin `.feature` files. These scenarios drive domain 
 
 Product context: [PRODUCT.md](PRODUCT.md). Domain terms: [glossary](docs/glossary.md). Contributor rules and decisions: [code style](CODE_STYLE.md), [stack](STACK.md), [ADRs](docs/adr/) and [decisions log](DECISIONS.md).
 
-## Tests and code coverage
+</details>
+
+<details>
+<summary><strong>Tests and code coverage</strong></summary>
+
 
 **[Latest coverage dashboard](https://elparaquecosadeque.github.io/clockin/)** · **[CI runs](https://github.com/elparaquecosadeque/clockin/actions/workflows/ci.yml)**
 
@@ -188,7 +214,9 @@ The badges read the published coverage summaries rather than fixed percentages i
 
 Backend coverage merges unit, architecture and HTTP/integration results for all eight production assemblies, including both public APIs and the shared Hosting helpers. Frontend coverage includes all TypeScript source, including untested files. Test code and generated backend `obj` files are excluded; type-only frontend files have no executable lines. Domain and Application must **each reach 80% line coverage**, using exact covered/coverable counts. Other layers and the frontend are report-only. Playwright remains a separate behavior and accessibility check.
 
-### Run the checks
+<details>
+<summary><strong>Run the checks</strong></summary>
+
 
 Backend checks, from `backend/`:
 
@@ -212,7 +240,11 @@ New UI texts need an `i18n` id and a Spanish translation in `frontend/src/locale
 
 Coverage tooling checks, from the repository root: `node --test scripts/*.test.mjs`.
 
-### Generate coverage locally
+</details>
+
+<details>
+<summary><strong>Generate coverage locally</strong></summary>
+
 
 Install the pinned collectors and report tool after pulling dependency changes:
 
@@ -233,6 +265,10 @@ From the repository root, run `node scripts/coverage.mjs` for both applications,
 | Machine-readable summary | `coverage/backend/Summary.json` | `coverage/frontend/Summary.json` |
 
 Run `node scripts/coverage-site.mjs` after collection to preview the dashboard at `coverage/site/index.html`. Raw backend collector files remain CI artifacts and are not published to Pages. Generated reports are ignored by Git.
+
+</details>
+
+</details>
 
 [backend-lines]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Felparaquecosadeque.github.io%2Fclockin%2Fbackend%2FSummary.json&query=%24.summary.linecoverage&label=lines&suffix=%25&color=blue
 [backend-branches]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Felparaquecosadeque.github.io%2Fclockin%2Fbackend%2FSummary.json&query=%24.summary.branchcoverage&label=branches&suffix=%25&color=blue
