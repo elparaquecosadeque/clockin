@@ -3,10 +3,13 @@ set -euo pipefail
 umask 077
 : "${CLOCKIN_TAG:?set CLOCKIN_TAG}"
 : "${CLOCKIN_DB_PASSWORD:?set CLOCKIN_DB_PASSWORD}"
+: "${CLOCKIN_LOGGING_PASSWORD:?set CLOCKIN_LOGGING_PASSWORD}"
 : "${CLOCKIN_SIGNING_KEY:?set CLOCKIN_SIGNING_KEY}"
 : "${CLOCKIN_FIRST_ADMIN_EMAIL:?set CLOCKIN_FIRST_ADMIN_EMAIL}"
 [[ "$CLOCKIN_TAG" =~ ^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$ ]] || { echo 'Invalid release tag' >&2; exit 1; }
 [[ "$CLOCKIN_DB_PASSWORD" =~ ^[a-f0-9]{64}$ ]] || { echo 'Expected generated 64-character hex database password' >&2; exit 1; }
+[[ "$CLOCKIN_LOGGING_PASSWORD" =~ ^[a-f0-9]{64}$ ]] || { echo 'Expected generated 64-character hex logging password' >&2; exit 1; }
+export CLOCKIN_LOGGING_CONNECTION_STRING="Host=shared-postgres;Port=5432;Database=telemetry;Username=clockin_log_writer;Password=$CLOCKIN_LOGGING_PASSWORD;Maximum Pool Size=2;Timeout=2;Command Timeout=3"
 export CLOCKIN_CONNECTION_STRING="Host=shared-postgres;Port=5432;Database=clockin_demo;Username=clockin_demo;Password=$CLOCKIN_DB_PASSWORD"
 root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 state=${CLOCKIN_STATE_DIR:-/var/jenkins_home/deploy-state/clockin}

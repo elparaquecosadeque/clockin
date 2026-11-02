@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1640" height="1150" viewBox="0 0 1640 1150" role="img" aria-labelledby="diagram-title"><title id="diagram-title">ClockIn deployment architecture</title><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#52677d"/></marker></defs><rect width="1640" height="1150" fill="#fbfcfe"/><g font-family="Arial, Helvetica, sans-serif"><text x="55" y="55" font-size="30" fill="#203047" text-anchor="start"><tspan x="55" dy="0">ClockIn deployment architecture</tspan></text>
 <text x="55" y="93" font-size="18" fill="#52677d" text-anchor="start"><tspan x="55" dy="0">Public production demo • Docker Engine in Ubuntu WSL • 2026-11-01</tspan></text>
-<rect x="40" y="300" width="1550" height="650" rx="20" fill="#f1f5f9" stroke="#94a3b8" stroke-dasharray="10 6"/>
+<rect x="40" y="300" width="1550" height="650" rx="20" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" stroke-dasharray="9 6"/>
 <text x="64" y="338" font-size="20" fill="#475569" text-anchor="start"><tspan x="64" dy="0">Ubuntu WSL / Docker host</tspan></text>
 <rect x="80" y="145" width="280" height="100" rx="14" fill="#e7f5ff" stroke="#1864ab" stroke-width="2"/>
 <text x="220" y="190.5" font-size="18" fill="#1864ab" text-anchor="middle"><tspan x="220" dy="0">Browser</tspan><tspan x="220" dy="22.5">English / Spanish</tspan></text>
@@ -12,12 +12,12 @@
 <text x="1180" y="409.25" font-size="18" fill="#1864ab" text-anchor="middle"><tspan x="1180" dy="0">nginx / Angular 22</tspan><tspan x="1180" dy="22.5">127.0.0.1:8082 → container :80</tspan><tspan x="1180" dy="22.5">/en/* and /es/* static SPA</tspan></text>
 <rect x="970" y="615" width="420" height="130" rx="14" fill="#e7f5ff" stroke="#1864ab" stroke-width="2"/>
 <text x="1180" y="653" font-size="18" fill="#1864ab" text-anchor="middle"><tspan x="1180" dy="0">ClockIn API / .NET 10</tspan><tspan x="1180" dy="22.5">Demo environment • internal :8080</tspan><tspan x="1180" dy="22.5">API + ready/live health checks</tspan><tspan x="1180" dy="22.5">Existing DemoSeed + 24-hour reset</tspan></text>
-<rect x="450" y="610" width="370" height="310" rx="20" fill="#f1f5f9" stroke="#94a3b8" stroke-dasharray="10 6"/>
+<rect x="450" y="610" width="370" height="310" rx="20" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" stroke-dasharray="9 6"/>
 <text x="474" y="648" font-size="20" fill="#475569" text-anchor="start"><tspan x="474" dy="0">shared-postgres:5432 • PG 16</tspan></text>
-<rect x="475" y="690" width="320" height="85" rx="14" fill="#e6fcf5" stroke="#087f5b" stroke-width="2"/>
-<text x="635" y="728" font-size="18" fill="#087f5b" text-anchor="middle"><tspan x="635" dy="0">clockin_demo database + role</tspan><tspan x="635" dy="22.5">Sample company / demo data</tspan></text>
-<rect x="475" y="810" width="320" height="75" rx="14" fill="#f8f9fa" stroke="#64748b" stroke-width="2" stroke-dasharray="9 6"/>
-<text x="635" y="843" font-size="18" fill="#64748b" text-anchor="middle"><tspan x="635" dy="0">clockin database</tspan><tspan x="635" dy="22.5">Original admin/data preserved</tspan></text>
+<rect x="475" y="670" width="320" height="65" rx="14" fill="#e6fcf5" stroke="#087f5b" stroke-width="2"/>
+<text x="635" y="698" font-size="18" fill="#087f5b" text-anchor="middle"><tspan x="635" dy="0">clockin_demo database + role</tspan><tspan x="635" dy="22.5">Sample company / demo data</tspan></text>
+<rect x="475" y="835" width="320" height="65" rx="14" fill="#f8f9fa" stroke="#64748b" stroke-width="2" stroke-dasharray="9 6"/>
+<text x="635" y="863" font-size="18" fill="#64748b" text-anchor="middle"><tspan x="635" dy="0">clockin database</tspan><tspan x="635" dy="22.5">Original admin/data preserved</tspan></text>
 <rect x="85" y="375" width="290" height="150" rx="14" fill="#f3f0ff" stroke="#6741d9" stroke-width="2" stroke-dasharray="9 6"/>
 <text x="230" y="423" font-size="18" fill="#6741d9" text-anchor="middle"><tspan x="230" dy="0">Jenkins controller</tspan><tspan x="230" dy="22.5">127.0.0.1:8081</tspan><tspan x="230" dy="22.5">Docker socket + secrets</tspan><tspan x="230" dy="22.5">SCM job currently disabled</tspan></text>
 <polyline points="360,195 480,195" fill="none" stroke="#52677d" stroke-width="2.5" marker-end="url(#arrow)"/>
@@ -30,8 +30,16 @@
 <text x="1200" y="515" font-size="15" fill="#475569" text-anchor="start"><tspan x="1200" dy="0">/api/* and /health/*</tspan><tspan x="1200" dy="18.75">Private app network</tspan><tspan x="1200" dy="18.75">Trusted nginx → API headers</tspan></text>
 <polyline points="970,700 820,700" fill="none" stroke="#52677d" stroke-width="2.5" marker-end="url(#arrow)"/>
 <text x="830" y="655" font-size="15" fill="#475569" text-anchor="start"><tspan x="830" dy="0">shared-db</tspan><tspan x="830" dy="18.75">External network</tspan></text>
-<text x="85" y="682" font-size="17" fill="#52677d" text-anchor="start"><tspan x="85" dy="0">No PostgreSQL host port.</tspan><tspan x="85" dy="21.25">Only API/migrations join shared-db.</tspan><tspan x="85" dy="21.25">Other apps keep their own roles/DBs.</tspan></text>
+<text x="85" y="682" font-size="17" fill="#52677d" text-anchor="start"><tspan x="85" dy="0">No PostgreSQL host port.</tspan><tspan x="85" dy="21.25">ClockIn API/migrations use shared-db.</tspan><tspan x="85" dy="21.25">Other apps keep their own roles/DBs.</tspan></text>
 <text x="85" y="807" font-size="17" fill="#52677d" text-anchor="start"><tspan x="85" dy="0">One-shot migrate container:</tspan><tspan x="85" dy="21.25">same API image, separate command,</tspan><tspan x="85" dy="21.25">finishes before the API is updated.</tspan></text>
 <rect x="80" y="1000" width="475" height="110" rx="14" fill="#fff4e6" stroke="#d9480f" stroke-width="2"/>
 <text x="317.5" y="1039.25" font-size="18" fill="#d9480f" text-anchor="middle"><tspan x="317.5" dy="0">Local development stays separate</tspan><tspan x="317.5" dy="22.5">Angular dev server + SQLite</tspan><tspan x="317.5" dy="22.5">No traffic to the hosted demo DB</tspan></text>
-<text x="650" y="1018" font-size="18" fill="#52677d" text-anchor="start"><tspan x="650" dy="0">Signing key, database password and backups stay outside Git/images.</tspan><tspan x="650" dy="22.5">Demo data and sessions reset when the seed is 24 hours old (checked hourly).</tspan><tspan x="650" dy="22.5">Initial live deployment used the local checkout; Jenkins needs enabling.</tspan></text></g></svg>
+<text x="650" y="1018" font-size="18" fill="#52677d" text-anchor="start"><tspan x="650" dy="0">Signing key, database password and backups stay outside Git/images.</tspan><tspan x="650" dy="22.5">Demo data and sessions reset when the seed is 24 hours old (checked hourly).</tspan><tspan x="650" dy="22.5">Initial live deployment used the local checkout; Jenkins needs enabling.</tspan></text>
+<rect x="475" y="750" width="320" height="65" rx="14" fill="#f3f0ff" stroke="#6741d9" stroke-width="2"/>
+<text x="635" y="778" font-size="18" fill="#6741d9" text-anchor="middle"><tspan x="635" dy="0">telemetry.clockin_logs</tspan><tspan x="635" dy="22.5">Seven-day log retention</tspan></text>
+<rect x="1000" y="825" width="390" height="85" rx="14" fill="#f3f0ff" stroke="#6741d9" stroke-width="2"/>
+<text x="1195" y="851.75" font-size="18" fill="#6741d9" text-anchor="middle"><tspan x="1195" dy="0">Existing Grafana :3001</tspan><tspan x="1195" dy="22.5">Read-only Telemetry datasource</tspan><tspan x="1195" dy="22.5">ClockIn application logs</tspan></text>
+<polyline points="1190,745 1190,785 820,785" fill="none" stroke="#52677d" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="880" y="770" font-size="15" fill="#475569" text-anchor="start"><tspan x="880" dy="0">Serilog batches / INSERT only</tspan></text>
+<polyline points="1000,867 860,867 860,810 820,810" fill="none" stroke="#52677d" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="870" y="850" font-size="15" fill="#475569" text-anchor="start"><tspan x="870" dy="0">SQL queries</tspan></text></g></svg>

@@ -2,6 +2,7 @@
 set -euo pipefail
 root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 export CLOCKIN_DB_PASSWORD="$(cat "$root/.secrets/clockin-postgres-password.txt")"
+export CLOCKIN_LOGGING_PASSWORD="$(cat "$root/.secrets/clockin-logging-password.txt")"
 export CLOCKIN_SIGNING_KEY="$(cat "$root/.secrets/clockin-signing-key.pem")"
 export CLOCKIN_FIRST_ADMIN_EMAIL="$(cat "$root/.secrets/clockin-first-admin-email.txt")"
 export CLOCKIN_STATE_DIR="${CLOCKIN_STATE_DIR:-$root/.deploy-state}"

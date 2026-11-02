@@ -1,0 +1,385 @@
+diff --git a/telemetry/server.js b/telemetry/server.js
+--- a/telemetry/server.js
++++ b/telemetry/server.js
+@@ -149,7 +149,7 @@
+   res.writeHead(status, headers).end(json ? JSON.stringify(json) : undefined);
+ }).listen(8080, () => console.log('telemetry receiver on :8080'));
+
+-const purge = () => Promise.all(['events', 'hits'].map((t) =>
++const purge = () => Promise.all(['events', 'hits', 'clockin_logs'].map((t) =>
+   pool.query(`DELETE FROM ${t} WHERE received_at < now() - make_interval(days => $1)`, [RETENTION_DAYS])))
+   .catch((err) => console.error(`purge failed: ${err.message}`));
+ setInterval(purge, 3600_000).unref();
+diff --git a/.env.example b/.env.example
+--- a/.env.example
++++ b/.env.example
+@@ -15,6 +15,9 @@
+ GITHUB_USER=your-github-user
+ GITHUB_TOKEN=github_pat_xxx
+
++# --- ClockIn log writer ---
++CLOCKIN_LOGGING_PASSWORD=replace-with-generated-64-character-hex-password
++
+ # --- Worktime ---
+ WORKTIME_REPO_URL=https://github.com/your-github-user/worktime.git
+ # openssl rand -base64 48
+diff --git a/telemetry/schema.sql b/telemetry/schema.sql
+--- a/telemetry/schema.sql
++++ b/telemetry/schema.sql
+@@ -30,4 +30,21 @@
+ );
+ CREATE INDEX IF NOT EXISTS hits_app_env_received ON hits (app, env, received_at);
+
++CREATE TABLE IF NOT EXISTS clockin_logs (
++  timestamp        timestamptz NOT NULL,
++  level            text NOT NULL,
++  message          text NOT NULL,
++  message_template text NOT NULL,
++  exception        text,
++  properties       jsonb NOT NULL,
++  service          text NOT NULL,
++  environment      text NOT NULL,
++  release          text NOT NULL,
++  correlation_id   text,
++  received_at      timestamptz NOT NULL DEFAULT now()
++);
++CREATE INDEX IF NOT EXISTS clockin_logs_timestamp ON clockin_logs (timestamp);
++CREATE INDEX IF NOT EXISTS clockin_logs_received_at ON clockin_logs (received_at);
++CREATE INDEX IF NOT EXISTS clockin_logs_correlation ON clockin_logs (correlation_id) WHERE correlation_id IS NOT NULL;
++
+ GRANT SELECT ON ALL TABLES IN SCHEMA public TO grafana_ro;
+diff --git a/casc/jenkins.yaml b/casc/jenkins.yaml
+--- a/casc/jenkins.yaml
++++ b/casc/jenkins.yaml
+@@ -37,6 +37,11 @@
+               password: "${GITHUB_TOKEN}"
+           - string:
+               scope: GLOBAL
++              id: clockin-logging-password
++              description: "ClockIn: INSERT-only telemetry log writer"
++              secret: "${CLOCKIN_LOGGING_PASSWORD}"
++          - string:
++              scope: GLOBAL
+               id: worktime-jwt-key
+               description: "Worktime: JWT signing key"
+               secret: "${WORKTIME_JWT_SIGNING_KEY}"
+diff --git a/telemetry/setup-clockin-logs.sh b/telemetry/setup-clockin-logs.sh
+new file mode 100644
+--- /dev/null
++++ b/telemetry/setup-clockin-logs.sh
+@@ -0,0 +1,20 @@
++#!/usr/bin/env bash
++set -euo pipefail
++cd "$(dirname "$0")/.."
++set -a
++. ./.env
++set +a
++: "${CLOCKIN_LOGGING_PASSWORD:?set CLOCKIN_LOGGING_PASSWORD}"
++[[ "$CLOCKIN_LOGGING_PASSWORD" =~ ^[a-f0-9]{64}$ ]] || { echo 'Expected generated hex logging password' >&2; exit 1; }
++docker exec -i shared-postgres psql -U telemetry -d telemetry -v ON_ERROR_STOP=1 -q < telemetry/schema.sql
++DB_PASSWORD="$CLOCKIN_LOGGING_PASSWORD" docker exec -i -e DB_PASSWORD shared-postgres psql -U postgres -d telemetry -v ON_ERROR_STOP=1 -q <<'SQL'
++\getenv pw DB_PASSWORD
++SELECT 'CREATE ROLE clockin_log_writer LOGIN' WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'clockin_log_writer')\gexec
++SELECT format('ALTER ROLE clockin_log_writer PASSWORD %L', :'pw')\gexec
++GRANT CONNECT ON DATABASE telemetry TO clockin_log_writer;
++GRANT USAGE ON SCHEMA public TO clockin_log_writer;
++REVOKE ALL ON clockin_logs FROM PUBLIC;
++REVOKE ALL ON clockin_logs FROM clockin_log_writer;
++GRANT INSERT ON clockin_logs TO clockin_log_writer;
++SQL
++echo '==> ClockIn log table, read-only Grafana access and INSERT-only writer ready'
+diff --git a/grafana/dashboards/clockin.json b/grafana/dashboards/clockin.json
+new file mode 100644
+--- /dev/null
++++ b/grafana/dashboards/clockin.json
+@@ -0,0 +1,290 @@
++{
++  "uid": "clockin-logs",
++  "title": "ClockIn — Application logs",
++  "description": "Serilog → existing telemetry PostgreSQL database → existing Grafana datasource. Seven-day server-side retention; no Loki.",
++  "schemaVersion": 39,
++  "version": 1,
++  "tags": [
++    "clockin",
++    "logs",
++    "postgresql"
++  ],
++  "timezone": "browser",
++  "refresh": "10s",
++  "time": {
++    "from": "now-1h",
++    "to": "now"
++  },
++  "editable": false,
++  "templating": {
++    "list": [
++      {
++        "name": "level",
++        "label": "Severity",
++        "type": "custom",
++        "query": "All,Information,Warning,Error,Fatal",
++        "current": {
++          "text": "All",
++          "value": "All"
++        },
++        "options": [
++          {
++            "text": "All",
++            "value": "All",
++            "selected": true
++          },
++          {
++            "text": "Information",
++            "value": "Information",
++            "selected": false
++          },
++          {
++            "text": "Warning",
++            "value": "Warning",
++            "selected": false
++          },
++          {
++            "text": "Error",
++            "value": "Error",
++            "selected": false
++          },
++          {
++            "text": "Fatal",
++            "value": "Fatal",
++            "selected": false
++          }
++        ]
++      },
++      {
++        "name": "correlation",
++        "label": "Correlation ID",
++        "type": "textbox",
++        "query": "",
++        "current": {
++          "text": "",
++          "value": ""
++        },
++        "options": []
++      }
++    ]
++  },
++  "panels": [
++    {
++      "id": 1,
++      "type": "stat",
++      "title": "Log events",
++      "datasource": {
++        "type": "grafana-postgresql-datasource",
++        "uid": "telemetry"
++      },
++      "gridPos": {
++        "x": 0,
++        "y": 0,
++        "w": 6,
++        "h": 4
++      },
++      "targets": [
++        {
++          "refId": "A",
++          "datasource": {
++            "type": "grafana-postgresql-datasource",
++            "uid": "telemetry"
++          },
++          "editorMode": "code",
++          "rawQuery": true,
++          "rawSql": "SELECT count(*) AS \"Events\" FROM clockin_logs WHERE $__timeFilter(\"timestamp\") AND service = 'clockin'",
++          "format": "table"
++        }
++      ],
++      "fieldConfig": {
++        "defaults": {},
++        "overrides": []
++      },
++      "options": {}
++    },
++    {
++      "id": 2,
++      "type": "stat",
++      "title": "Errors",
++      "datasource": {
++        "type": "grafana-postgresql-datasource",
++        "uid": "telemetry"
++      },
++      "gridPos": {
++        "x": 6,
++        "y": 0,
++        "w": 6,
++        "h": 4
++      },
++      "targets": [
++        {
++          "refId": "A",
++          "datasource": {
++            "type": "grafana-postgresql-datasource",
++            "uid": "telemetry"
++          },
++          "editorMode": "code",
++          "rawQuery": true,
++          "rawSql": "SELECT count(*) AS \"Errors\" FROM clockin_logs WHERE $__timeFilter(\"timestamp\") AND service = 'clockin' AND level IN ('Error', 'Fatal')",
++          "format": "table"
++        }
++      ],
++      "fieldConfig": {
++        "defaults": {},
++        "overrides": []
++      },
++      "options": {}
++    },
++    {
++      "id": 3,
++      "type": "stat",
++      "title": "Warnings",
++      "datasource": {
++        "type": "grafana-postgresql-datasource",
++        "uid": "telemetry"
++      },
++      "gridPos": {
++        "x": 12,
++        "y": 0,
++        "w": 6,
++        "h": 4
++      },
++      "targets": [
++        {
++          "refId": "A",
++          "datasource": {
++            "type": "grafana-postgresql-datasource",
++            "uid": "telemetry"
++          },
++          "editorMode": "code",
++          "rawQuery": true,
++          "rawSql": "SELECT count(*) AS \"Warnings\" FROM clockin_logs WHERE $__timeFilter(\"timestamp\") AND service = 'clockin' AND level = 'Warning'",
++          "format": "table"
++        }
++      ],
++      "fieldConfig": {
++        "defaults": {},
++        "overrides": []
++      },
++      "options": {}
++    },
++    {
++      "id": 4,
++      "type": "stat",
++      "title": "Average request duration",
++      "datasource": {
++        "type": "grafana-postgresql-datasource",
++        "uid": "telemetry"
++      },
++      "gridPos": {
++        "x": 18,
++        "y": 0,
++        "w": 6,
++        "h": 4
++      },
++      "targets": [
++        {
++          "refId": "A",
++          "datasource": {
++            "type": "grafana-postgresql-datasource",
++            "uid": "telemetry"
++          },
++          "editorMode": "code",
++          "rawQuery": true,
++          "rawSql": "SELECT avg((properties->>'Elapsed')::double precision) AS \"Duration\" FROM clockin_logs WHERE $__timeFilter(\"timestamp\") AND service = 'clockin' AND properties ? 'Elapsed'",
++          "format": "table"
++        }
++      ],
++      "fieldConfig": {
++        "defaults": {
++          "unit": "ms"
++        },
++        "overrides": []
++      },
++      "options": {}
++    },
++    {
++      "id": 5,
++      "type": "timeseries",
++      "title": "Log volume by severity",
++      "datasource": {
++        "type": "grafana-postgresql-datasource",
++        "uid": "telemetry"
++      },
++      "gridPos": {
++        "x": 0,
++        "y": 4,
++        "w": 24,
++        "h": 7
++      },
++      "targets": [
++        {
++          "refId": "A",
++          "datasource": {
++            "type": "grafana-postgresql-datasource",
++            "uid": "telemetry"
++          },
++          "editorMode": "code",
++          "rawQuery": true,
++          "rawSql": "SELECT $__timeGroupAlias(\"timestamp\", '1m'), level AS metric, count(*) AS value FROM clockin_logs WHERE $__timeFilter(\"timestamp\") AND service = 'clockin' GROUP BY 1, 2 ORDER BY 1",
++          "format": "time_series"
++        }
++      ],
++      "fieldConfig": {
++        "defaults": {},
++        "overrides": []
++      },
++      "options": {
++        "legend": {
++          "displayMode": "list",
++          "placement": "bottom"
++        },
++        "tooltip": {
++          "mode": "multi"
++        }
++      }
++    },
++    {
++      "id": 6,
++      "type": "table",
++      "title": "Recent ClockIn logs",
++      "datasource": {
++        "type": "grafana-postgresql-datasource",
++        "uid": "telemetry"
++      },
++      "gridPos": {
++        "x": 0,
++        "y": 11,
++        "w": 24,
++        "h": 13
++      },
++      "targets": [
++        {
++          "refId": "A",
++          "datasource": {
++            "type": "grafana-postgresql-datasource",
++            "uid": "telemetry"
++          },
++          "editorMode": "code",
++          "rawQuery": true,
++          "rawSql": "SELECT \"timestamp\" AS \"Time\", level AS \"Level\", message AS \"Message\", exception AS \"Exception\", correlation_id AS \"Correlation ID\", environment AS \"Environment\", release AS \"Release\", properties AS \"Properties\" FROM clockin_logs WHERE $__timeFilter(\"timestamp\") AND service = 'clockin' AND (${level:sqlstring} = 'All' OR level = ${level:sqlstring}) AND (${correlation:sqlstring} = '' OR correlation_id = ${correlation:sqlstring}) ORDER BY \"timestamp\" DESC LIMIT 1000",
++          "format": "table"
++        }
++      ],
++      "fieldConfig": {
++        "defaults": {},
++        "overrides": []
++      },
++      "options": {
++        "showHeader": true,
++        "cellHeight": "sm",
++        "sortBy": [
++          {
++            "displayName": "Time",
++            "desc": true
++          }
++        ]
++      }
++    }
++  ]
++}

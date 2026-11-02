@@ -7,7 +7,9 @@ if [[ ! -s "$root/.secrets/clockin-signing-key.pem" ]]; then
     openssl ecparam -name prime256v1 -genkey -noout -out "$root/.secrets/clockin-signing-key.pem"
 fi
 openssl ec -in "$root/.secrets/clockin-signing-key.pem" -check -noout >/dev/null 2>&1
-if [[ ! -s "$root/.secrets/clockin-postgres-password.txt" ]]; then
-    openssl rand -hex 32 | tr -d '\n' > "$root/.secrets/clockin-postgres-password.txt"
-fi
+for password_file in clockin-postgres-password clockin-logging-password; do
+    if [[ ! -s "$root/.secrets/$password_file.txt" ]]; then
+        openssl rand -hex 32 | tr -d '\n' > "$root/.secrets/$password_file.txt"
+    fi
+done
 printf 'Production secrets prepared; existing files preserved. Values were not printed.\n'

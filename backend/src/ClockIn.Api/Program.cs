@@ -4,6 +4,7 @@ using System.Threading.RateLimiting;
 using ClockIn.Api.Auth;
 using ClockIn.Api.Common;
 using ClockIn.Api.Demo;
+using ClockIn.Api.Logging;
 using ClockIn.Application.Common.Exceptions;
 using ClockIn.Application.Common.Interfaces;
 using ClockIn.Application.Common.Middleware;
@@ -60,10 +61,19 @@ public sealed class Program
         app.Run();
     }
 
-    private static void AddLogging(WebApplicationBuilder builder) =>
-        builder.Services.AddSerilog((services, config) => config
-            .ReadFrom.Configuration(builder.Configuration)
-            .ReadFrom.Services(services));
+    private static void AddLogging(WebApplicationBuilder builder)
+    {
+        builder.Services.AddOptions<PostgresLoggingOptions>().BindConfiguration(PostgresLoggingOptions.Section)
+            .Validate(options => !options.Enabled || !string.IsNullOrWhiteSpace(options.ConnectionString),
+                "PostgresLogging:ConnectionString is required when PostgreSQL logging is enabled.")
+            .ValidateOnStart();
+        builder.Services.AddSerilog((services, config) =>
+        {
+            config.ReadFrom.Configuration(builder.Configuration).ReadFrom.Services(services);
+            PostgresLoggingModule.Configure(config, services.GetRequiredService<IOptions<PostgresLoggingOptions>>().Value,
+                builder.Environment.EnvironmentName);
+        });
+    }
 
     private static void AddOptions(WebApplicationBuilder builder)
     {

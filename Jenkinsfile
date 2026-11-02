@@ -33,6 +33,7 @@ pipeline {
                 }
                 withCredentials([
                     string(credentialsId: 'clockin-postgres-password', variable: 'CLOCKIN_DB_PASSWORD'),
+                    string(credentialsId: 'clockin-logging-password', variable: 'CLOCKIN_LOGGING_PASSWORD'),
                     string(credentialsId: 'clockin-signing-key-base64', variable: 'CLOCKIN_SIGNING_KEY_BASE64')
                 ]) {
                     sh '''#!/usr/bin/env bash

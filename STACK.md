@@ -17,7 +17,7 @@ Keep this list short. A new package needs a reason the framework can't cover, an
 | Guard clauses | **Ardalis.GuardClauses** | The only package allowed in Domain. |
 | Password hashing | **Microsoft.Extensions.Identity.Core** | `PasswordHasher<T>` only; no Identity stores (they require EF Core). |
 | JWT validation | **Microsoft.AspNetCore.Authentication.JwtBearer** | |
-| Logging | **Serilog** (`Serilog.AspNetCore`, `Serilog.Sinks.File`) | Behind `ILogger<T>`. See [Serilog](#serilog). |
+| Logging | **Serilog** (`Serilog.AspNetCore`, `Serilog.Sinks.File`, `Serilog.Sinks.Postgresql.Alternative`) | Behind `ILogger<T>`. Hosted logs use an INSERT-only writer to the existing telemetry PostgreSQL database; Grafana reads through its existing datasource. See [Serilog](#serilog) and [logging operations](docs/logging.md). |
 | OpenAPI | **Microsoft.AspNetCore.OpenApi** | Built-in document generation. |
 | Rate limiting, health checks, CORS, options | Built into ASP.NET Core | No extra packages. |
 | Banned APIs | **Microsoft.CodeAnalysis.BannedApiAnalyzers** | See [Enforcement](#enforcement). |
@@ -70,7 +70,7 @@ Fill these in for each project.
 | Database, local development | SQLite | SQLite |
 | Database, remote (dev, QA, staging, production) | PostgreSQL | PostgreSQL |
 | Token issuer | Own `Auth` feature in `<Project>.Api` | Own `Auth` feature in `ClockIn.Api` |
-| Production log sink | — (file only) | Console output with bounded Docker log rotation; local Development keeps its file sink |
+| Production log sink | — (file only) | Console output with bounded Docker rotation plus redacted, asynchronously batched PostgreSQL telemetry logs; local Development keeps its file sink |
 | Hosting (backend / frontend) | — | Separate .NET API and nginx/Angular Docker images, deployed by local Jenkins; PostgreSQL 16 on the external `shared-db` network |
 | CI platform | — | GitHub Actions |
 | Solution name | — | `ClockIn` |

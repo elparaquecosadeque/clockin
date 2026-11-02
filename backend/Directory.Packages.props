@@ -15,6 +15,7 @@
     <PackageVersion Include="Npgsql" Version="10.0.3" />
     <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Postgresql.Alternative" Version="4.3.0" />
     <PackageVersion Include="WolverineFx" Version="6.59.1" />
     <PackageVersion Include="WolverineFx.FluentValidation" Version="6.59.1" />
     <PackageVersion Include="WolverineFx.RuntimeCompilation" Version="6.59.1" />

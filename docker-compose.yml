@@ -36,6 +36,9 @@ services:
       FirstAdmin__Email: ${CLOCKIN_FIRST_ADMIN_EMAIL:?set CLOCKIN_FIRST_ADMIN_EMAIL}
       Company__TimeZone: ${CLOCKIN_TIME_ZONE:-America/Bogota}
       ReverseProxy__KnownProxies__0: 172.30.82.2
+      PostgresLogging__Enabled: "true"
+      PostgresLogging__ConnectionString: ${CLOCKIN_LOGGING_CONNECTION_STRING:?set CLOCKIN_LOGGING_CONNECTION_STRING}
+      PostgresLogging__Release: ${CLOCKIN_TAG:-local}
   web:
     image: clockin-web:${CLOCKIN_TAG:-local}
     build: ./frontend

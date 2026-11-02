@@ -12,6 +12,8 @@ Run `node scripts/check-demo.mjs` to verify public account discovery, admin/supe
 
 ## Host and secrets
 
+For the hosted API, provision PostgreSQL logging before deployment as described in [logging operations](logging.md): the existing telemetry database, restricted `clockin_log_writer` credential, Grafana dashboard and seven-day cleanup are managed in `jenkins-local`. Deployment requires `CLOCKIN_LOGGING_PASSWORD` in addition to the application database password. `prepare-production-secrets.sh` creates the separate ignored password and `configure-jenkins.sh` installs its Jenkins credential.
+
 Use Ubuntu WSL's Docker Engine, the daemon that hosts `jenkins` and healthy `shared-postgres`. Windows Docker Desktop is a different, currently unavailable daemon. Run Docker commands below inside Ubuntu, not against Docker Desktop.
 
 The frontend is published on `127.0.0.1:8082`; the intended HTTPS hostname is `clockin.gerardoleon.dev`. The private app subnet is `172.30.82.0/24`; verify it is unused before moving this deployment to another host. Only nginx publishes a port. The API and migration process also join external network `shared-db`.

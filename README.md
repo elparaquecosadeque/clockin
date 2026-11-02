@@ -77,6 +77,8 @@ The API and localized frontend have separate images. The public production demo 
 
 Build from the repository root: `docker compose build` after supplying the deployment environment variables described in the operations guide. Migrate separately with `docker compose run --rm --no-deps migrate`; never point the demo deployment at real production data.
 
+Application logs go through Serilog to the existing PostgreSQL telemetry database and [Grafana ClockIn dashboard](http://localhost:3001/d/clockin-logs). See [logging setup and operations](docs/logging.md) for restricted credentials, redaction, seven-day retention and delivery limits.
+
 ## Architecture diagrams
 
 See [`docs/architecture/`](docs/architecture/README.md).

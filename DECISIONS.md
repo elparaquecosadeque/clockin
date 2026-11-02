@@ -4,6 +4,15 @@ Smaller decisions made while developing, newest first. A decision that changes a
 
 Each entry has the decision, the reason, and who decided (**user**, or **dev** when it was taken while implementing and not objected to).
 
+## 2026-11-01: PostgreSQL logs in existing Grafana
+
+| Decision | Why | By |
+|---|---|---|
+| Use Serilog.Sinks.Postgresql.Alternative 4.3.0 to write to `telemetry.clockin_logs` and the existing Grafana PostgreSQL datasource. Keep console logging. | The user wants the existing PostgreSQL/Grafana architecture, without Loki or new services. | user / dev |
+| Give the API a separate INSERT-only log writer; provision schema and credentials outside application startup. Extend the existing receiver's seven-day cleanup. | Logs survive demo resets, the API cannot read/delete logs, and retention needs no additional worker. | dev |
+| Filter credential-bearing events from PostgreSQL, redact common sensitive text, and persist only allowlisted scalar context. Preserve the existing protected bootstrap console event. | Activation links and arbitrary payloads must not enter the shared log dashboard. | dev |
+| Bound asynchronous delivery to 1,000 queued events, batches of 50 and a two-second period. | A logging outage must not block requests or grow memory without limit; delivery is explicitly best effort. | dev |
+
 ## 2026-11-01: Public production demo
 
 | Decision | Why | By |

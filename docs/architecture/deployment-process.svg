@@ -40,4 +40,5 @@
 <rect x="80" y="1040" width="1420" height="145" rx="14" fill="#f3f0ff" stroke="#6741d9" stroke-width="2"/>
 <text x="790" y="1085.5" font-size="18" fill="#6741d9" text-anchor="middle"><tspan x="790" dy="0">Manual rollback: DEPLOY_TAG + ACK_SCHEMA_COMPATIBLE=true</tspan><tspan x="790" dy="22.5">Use the target release's saved deployment script, Compose configuration and image tags.</tspan><tspan x="790" dy="22.5">The target images must support the current schema. Never reverse migrations automatically.</tspan><tspan x="790" dy="22.5">Restoring data is a separate reviewed recovery operation; test backups in an isolated PostgreSQL 16 database.</tspan></text>
 <polyline points="1190,930 1190,1040" fill="none" stroke="#52677d" stroke-width="2.5" marker-end="url(#arrow)" stroke-dasharray="8 5"/>
-<text x="1210" y="990" font-size="15" fill="#475569" text-anchor="start"><tspan x="1210" dy="0">retained releases</tspan></text></g></svg>
+<text x="1210" y="990" font-size="15" fill="#475569" text-anchor="start"><tspan x="1210" dy="0">retained releases</tspan></text>
+<text x="80" y="1216" font-size="16" fill="#52677d" text-anchor="start"><tspan x="80" dy="0">Logging is provisioned first: telemetry.clockin_logs + INSERT-only writer; Grafana and retention use existing services.</tspan></text></g></svg>
