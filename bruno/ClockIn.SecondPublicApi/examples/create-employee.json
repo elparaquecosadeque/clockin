@@ -1,0 +1,6 @@
+{
+  "email": "sample-employee@clockin.demo",
+  "name": "Sample Employee",
+  "role": "Employee",
+  "teamId": "paste-Office-teamId-from-Scalar"
+}

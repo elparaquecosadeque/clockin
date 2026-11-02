@@ -1,0 +1,26 @@
+meta {
+  name: Read Office teamId from OpenAPI
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/openapi/v1.json
+  body: none
+  auth: none
+}
+
+script:post-response {
+  bru.deleteVar("officeTeamId");
+  if (res.getStatus() === 200) {
+    const examples = res.getBody().paths["/api/v1/users"].post.requestBody.content["application/json"].examples;
+    if (!examples.Employee) throw new Error("Office is unavailable. Prepare the shared demo database.");
+    bru.setVar("officeTeamId", examples.Employee.value.teamId);
+  }
+}
+
+tests {
+  test("Expected status 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

@@ -1,7 +1,7 @@
-using ClockIn.Api.Auth;
 using ClockIn.Application.Timesheets.Commands;
 using ClockIn.Application.Timesheets.Queries;
 using ClockIn.Application.Timesheets.Results;
+using ClockIn.Hosting.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Wolverine;

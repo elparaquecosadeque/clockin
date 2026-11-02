@@ -1,0 +1,42 @@
+meta {
+  name: Create supervisor as Ada
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v1/users
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "email": "{{supervisorEmail}}",
+    "name": "Bruno Supervisor",
+    "role": "Supervisor",
+    "teamId": null
+  }
+}
+
+script:pre-request {
+  const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  bru.setVar("supervisorEmail", `bruno-supervisor-${suffix}@clockin.demo`);
+  bru.deleteVar("activationToken");
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    bru.setVar("activationToken", res.getBody().token);
+  }
+}
+
+tests {
+  test("Expected status 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

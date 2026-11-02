@@ -1,0 +1,17 @@
+meta {
+  name: Public info
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/info
+  body: none
+  auth: none
+}
+
+tests {
+  test("Expected status 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

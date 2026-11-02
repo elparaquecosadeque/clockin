@@ -162,7 +162,7 @@ public static void Main(string[] args)
 }
 ```
 
-Each configuration block goes in a named private method. Both hosts (`Api`, `PublicApi`) follow the same shape.
+Each configuration block goes in a named private method. Both hosts (`Api`, `PublicApi`) follow the same shape. PublicApi registers handlers directly and has no mediator ([ADR 0010](docs/adr/0010-development-public-api-with-direct-handlers.md)). Shared authentication/HTTP helpers live in `ClockIn.Hosting`, depending only on Application; neither host references the other.
 
 ## Responsibilities by layer
 
@@ -219,13 +219,13 @@ Each configuration block goes in a named private method. Both hosts (`Api`, `Pub
 
 ## Commands, queries and validation
 
-- A **command** changes state; a **query** only reads. Both are immutable records, dispatched in-process through the mediator (see [`STACK.md`](STACK.md)).
+- A **command** changes state; a **query** only reads. Both are immutable records, invoked through the host's agreed dispatch mechanism (see [`STACK.md`](STACK.md)).
 - Handlers end in `Handler` and expose one `HandleAsync` method. Validators end in `Validator`.
-- Controllers dispatch through the mediator; they never inject or call a handler directly.
-- **Validation** runs as middleware before the handler. A failure becomes a 400 with field errors. Handlers assume valid input.
+- SPA API controllers dispatch through Wolverine. Development PublicApi controllers inject and invoke application handlers directly, execute existing validators explicitly and use an MVC transaction filter for time-changing actions ([ADR 0010](docs/adr/0010-development-public-api-with-direct-handlers.md)).
+- **Validation** runs before the handler: mediator middleware in the SPA API, explicit validator calls in PublicApi ([ADR 0010](docs/adr/0010-development-public-api-with-direct-handlers.md)). A failure becomes a 400 with field errors. Handlers assume valid input.
 - **Command handlers** load aggregates through repositories, call domain methods and save. **Query handlers** use reads that project straight into results and may skip the domain.
 - Static helpers and extensions only use what they are given; they never take a dependency just to pass it on. Logic that several handlers share and that needs dependencies is a sealed, scoped service injected into them (`TimesheetAccess`), and a handler injects a repository only when it calls it itself ([ADR 0008](docs/adr/0008-shared-handler-logic-in-injected-services.md)).
-- Cross-cutting concerns (validation, transactions, logging) are mediator middleware in `Application/Common/Middleware/`, never repeated inside handlers.
+- In the SPA API, cross-cutting concerns (validation, transactions, logging) are mediator middleware in `Application/Common/Middleware/`, never repeated inside handlers.
 
 ```csharp
 // Application/Orders/Commands/CreateOrderCommand.cs
@@ -254,7 +254,7 @@ public sealed class CreateOrderHandler(IOrderRepository ordersRepository)
 ## Domain event dispatch
 
 - The unit of work collects domain events from the aggregates saved in the current command.
-- After saving and **before committing**, it dispatches each event to its handlers through the mediator. Event handlers run inside the same transaction: either everything succeeds or nothing is saved.
+- After saving and **before committing**, it dispatches each event directly to registered application subscribers. Event handlers run inside the same transaction in both hosts: either everything succeeds or nothing is saved ([ADR 0010](docs/adr/0010-development-public-api-with-direct-handlers.md)).
 - Event handlers live in `Application/<Feature>/EventHandlers/`, one per file, named `<Reaction>On<Event>Handler` (`SendConfirmationOnOrderPlacedHandler`).
 - Events sent to **other systems** (integration events, outbox) are out of scope for the baseline and need an ADR.
 
@@ -301,7 +301,7 @@ No mapping libraries. Mapping is plain C# that you can step through in the debug
 
 ### Transactions and concurrency
 
-- **One transaction per command**, opened and committed by mediator middleware; it also covers domain-event dispatch. Queries run without transactions.
+- **One transaction per transactional command**, opened and committed by mediator middleware (SPA API) or the MVC filter (development PublicApi, [ADR 0010](docs/adr/0010-development-public-api-with-direct-handlers.md)); it also covers domain-event dispatch. Queries run without transactions.
 - **Optimistic concurrency:** saving an aggregate checks and increments its `Version`. A mismatch throws `ConflictException` → 409.
 
 ### Time
@@ -334,9 +334,9 @@ No mapping libraries. Mapping is plain C# that you can step through in the debug
 
 | | `Api` | `PublicApi` |
 |---|---|---|
-| Consumers | The Angular app | External systems |
+| Consumers | The Angular app | Local demo clients (Scalar / Bruno), [ADR 0010](docs/adr/0010-development-public-api-with-direct-handlers.md) |
 | Versioning | None (ships with the frontend) | URL segment: `/api/v1/...` |
-| Auth | User tokens | Client credentials tokens (audience `PublicApi`) |
+| Auth | User tokens | Human demo-user tokens (audience `ClockIn.PublicApi`), [ADR 0010](docs/adr/0010-development-public-api-with-direct-handlers.md) |
 | Shape | Endpoints shaped for the UI | Stable, documented contract |
 
 Breaking changes in `PublicApi` require a new version; old versions stay until consumers migrate.
@@ -353,18 +353,20 @@ Breaking changes in `PublicApi` require a new version; old versions stay until c
 
 - Both hosts generate an OpenAPI document with the built-in OpenAPI support. The interactive UI is enabled only in Development.
 - The `PublicApi` document is published per version.
+- Development PublicApi uses Scalar with the built-in OpenAPI generator and a Bruno collection. It never migrates, seeds or resets; the existing Api prepares their shared database. It refuses startup outside Development ([ADR 0010](docs/adr/0010-development-public-api-with-direct-handlers.md)).
+- `ClockIn.SecondPublicApi` follows the same dependency direction, direct handler calls, explicit validation, Development-only guard and database ownership. It exposes only info, login, activation, identity and admin-only creation, with its own token audience and shared `ClockIn.Hosting` authentication setup ([ADR 0011](docs/adr/0011-second-public-api-account-workflows.md)).
 
 ## Authentication and authorization
 
 ### Tokens
 
 - The application issues its own tokens, from an `Auth` feature in `<Project>.Api`. Moving to an external identity provider is an ADR when the project needs it; the APIs only validate tokens, so they don't change.
-- **Asymmetric signing** (ES256 or RS256). Only `<Project>.Api` holds the private key; `PublicApi` validates with the public key.
+- **Asymmetric signing** (ES256 or RS256). The development PublicApi issues its own tokens with a separate process-local key; its tokens and SPA tokens are not interchangeable ([ADR 0010](docs/adr/0010-development-public-api-with-direct-handlers.md)). Production public-key-only validation is deferred.
 - Signing keys come from the secret store per environment. Locally, a development key is generated and never committed.
 - **Access token:** short-lived JWT (10–15 minutes) carrying identity only: `sub`, `sid` (its session, checked on every request), `security_stamp`, audience ([ADR 0009](docs/adr/0009-session-id-in-the-access-token.md)). **No permissions in the token.**
 - **Refresh token:** opaque random value, stored **hashed**, **rotated** on every use. Reuse of an old refresh token revokes the whole token family.
 - **Users** are a domain aggregate (`User`) persisted like any other. Passwords are hashed with a versioned, well-tested hasher (see [`STACK.md`](STACK.md)), never with hand-written crypto.
-- **External consumers** of `PublicApi` use client credentials: a client id and secret (stored hashed) exchanged at the token endpoint for a short-lived JWT with audience `PublicApi` and scoped permissions.
+- **Development PublicApi** uses existing human accounts, 15-minute bearer tokens and current session/permission checks; no refresh or logout endpoint. Machine client credentials and production deployment are deferred ([ADR 0010](docs/adr/0010-development-public-api-with-direct-handlers.md)).
 
 ### Permissions are checked on every request
 

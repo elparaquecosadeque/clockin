@@ -4,6 +4,7 @@ using ClockIn.Application.Accounts.Queries;
 using ClockIn.Application.Accounts.Results;
 using ClockIn.Application.Reporting.Queries;
 using ClockIn.Application.Reporting.Results;
+using ClockIn.Hosting.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Wolverine;

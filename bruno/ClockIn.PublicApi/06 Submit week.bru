@@ -1,0 +1,17 @@
+meta {
+  name: Submit my ended week
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/v1/timesheets/mine/{{weekStart}}/submit
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("Submitted week", function () {
+    expect(res.getStatus()).to.equal(204);
+  });
+}

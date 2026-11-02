@@ -10,7 +10,7 @@ namespace ClockIn.Architecture.Tests;
 public sealed class ConventionTests
 {
     public static TheoryData<string> Layers =>
-        ["ClockIn.Domain", "ClockIn.Application", "ClockIn.Persistence", "ClockIn.Infrastructure", "ClockIn.Api"];
+        ["ClockIn.Domain", "ClockIn.Application", "ClockIn.Persistence", "ClockIn.Infrastructure", "ClockIn.Api", "ClockIn.PublicApi", "ClockIn.SecondPublicApi", "ClockIn.Hosting"];
 
     [Theory]
     [MemberData(nameof(Layers))]

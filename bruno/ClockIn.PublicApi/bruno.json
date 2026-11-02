@@ -1,0 +1,6 @@
+{
+  "version": "1",
+  "name": "ClockIn PublicApi",
+  "type": "collection",
+  "ignore": ["node_modules", ".git", "examples"]
+}

@@ -1,7 +1,7 @@
 using System.Net;
 using AwesomeAssertions;
-using ClockIn.Api.Common;
 using ClockIn.Api.Tests.Common;
+using ClockIn.Hosting.Common;
 
 namespace ClockIn.Api.Tests;
 

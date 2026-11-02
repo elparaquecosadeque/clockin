@@ -11,6 +11,9 @@ function report(domain = 80, application = 80) {
         "Domain",
         "Infrastructure",
         "Persistence",
+        "PublicApi",
+        "SecondPublicApi",
+        "Hosting",
       ].map((name) => ({
         name: `ClockIn.${name}`,
         coverablelines: 100,
@@ -38,7 +41,7 @@ test("fails if a production layer is missing or has no measured code", () => {
   missing.coverage.assemblies.pop();
   assert.throws(
     () => checkBackendCoverage(missing),
-    /Missing coverage for ClockIn.Persistence/,
+    /Missing coverage for ClockIn.Hosting/,
   );
   const empty = report();
   empty.coverage.assemblies[0].coverablelines = 0;

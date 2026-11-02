@@ -18,7 +18,7 @@ Keep this list short. A new package needs a reason the framework can't cover, an
 | Password hashing | **Microsoft.Extensions.Identity.Core** | `PasswordHasher<T>` only; no Identity stores (they require EF Core). |
 | JWT validation | **Microsoft.AspNetCore.Authentication.JwtBearer** | |
 | Logging | **Serilog** (`Serilog.AspNetCore`, `Serilog.Sinks.File`, `Serilog.Sinks.Postgresql.Alternative`) | Behind `ILogger<T>`. Hosted logs use an INSERT-only writer to the existing telemetry PostgreSQL database; Grafana reads through its existing datasource. See [Serilog](#serilog) and [logging operations](docs/logging.md). |
-| OpenAPI | **Microsoft.AspNetCore.OpenApi** | Built-in document generation. |
+| OpenAPI | **Microsoft.AspNetCore.OpenApi**, **Scalar.AspNetCore** | Built-in document generation; Scalar UI in development PublicApi ([ADR 0010](docs/adr/0010-development-public-api-with-direct-handlers.md)). |
 | Rate limiting, health checks, CORS, options | Built into ASP.NET Core | No extra packages. |
 | Banned APIs | **Microsoft.CodeAnalysis.BannedApiAnalyzers** | See [Enforcement](#enforcement). |
 
@@ -74,14 +74,15 @@ Fill these in for each project.
 | Hosting (backend / frontend) | — | Separate .NET API and nginx/Angular Docker images, deployed by local Jenkins; PostgreSQL 16 on the external `shared-db` network |
 | CI platform | — | GitHub Actions |
 | Solution name | — | `ClockIn` |
-| PublicApi | — | Not built in v1 (no external consumers) |
+| PublicApi | — | Development-only controller host; direct handler injection, human bearer tokens, Scalar and Bruno ([ADR 0010](docs/adr/0010-development-public-api-with-direct-handlers.md)) |
+| SecondPublicApi | — | Development-only account API; same approved libraries, direct handler calls and separate bearer audience ([ADR 0011](docs/adr/0011-second-public-api-account-workflows.md)) |
 | Internationalization | Deferred | `@angular/localize`, `en` and `es`. See [ADR 0001](docs/adr/0001-internationalization.md) |
 
 ## Library notes
 
 ### Wolverine
 
-Used **only as an in-process mediator**.
+Used **only as an in-process mediator** in the SPA API. PublicApi has no Wolverine dependency and calls existing handlers directly ([ADR 0010](docs/adr/0010-development-public-api-with-direct-handlers.md)).
 
 - Handlers live in the Application assembly, which Wolverine doesn't scan by default, so register it explicitly and turn off the messaging and durability features:
 

@@ -1,0 +1,29 @@
+meta {
+  name: Employee without teamId (400)
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/api/v1/users
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "email": "missing-team@clockin.demo",
+    "name": "Missing Team",
+    "role": "Employee"
+  }
+}
+
+tests {
+  test("Expected status 400", function () {
+    expect(res.getStatus()).to.equal(400);
+  });
+}

@@ -1,0 +1,32 @@
+meta {
+  name: Login new supervisor
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "{{supervisorEmail}}",
+    "password": "{{newPassword}}"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    bru.setVar("accessToken", res.getBody().accessToken);
+  } else {
+    bru.deleteVar("accessToken");
+  }
+}
+
+tests {
+  test("Expected status 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

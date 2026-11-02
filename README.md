@@ -26,9 +26,86 @@ Open [the local app](http://localhost:4200). To run Spanish instead, replace `np
 
 The API listens at `http://localhost:5244`; the Angular dev server proxies `/api` to it. Development uses a local SQLite database, runs migrations on startup and seeds demo data. The API's [launch settings](backend/src/ClockIn.Api/Properties/launchSettings.json), [development settings](backend/src/ClockIn.Api/appsettings.Development.json) and [frontend proxy](frontend/proxy.conf.json) define this setup.
 
+### Public APIs: Scalar access and prefilled data
+
+Both public APIs run locally after the existing API has prepared the shared demo database. Start each host using the commands below, then open its own Scalar URL:
+
+| API | Open Scalar | Prefilled examples |
+|---|---|---|
+| `ClockIn.PublicApi` | **[http://localhost:5245/scalar/v1](http://localhost:5245/scalar/v1)** | Mia's login, previous seeded week, real entry ID, start/end times, edit note and latest timesheet version; Ada and Sam are alternative logins |
+| `ClockIn.SecondPublicApi` | **[http://localhost:5246/scalar/v1](http://localhost:5246/scalar/v1)** | Ada/Mia logins, new-supervisor login, supervisor creation, employee creation with the real Office `teamId`, and activation password |
+
+In Scalar, open an operation, select its named request example where available, and send the request. Copy the login response's `accessToken` into **Bearer authentication**. Each host issues its own tokens; they cannot be shared between APIs. Neither public API is included in the remote deployment.
+
+### PublicApi: personal time and prefilled Scalar examples
+
+The separate `ClockIn.PublicApi` exposes the personal-time workflow at `/api/v1`. It runs only in **Development**, sharing the existing API's database and business rules. Controllers call application handlers directly, without Wolverine.
+
+First run the existing API as shown above to migrate and seed the local database. Once startup finishes, it can remain running or be stopped; PublicApi runs independently after that preparation. From the repository root:
+
+```sh
+dotnet run --project backend/src/ClockIn.PublicApi --launch-profile http
+```
+
+Open **[Scalar](http://localhost:5245/scalar/v1)** to try requests, or view the [OpenAPI document](http://localhost:5245/openapi/v1.json). PublicApi uses port 5245; the existing API uses 5244. PublicApi does not migrate, seed or reset data and is not included in the hosted deployment.
+
+Scalar's examples assume **Mia**, an employee with a previous Draft week suitable for editing and submission:
+
+```json
+{
+  "email": "mia@clockin.demo",
+  "password": "clockin-demo"
+}
+```
+
+Send the login request, copy its `accessToken`, and paste it into Scalar's **Bearer authentication** field. The token applies to the protected operations below, expires after 15 minutes and is invalidated when PublicApi restarts. Sign in again to renew it; SPA API tokens are separate.
+
+| Method | Route | Prefilled data / behavior |
+|---|---|---|
+| POST | `/api/v1/auth/login` | Mia's credentials; Sam and Ada are alternative login examples |
+| POST | `/api/v1/time-entries/clock-in` | No body; opens Mia's entry using server time |
+| POST | `/api/v1/time-entries/clock-out` | No body; closes Mia's open entry using server time |
+| GET | `/api/v1/timesheets/mine/{weekStart}` | Monday of Mia's previous seeded week |
+| PUT | `/api/v1/time-entries/{entryId}` | Mia's real entry ID, start/end times, explanation and latest timesheet version |
+| POST | `/api/v1/timesheets/mine/{weekStart}/submit` | The same ended week; no body |
+
+Try login, punch in, punch out, read the example week, edit, then submit. Punches affect the current week; the read/edit/submit examples use the previous seeded week because the current week cannot be submitted yet. Examples use the signed-in user, so keep Mia selected for this walkthrough.
+
+**Reload Scalar after an edit or demo reset** to refresh entry IDs and concurrency versions. Submitting locks the week against further edits. The existing API's daily demo reset rebuilds shared data and deletes sessions across all hosts; sign in again afterwards. Scalar only reads example data and never resets it.
+
+For Bruno, open the [collection](bruno/ClockIn.PublicApi/), select **Local**, and run its numbered requests. It captures the bearer token and edit values automatically. See the [sample JSON bodies](bruno/ClockIn.PublicApi/examples/), [full API guide](docs/public-api.md) and [feature specification](docs/specs/public-api/personal-time.feature).
+
+### SecondPublicApi: accounts, authorization and prefilled Scalar examples
+
+After preparing the shared database through the existing API as above, start the separate account API from the repository root:
+
+```sh
+dotnet run --project backend/src/ClockIn.SecondPublicApi --launch-profile http
+```
+
+Open **[SecondPublicApi Scalar](http://localhost:5246/scalar/v1)** or its [OpenAPI document](http://localhost:5246/openapi/v1.json). This host runs only in Development and uses direct application-handler calls, the shared database and its own 15-minute bearer tokens.
+
+| Method | Route | Access / prefilled data |
+|---|---|---|
+| GET | `/api/v1/info` | Anonymous; API name and version |
+| POST | `/api/v1/auth/login` | Anonymous; Ada, Mia and NewSupervisor credential examples |
+| POST | `/api/v1/auth/set-password` | Anonymous; `new-user-password` and an activation-token placeholder to replace |
+| GET | `/api/v1/me` | Authenticated; identity and current permissions |
+| POST | `/api/v1/users` | Admin only; Supervisor and Employee examples, with Office's actual `teamId` for Employee |
+
+Scalar prefills **Ada** (`ada@clockin.demo`) and **Mia** (`mia@clockin.demo`), both with password `clockin-demo`. Sign in as Ada, copy the access token into Bearer authentication, and create a user using the **Supervisor** or **Employee** example. **Employees require `teamId`**; Scalar fills in the active **Office** team's real ID. Supervisors and admins have no team.
+
+The creation examples use `sample-supervisor@clockin.demo` and `sample-employee@clockin.demo`, with their names and roles already filled in. **NewSupervisor** login uses `sample-supervisor@clockin.demo` / `new-user-password`. Activation's `paste-token-from-create-user-response` value is a placeholder: replace it with the token returned by user creation; Scalar does not generate that secret for you.
+
+Copy the creation response's `token` into set-password, using the prefilled `new-user-password`, then log in as the new user and call `/me`. Accounts cannot log in before activation. A missing bearer token returns **401**; a non-admin creating a user returns **403**; duplicate emails return **409**. Change fixed Scalar emails for repeated creation. Reload Scalar after demo resets to refresh Office's ID.
+
+The [SecondPublicApi Bruno collection](bruno/ClockIn.SecondPublicApi/) captures tokens and generates unique emails. Select **Local**, run the root requests, then the **Employee** folder for the Office flow. See the [sample JSON](bruno/ClockIn.SecondPublicApi/examples/), [full guide](docs/second-public-api.md) and [feature specification](docs/specs/second-public-api/accounts.feature). All hosts share accounts and daily demo resets; this host never migrates, seeds or resets the database.
+
 ### Hosted deployment
 
-Try the public demo: **[English](https://clockin.gerardoleon.dev/en/)** · **[Español](https://clockin.gerardoleon.dev/es/)**.
+Try the deployed demo: **[English sign-in](https://clockin.gerardoleon.dev/en/sign-in)** · **[Español](https://clockin.gerardoleon.dev/es/)**.
+
+The remote deployment includes the **Angular frontend** and the existing **`ClockIn.Api` backend** only. **`ClockIn.PublicApi` and `ClockIn.SecondPublicApi` are not deployed**; their versioned endpoints and Scalar UIs are available only in local Development.
 
 Local development and the hosted demo use these sample accounts, all with password **`clockin-demo`**:
 
@@ -109,7 +186,7 @@ Product context: [PRODUCT.md](PRODUCT.md). Domain terms: [glossary](docs/glossar
 
 The badges read the published coverage summaries rather than fixed percentages in this README. A successful `main` build publishes both reports from the same run; failed builds keep the last successful reports online. The dashboard identifies the source commit and generation time. PRs publish downloadable CI artifacts without deploying Pages.
 
-Backend coverage merges unit, architecture and HTTP/integration results for all five production assemblies. Frontend coverage includes all TypeScript source, including untested files. Test code and generated backend `obj` files are excluded; type-only frontend files have no executable lines. Domain and Application must **each reach 80% line coverage**, using exact covered/coverable counts. Other layers and the frontend are report-only. Playwright remains a separate behavior and accessibility check.
+Backend coverage merges unit, architecture and HTTP/integration results for all eight production assemblies, including both public APIs and the shared Hosting helpers. Frontend coverage includes all TypeScript source, including untested files. Test code and generated backend `obj` files are excluded; type-only frontend files have no executable lines. Domain and Application must **each reach 80% line coverage**, using exact covered/coverable counts. Other layers and the frontend are report-only. Playwright remains a separate behavior and accessibility check.
 
 ### Run the checks
 

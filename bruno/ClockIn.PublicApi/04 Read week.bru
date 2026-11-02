@@ -1,0 +1,36 @@
+meta {
+  name: Read my week and capture edit values
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/timesheets/mine/{{weekStart}}
+  body: none
+  auth: inherit
+}
+
+script:post-response {
+  bru.deleteVar("entryId");
+  bru.deleteVar("version");
+  bru.deleteVar("entryStart");
+  bru.deleteVar("entryEnd");
+  if (res.getStatus() === 200) {
+    const sheet = res.getBody();
+    bru.setVar("version", sheet.version);
+    if (sheet.entries.length) {
+      const entry = sheet.entries[0];
+      bru.setVar("entryId", entry.id);
+      bru.setVar("entryStart", entry.start);
+      bru.setVar("entryEnd", JSON.stringify(entry.end));
+    }
+  }
+}
+
+tests {
+  test("Read a week with an editable sample entry", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().status).to.equal("Draft");
+    expect(res.getBody().entries.length).to.be.greaterThan(0);
+  });
+}

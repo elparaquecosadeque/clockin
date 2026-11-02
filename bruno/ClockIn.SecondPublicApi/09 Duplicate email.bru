@@ -1,0 +1,30 @@
+meta {
+  name: Duplicate email as Ada (409)
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/api/v1/users
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "email": "{{supervisorEmail}}",
+    "name": "Bruno Supervisor",
+    "role": "Supervisor",
+    "teamId": null
+  }
+}
+
+tests {
+  test("Expected status 409", function () {
+    expect(res.getStatus()).to.equal(409);
+  });
+}

@@ -8,6 +8,9 @@ export function checkBackendCoverage(report) {
     "Domain",
     "Infrastructure",
     "Persistence",
+    "PublicApi",
+    "SecondPublicApi",
+    "Hosting",
   ]) {
     const assembly = assemblies.find((item) => item.name === `ClockIn.${name}`);
     assert(assembly, `Missing coverage for ClockIn.${name}`);

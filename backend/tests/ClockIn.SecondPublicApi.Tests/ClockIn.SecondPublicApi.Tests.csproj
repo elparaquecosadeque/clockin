@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+    <ProjectReference Include="../../src/ClockIn.SecondPublicApi/ClockIn.SecondPublicApi.csproj" />
+    <ProjectReference Include="../../src/ClockIn.PublicApi/ClockIn.PublicApi.csproj" />
+    <ProjectReference Include="../ClockIn.Tests.Common/ClockIn.Tests.Common.csproj" />
+    <PackageReference Include="AwesomeAssertions" />
+    <PackageReference Include="xunit.v3.mtp-v2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
+  </ItemGroup>
+</Project>

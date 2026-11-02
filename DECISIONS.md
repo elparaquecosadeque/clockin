@@ -320,3 +320,18 @@ The interview decisions are in [`docs/specs/`](docs/specs/) and [`docs/glossary.
 | Deactivation and correction requests need no reason. | user |
 
 Larger decisions: [ADR 0001](docs/adr/0001-internationalization.md) (i18n), [ADR 0002](docs/adr/0002-reqnroll-for-api-specs.md) (Reqnroll), [ADR 0003](docs/adr/0003-adopt-baseline-code-style-and-stack.md) (baseline and ADR sync), [ADR 0004](docs/adr/0004-http-tests-instead-of-reqnroll.md) (no Reqnroll; supersedes 0002), [ADR 0006](docs/adr/0006-repository-suffix-on-variables.md) (repository variable names), [ADR 0007](docs/adr/0007-suffixes-for-static-classes.md) (static class suffixes), [ADR 0008](docs/adr/0008-shared-handler-logic-in-injected-services.md) (shared handler logic as a service), [ADR 0009](docs/adr/0009-session-id-in-the-access-token.md) (session id in the access token).
+
+## 2026-11-01: Development PublicApi examples
+
+| Decision | Why | By |
+|---|---|---|
+| PublicApi uses localhost port 5245. | Keep the SPA API on 5244 and its frontend proxy unchanged. | dev |
+| Bruno defaults to Mia and the previous week, capturing tokens and edit values in runtime variables. | Mia has no open punch and has a past Draft week, so all six sample requests can succeed without weakening week-submission rules or saving bearer tokens to disk. | dev, following user-approved scope |
+
+Architecture and authentication: [ADR 0010](docs/adr/0010-development-public-api-with-direct-handlers.md).
+
+Scalar personal-time examples read Mia's previous seeded week, entry ID and current version from the shared database when generating the OpenAPI document. Refreshing Scalar after a write/reset replaces stale values; documentation never changes or resets data. Requested by the user, implemented by dev.
+
+## 2026-11-02: SecondPublicApi
+
+Port 5246 keeps the existing API (5244) and PublicApi (5245) startup unchanged. Scalar reads the real Office team ID, while its activation example uses a placeholder to be replaced with the create response token. Bruno uses unique emails and runtime tokens for repeatable account flows. These implement the user-approved scope; architecture and authentication are recorded in [ADR 0011](docs/adr/0011-second-public-api-account-workflows.md).

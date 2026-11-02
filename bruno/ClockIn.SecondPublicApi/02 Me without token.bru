@@ -1,0 +1,17 @@
+meta {
+  name: Me without token (401)
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/v1/me
+  body: none
+  auth: none
+}
+
+tests {
+  test("Expected status 401", function () {
+    expect(res.getStatus()).to.equal(401);
+  });
+}

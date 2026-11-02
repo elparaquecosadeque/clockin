@@ -1,7 +1,7 @@
-using ClockIn.Api.Auth;
 using ClockIn.Application.Teams.Commands;
 using ClockIn.Application.Teams.Queries;
 using ClockIn.Application.Teams.Results;
+using ClockIn.Hosting.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Wolverine;

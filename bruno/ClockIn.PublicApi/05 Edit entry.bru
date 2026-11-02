@@ -1,0 +1,26 @@
+meta {
+  name: Edit my entry
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{baseUrl}}/api/v1/time-entries/{{entryId}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "start": "{{entryStart}}",
+    "end": {{entryEnd}},
+    "note": "Reviewed and confirmed through Bruno",
+    "version": {{version}}
+  }
+}
+
+tests {
+  test("Edited entry", function () {
+    expect(res.getStatus()).to.equal(204);
+  });
+}

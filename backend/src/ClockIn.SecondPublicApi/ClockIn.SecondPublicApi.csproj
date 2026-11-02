@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <ProjectReference Include="../ClockIn.Hosting/ClockIn.Hosting.csproj" />
+    <ProjectReference Include="../ClockIn.Application/ClockIn.Application.csproj" />
+    <ProjectReference Include="../ClockIn.Persistence/ClockIn.Persistence.csproj" />
+    <ProjectReference Include="../ClockIn.Infrastructure/ClockIn.Infrastructure.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Scalar.AspNetCore" />
+  </ItemGroup>
+</Project>

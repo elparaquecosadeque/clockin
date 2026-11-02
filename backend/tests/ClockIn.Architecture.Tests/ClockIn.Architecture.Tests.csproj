@@ -11,6 +11,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ClockIn.Api\ClockIn.Api.csproj" />
+    <ProjectReference Include="../../src/ClockIn.PublicApi/ClockIn.PublicApi.csproj" />
+    <ProjectReference Include="../../src/ClockIn.SecondPublicApi/ClockIn.SecondPublicApi.csproj" />
     <ProjectReference Include="..\ClockIn.Tests.Common\ClockIn.Tests.Common.csproj" />
   </ItemGroup>
 

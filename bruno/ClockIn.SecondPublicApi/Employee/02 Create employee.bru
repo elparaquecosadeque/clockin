@@ -1,0 +1,42 @@
+meta {
+  name: Create employee in Office as Ada
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/users
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "email": "{{employeeEmail}}",
+    "name": "Bruno Employee",
+    "role": "Employee",
+    "teamId": "{{officeTeamId}}"
+  }
+}
+
+script:pre-request {
+  const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  bru.setVar("employeeEmail", `bruno-employee-${suffix}@clockin.demo`);
+  bru.deleteVar("employeeActivationToken");
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    bru.setVar("employeeActivationToken", res.getBody().token);
+  }
+}
+
+tests {
+  test("Expected status 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+}
